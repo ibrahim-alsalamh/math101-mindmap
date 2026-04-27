@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>رياضيات 101 — جامعة الملك سعود</title>
+<title>Math 101 — King Saud University</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
 <style>
@@ -83,7 +83,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);fo
 <div id="hdr">
   <div class="hlogo">
     <div class="hring">∑</div>
-    <div><div class="htxt">رياضيات ١٠١</div><div class="hsub">جامعة الملك سعود</div></div>
+    <div><div class="htxt">Math 101</div><div class="hsub">King Saud University</div></div>
   </div>
   <div class="hacts">
     <button class="hab" onclick="resetV()">↺ إعادة ضبط</button>
@@ -92,9 +92,9 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);fo
 </div>
 
 <div id="leg">
-  <div class="lt">الفصول</div>
-  <div class="li" onclick="focusCh(0)"><div class="ld" style="background:var(--c1)"></div><span class="ll">الفصل الأول — الأعداد والدوال</span></div>
-  <div class="li" onclick="focusCh(1)"><div class="ld" style="background:var(--c2)"></div><span class="ll">الفصل الثاني — النهايات والاتصال</span></div>
+  <div class="lt">Chapters</div>
+  <div class="li" onclick="focusCh(0)"><div class="ld" style="background:var(--c1)"></div><span class="ll">Chapter 1 — Numbers & Functions</span></div>
+  <div class="li" onclick="focusCh(1)"><div class="ld" style="background:var(--c2)"></div><span class="ll">Chapter 2 — Limits & Continuity</span></div>
 </div>
 
 <div id="cw"><svg id="svg"></svg></div>
@@ -104,7 +104,7 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);fo
   <button class="zb" onclick="bz(.87)">－</button>
 </div>
 
-<p id="hint">اسحب • عجلة للتكبير حول الماوس • اضغط عقدة للتفاصيل</p>
+<p id="hint">Drag • Scroll to zoom • Click node for details</p>
 
 <div id="dp">
   <div id="dp-l"></div>
@@ -126,74 +126,73 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);fo
 // ═══════════════════════════════════════════════════════
 const DATA = [
   {
-    id:1, color:'#1fad84', label:'الفصل الأول\nالأعداد والدوال',
+    id:1, color:'#1fad84', label:'Chapter 1\nNumbers & Functions',
     desc:'مجموعات الأعداد، أنواع الدوال وعملياتها، الدوال العكسية، والدوال المثلثية.',
     tags:['Section 1.1 – 1.4'],
     // background symbols for this chapter
     bgSyms:['ℝ','ℕ','ℤ','ℚ','f(x)','f⁻¹','∘','sin','cos','|x|','π','θ'],
     sections:[
-      { label:'١.١\nالأعداد والمتباينات', desc:'أنواع الأعداد، فترات المتباينات، وخصائص القيمة المطلقة.', tags:['مجموعات الأعداد','فترات المتباينات','القيمة المطلقة'],
+      { label:'1.1\nSets of Numbers &\nInequalities', desc:'أنواع الأعداد، فترات المتباينات، وخصائص القيمة المطلقة.', tags:['مجموعات الأعداد','فترات المتباينات','القيمة المطلقة'],
         leaves:[
-          {label:'مجموعات\nالأعداد', desc:'ℕ⊂W⊂ℤ⊂ℚ⊂ℝ — كل مجموعة تتضمن ما قبلها.', tags:['ℕ الطبيعية','W الكلية','ℤ الصحيحة','ℚ النسبية','ℝ الحقيقية']},
-          {label:'فترات\nالمتباينات', desc:'(a,b) مفتوحة، [a,b] مغلقة. عند الضرب أو القسمة في سالب تُقلب إشارة المتباينة.', tags:['(a,b) مفتوحة','[a,b] مغلقة','فترات ±∞','قلب الإشارة بالسالب']},
-          {label:'القيمة\nالمطلقة', desc:'|a|=a إذا a≥0، و |a|=−a إذا a<0. متباينة المثلث: |a+b|≤|a|+|b|.', tags:['التعريف الرياضي','متباينة المثلث','تطبيقات المتباينات']}
+          {label:'Number\nSets', desc:'ℕ⊂W⊂ℤ⊂ℚ⊂ℝ — كل مجموعة تتضمن ما قبلها.', tags:['ℕ الطبيعية','W الكلية','ℤ الصحيحة','ℚ النسبية','ℝ الحقيقية']},
+          {label:'Intervals &\nInequalities', desc:'(a,b) مفتوحة، [a,b] مغلقة. عند الضرب أو القسمة في سالب تُقلب إشارة المتباينة.', tags:['(a,b) مفتوحة','[a,b] مغلقة','فترات ±∞','قلب الإشارة بالسالب']},
+          {label:'Absolute\nValue', desc:'|a|=a إذا a≥0، و |a|=−a إذا a<0. متباينة المثلث: |a+b|≤|a|+|b|.', tags:['التعريف الرياضي','متباينة المثلث','تطبيقات المتباينات']}
         ]
       },
-      { label:'١.٢\nالدوال', desc:'تعريف الدالة، أنواعها، والعمليات عليها بما فيها التركيب.', tags:['تعريف الدالة','أنواع الدوال','التركيب'],
+      { label:'1.2\nFunctions', desc:'تعريف الدالة، أنواعها، والعمليات عليها بما فيها التركيب.', tags:['تعريف الدالة','أنواع الدوال','التركيب'],
         leaves:[
-          {label:'تعريف\nالدالة', desc:'علاقة تربط كل عنصر في المجال بعنصر واحد فقط في المدى.', tags:['المجال Domain','المدى Range','اختبار الخط العمودي']},
-          {label:'أنواع\nالدوال', desc:'كثيرات الحدود (ℝ)، الكسرية (q(x)≠0)، الجذرية، ومتعددة التعريف Piecewise.', tags:['كثيرات الحدود','الكسرية q(x)≠0','الجذرية','Piecewise']},
-          {label:'العمليات\nوالتركيب', desc:'الجمع والطرح: Df∩Dg. القسمة: g(x)≠0. التركيب: (f∘g)(x)=f(g(x)).', tags:['Df∩Dg','g(x)≠0 للقسمة','(f∘g)(x)=f(g(x))']}
+          {label:'Function\nDefinition', desc:'علاقة تربط كل عنصر في المجال بعنصر واحد فقط في المدى.', tags:['المجال Domain','المدى Range','اختبار الخط العمودي']},
+          {label:'Types of\nFunctions', desc:'كثيرات الحدود (ℝ)، الكسرية (q(x)≠0)، الجذرية، ومتعددة التعريف Piecewise.', tags:['كثيرات الحدود','الكسرية q(x)≠0','الجذرية','Piecewise']},
+          {label:'Operations &\nComposition', desc:'الجمع والطرح: Df∩Dg. القسمة: g(x)≠0. التركيب: (f∘g)(x)=f(g(x)).', tags:['Df∩Dg','g(x)≠0 للقسمة','(f∘g)(x)=f(g(x))']}
         ]
       },
-      { label:'١.٣\nالدوال العكسية', desc:'شروط وجود الدالة العكسية وخصائص الإلغاء.', tags:['واحد لواحد','f⁻¹','خصائص الإلغاء'],
+      { label:'1.3\nInverse Functions', desc:'شروط وجود الدالة العكسية وخصائص الإلغاء.', tags:['واحد لواحد','f⁻¹','خصائص الإلغاء'],
         leaves:[
-          {label:'واحد\nلواحد', desc:'f(x₁)=f(x₂) ⟹ x₁=x₂. يُتحقق منها باختبار الخط الأفقي.', tags:['اختبار HLT','التعريف الرياضي','شرط الوجود']},
-          {label:'الدالة\nالعكسية f⁻¹', desc:'مجال f⁻¹ = مدى f، ومدى f⁻¹ = مجال f. التماثل مع y=x بيانياً.', tags:['مجال f⁻¹ = مدى f','التماثل مع y=x']},
-          {label:'خصائص\nالإلغاء', desc:'f⁻¹(f(x))=x و f(f⁻¹(x))=x — الدالتان تلغيان أثر بعضهما.', tags:['f⁻¹(f(x))=x','f(f⁻¹(x))=x','التحقق من العكس']}
+          {label:'One-to-One\nFunction', desc:'f(x₁)=f(x₂) ⟹ x₁=x₂. يُتحقق منها باختبار الخط الأفقي.', tags:['اختبار HLT','التعريف الرياضي','شرط الوجود']},
+          {label:'Inverse\nFunction f⁻¹', desc:'مجال f⁻¹ = مدى f، ومدى f⁻¹ = مجال f. التماثل مع y=x بيانياً.', tags:['مجال f⁻¹ = مدى f','التماثل مع y=x']}
         ]
       },
-      { label:'١.٤\nالدوال المثلثية', desc:'قياس الزوايا، الدوال الست، المتطابقات، والمعكوسات.', tags:['الزوايا','الدوال الست','المتطابقات'],
+      { label:'1.4\nTrigonometric Functions\n& Their Inverses', desc:'قياس الزوايا، الدوال الست، المتطابقات، والمعكوسات.', tags:['الزوايا','الدوال الست','المتطابقات'],
         leaves:[
-          {label:'الزوايا\nوالقياسات', desc:'درجة→راديان: ×π/180. راديان→درجة: ×180/π. طول القوس: s=rθ.', tags:['×π/180 درجة→راديان','×180/π راديان→درجة','s=rθ طول القوس','الزاوية المرجعية θ\'']},
-          {label:'الدوال الست\nوإشاراتها', desc:'sin=مقابل/وتر، cos=مجاور/وتر، tan=مقابل/مجاور. إشارات ASTC في الأرباع.', tags:['sin=مقابل/وتر','cos=مجاور/وتر','tan=مقابل/مجاور','ASTC في الأرباع']},
-          {label:'المتطابقات\nوالمعكوسات', desc:'sin²θ+cos²θ=1. المعكوسات: sin⁻¹∈[−π/2,π/2]، cos⁻¹∈[0,π]، tan⁻¹∈(−π/2,π/2).', tags:['sin²θ+cos²θ=1','قوانين ضعف الزاوية','sin⁻¹: [−π/2,π/2]','cos⁻¹: [0,π]']}
+          {label:'Angles &\nMeasurements', desc:'درجة→راديان: ×π/180. راديان→درجة: ×180/π. طول القوس: s=rθ.', tags:['×π/180 درجة→راديان','×180/π راديان→درجة','s=rθ طول القوس','الزاوية المرجعية θ\'']},
+          {label:'6 Trig Functions\n& Signs', desc:'sin = opp/hyp    cos = adj/hyp    tan = opp/adj\ncsc = hyp/opp    sec = hyp/adj    cot = adj/opp\nإشارات ASTC في الأرباع الأربعة.', tags:['sin, csc','cos, sec','tan, cot','ASTC Signs']},
+          {label:'Identities &\nInverses', desc:'sin²θ+cos²θ=1. المعكوسات: sin⁻¹∈[−π/2,π/2]، cos⁻¹∈[0,π]، tan⁻¹∈(−π/2,π/2).', tags:['sin²θ+cos²θ=1','قوانين ضعف الزاوية','sin⁻¹: [−π/2,π/2]','cos⁻¹: [0,π]']}
         ]
       }
     ]
   },
   {
-    id:2, color:'#7b6fd4', label:'الفصل الثاني\nالنهايات والاتصال',
+    id:2, color:'#7b6fd4', label:'Chapter 2\nLimits & Continuity',
     desc:'مفهوم النهاية، طرق حسابها، النهايات عند اللانهاية، وشروط الاتصال.',
     tags:['Section 2.1 – 2.4'],
     bgSyms:['lim','→','∞','ε','δ','L','a⁺','a⁻','0/0','≈','∃','⟹'],
     sections:[
-      { label:'٢.١\nمفهوم النهاية', desc:'تعريف النهاية، النهايات الجانبية، وشرط الوجود.', tags:['تعريف النهاية','نهايات جانبية','شرط الوجود'],
+      { label:'2.1\nDefinition of Limit', desc:'تعريف النهاية، النهايات الجانبية، وشرط الوجود.', tags:['تعريف النهاية','نهايات جانبية','شرط الوجود'],
         leaves:[
-          {label:'تعريف\nالنهاية', desc:'lim(x→a)f(x)=L — اقتراب f(x) من L عند اقتراب x من a دون بلوغها.', tags:['الاقتراب من L','x→a دون بلوغها','تعريف ε-δ الرسمي']},
-          {label:'النهايات\nالجانبية', desc:'من اليمين: lim(x→a⁺)f(x). من اليسار: lim(x→a⁻)f(x).', tags:['lim x→a⁺ من اليمين','lim x→a⁻ من اليسار','مهمة في Piecewise']},
-          {label:'شرط\nالوجود', desc:'النهاية موجودة فقط إذا تساوت النهاية من اليمين مع النهاية من اليسار.', tags:['lim a⁺ = lim a⁻','غياب أحد الجانبين','عدم وجود النهاية']}
+          {label:'Limit\nDefinition', desc:'lim(x→a)f(x)=L — اقتراب f(x) من L عند اقتراب x من a دون بلوغها.', tags:['الاقتراب من L','x→a دون بلوغها','تعريف ε-δ الرسمي']},
+          {label:'One-Sided\nLimits', desc:'من اليمين: lim(x→a⁺)f(x). من اليسار: lim(x→a⁻)f(x).', tags:['lim x→a⁺ من اليمين','lim x→a⁻ من اليسار','مهمة في Piecewise']},
+          {label:'Existence\nCondition', desc:'النهاية موجودة فقط إذا تساوت النهاية من اليمين مع النهاية من اليسار.', tags:['lim a⁺ = lim a⁻','غياب أحد الجانبين','عدم وجود النهاية']}
         ]
       },
-      { label:'٢.٢\nحساب النهايات', desc:'التعويض المباشر، معالجة حالات عدم التعيين، ونظرية الحصر.', tags:['التعويض المباشر','0/0','نظرية الحصر'],
+      { label:'2.2\nLimit Laws', desc:'التعويض المباشر، معالجة حالات عدم التعيين، ونظرية الحصر.', tags:['التعويض المباشر','0/0','نظرية الحصر'],
         leaves:[
-          {label:'التعويض\nالمباشر', desc:'الخطوة الأولى دائماً: تعويض قيمة x في الدالة مباشرةً.', tags:['الخطوة الأولى دائماً','ينجح مع المتصلة','إذا 0/0: طرق التبسيط']},
-          {label:'طرق\nالتبسيط', desc:'عند 0/0: التحليل واختصار العامل، الضرب بالمرافق، توحيد المقامات.', tags:['التحليل Factorization','الضرب بالمرافق','توحيد المقامات','اختصار العامل']},
-          {label:'نظرية\nالحصر', desc:'إذا g(x)≤f(x)≤h(x) وlim g=lim h=L فإن lim f=L.', tags:['g≤f≤h','lim g = lim h = L','⟹ lim f = L','مثال: sin(x)/x→1']}
+          {label:'Direct\nSubstitution', desc:'الخطوة الأولى دائماً: تعويض قيمة x في الدالة مباشرةً.', tags:['الخطوة الأولى دائماً','ينجح مع المتصلة','إذا 0/0: طرق التبسيط']},
+          {label:'Simplification\nMethods', desc:'عند 0/0: التحليل واختصار العامل، الضرب بالمرافق، توحيد المقامات.', tags:['التحليل Factorization','الضرب بالمرافق','توحيد المقامات','اختصار العامل']},
+          {label:'Squeeze\nTheorem', desc:'إذا g(x)≤f(x)≤h(x) وlim g=lim h=L فإن lim f=L.', tags:['g≤f≤h','lim g = lim h = L','⟹ lim f = L','مثال: sin(x)/x→1']}
         ]
       },
-      { label:'٢.٣\nالنهايات واللانهاية', desc:'سلوك الدالة عند x→±∞ وعند النهايات اللانهائية.', tags:['x→±∞','خطوط التقارب'],
+      { label:'2.3\nLimits Involving Infinity', desc:'سلوك الدالة عند x→±∞ وعند النهايات اللانهائية.', tags:['x→±∞','خطوط التقارب'],
         leaves:[
-          {label:'النهايات\nعند ±∞', desc:'دراسة السلوك عند x→∞ أو x→−∞. خط التقارب الأفقي يوجد إذا كانت النهاية ثابتاً.', tags:['x→+∞ أو x→−∞','خط التقارب الأفقي y=L','السلوك النهائي']},
-          {label:'النهايات\nاللانهائية', desc:'عند اقتراب x من a، تتزايد الدالة بلا حدود (+∞) أو تتناقص (−∞).', tags:['lim f(x)=+∞','lim f(x)=−∞','خط التقارب الرأسي x=a']},
-          {label:'خطوط\nالتقارب', desc:'الأفقي: النهاية عند ±∞ ثابتة. الرأسي: أصفار المقام بعد التبسيط.', tags:['الأفقي y=L','الرأسي x=a','إيجاد أصفار المقام']}
+          {label:'Limits at\nInfinity', desc:'دراسة السلوك عند x→∞ أو x→−∞. خط التقارب الأفقي يوجد إذا كانت النهاية ثابتاً.', tags:['x→+∞ أو x→−∞','خط التقارب الأفقي y=L','السلوك النهائي']},
+          {label:'Infinite\nLimits', desc:'عند اقتراب x من a، تتزايد الدالة بلا حدود (+∞) أو تتناقص (−∞).', tags:['lim f(x)=+∞','lim f(x)=−∞','خط التقارب الرأسي x=a']},
+          {label:'Asymptotes', desc:'الأفقي: النهاية عند ±∞ ثابتة. الرأسي: أصفار المقام بعد التبسيط.', tags:['الأفقي y=L','الرأسي x=a','إيجاد أصفار المقام']}
         ]
       },
-      { label:'٢.٤\nالاتصال وأنواعه', desc:'الشروط الثلاثة للاتصال، أنواع الانقطاع، ونظرية القيمة المتوسطة.', tags:['شروط الاتصال','الانقطاع','IVT'],
+      { label:'2.4\nContinuity of Functions', desc:'الشروط الثلاثة للاتصال، أنواع الانقطاع، ونظرية القيمة المتوسطة.', tags:['شروط الاتصال','الانقطاع','IVT'],
         leaves:[
-          {label:'شروط\nالاتصال', desc:'(١) f(a) موجودة. (٢) النهاية موجودة. (٣) النهاية = f(a). الثلاثة شرط.', tags:['f(a) موجودة','النهاية موجودة','النهاية = f(a)','الثلاثة معاً']},
-          {label:'أنواع\nالانقطاع', desc:'نقطي: النهاية موجودة لكن ≠f(a). قفزي: يمين≠يسار. لانهائي: عند التقارب الرأسي.', tags:['نقطي Removable','قفزي Jump','لانهائي Infinite']},
-          {label:'نظرية IVT\nالقيمة المتوسطة', desc:'إذا f متصلة على [a,b] وf(a)≤k≤f(b) فتوجد c∈(a,b) بحيث f(c)=k.', tags:['f متصلة على [a,b]','f(a)≤k≤f(b)','∃c: f(c)=k','إثبات وجود الجذور']}
+          {label:'Continuity\nConditions', desc:'(١) f(a) موجودة. (٢) النهاية موجودة. (٣) النهاية = f(a). الثلاثة شرط.', tags:['f(a) موجودة','النهاية موجودة','النهاية = f(a)','الثلاثة معاً']},
+          {label:'Types of\nDiscontinuity', desc:'نقطي: النهاية موجودة لكن ≠f(a). قفزي: يمين≠يسار. لانهائي: عند التقارب الرأسي.', tags:['نقطي Removable','قفزي Jump','لانهائي Infinite']},
+          {label:'IVT\nIntermediate Value', desc:'إذا f متصلة على [a,b] وf(a)≤k≤f(b) فتوجد c∈(a,b) بحيث f(c)=k.', tags:['f متصلة على [a,b]','f(a)≤k≤f(b)','∃c: f(c)=k','إثبات وجود الجذور']}
         ]
       }
     ]
@@ -385,8 +384,8 @@ function drawRoot(NG,LG,x,y){
   se('circle',{cx:x,cy:y,r:ROOT_R,fill:'#06070b',stroke:'#c9a84c','stroke-width':'2'},g);
   se('circle',{cx:x,cy:y,r:ROOT_R-4,fill:'#c9a84c',opacity:'.06'},g);
   se('ellipse',{cx:x-ROOT_R*.17,cy:y-ROOT_R*.23,rx:ROOT_R*.33,ry:ROOT_R*.15,fill:'rgba(255,255,255,.05)'},g);
-  ['رياضيات','١٠١'].forEach((ln,i)=>se('text',{x,y:y-10+i*20,'text-anchor':'middle','dominant-baseline':'central',fill:'#c9a84c','font-size':'15','font-weight':'700','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',()=>openDp('رياضيات ١٠١','خريطة ذهنية لمادة حساب التفاضل والتكامل — جامعة الملك سعود.',['الفصل الأول: الأعداد والدوال','الفصل الثاني: النهايات والاتصال'],'#c9a84c','Math 101 — KSU'));
+  ['Math','101'].forEach((ln,i)=>se('text',{x,y:y-10+i*20,'text-anchor':'middle','dominant-baseline':'central',fill:'#c9a84c','font-size':'15','font-weight':'700','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
+  g.addEventListener('click',()=>openDp('Math 101','Interactive mind map for Calculus — King Saud University.',['Chapter 1: Numbers & Functions','Chapter 2: Limits & Continuity'],'#c9a84c','Math 101 — KSU'));
   g.addEventListener('mouseenter',()=>g.setAttribute('transform',`translate(0,-5)`));
   g.addEventListener('mouseleave',()=>g.removeAttribute('transform'));
 }
@@ -399,7 +398,7 @@ function drawChNode(NG,x,y,ch){
   se('ellipse',{cx:x-CH_R*.16,cy:y-CH_R*.22,rx:CH_R*.3,ry:CH_R*.14,fill:'rgba(255,255,255,.06)'},g);
   const lines=ch.label.split('\n');
   lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*17+(lines.length>1?2:0),'text-anchor':'middle','dominant-baseline':'central',fill:'#eeeaf2','font-size':'11.5','font-weight':'700','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',e=>{e.stopPropagation();openDp(ch.label,ch.desc,ch.tags,ch.color,`الفصل ${ch.id}`)});
+  g.addEventListener('click',e=>{e.stopPropagation();openDp(ch.label,ch.desc,ch.tags,ch.color,`Chapter ${ch.id}`)});
   g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-6)');fill.setAttribute('opacity','.22')});
   g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');fill.setAttribute('opacity','.12')});
 }
@@ -410,7 +409,7 @@ function drawSecNode(NG,x,y,col,sec){
   se('circle',{cx:x,cy:y,r:SEC_R,fill:'none',stroke:col,'stroke-width':'1.5'},g);
   const lines=sec.label.split('\n');
   lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*14+(lines.length>1?1:0),'text-anchor':'middle','dominant-baseline':'central',fill:'#eeeaf2','font-size':'10','font-weight':'600','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',e=>{e.stopPropagation();openDp(sec.label,sec.desc,sec.tags,col,'موضوع رئيسي')});
+  g.addEventListener('click',e=>{e.stopPropagation();openDp(sec.label,sec.desc,sec.tags,col,'Section')});
   g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-5)');fill.setAttribute('opacity','.25')});
   g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');fill.setAttribute('opacity','.14')});
 }
@@ -423,7 +422,7 @@ function drawLeaf(NG,x,y,col,node){
   se('rect',{x:x-LW/2+4,y:y-LH/2+10,width:LW-8,height:LH-18,rx:'7',fill:col,opacity:'.04'},g);
   const lines=node.label.split('\n');
   lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*15+(lines.length>1?2:0),'text-anchor':'middle','dominant-baseline':'central',fill:'#eeeaf2','font-size':'10.5','font-weight':'600','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',e=>{e.stopPropagation();openDp(node.label,node.desc,node.tags||[],col,'مفهوم')});
+  g.addEventListener('click',e=>{e.stopPropagation();openDp(node.label,node.desc,node.tags||[],col,'Concept')});
   g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-5)');rect.setAttribute('stroke-width','2.3')});
   g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');rect.setAttribute('stroke-width','1.5')});
 }
@@ -492,7 +491,7 @@ cw.addEventListener('touchend',()=>{dragging=false;ltd=null});
 // ═══════════════════════════════════════════════════════
 const DIAGRAMS = {
 
-'مجموعات\nالأعداد': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
+'Number\nSets': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
   <style>.dl{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:9px;fill:#8a8799}.dv{font-size:10px;fill:#c9a84c;font-weight:600}</style>
   <ellipse cx="130" cy="95" rx="118" ry="78" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".35"/>
   <ellipse cx="130" cy="95" rx="95" ry="62" fill="none" stroke="#7b6fd4" stroke-width="1" opacity=".35"/>
@@ -508,7 +507,7 @@ const DIAGRAMS = {
   <text x="210" y="108" text-anchor="middle" class="dl" fill="#7b6fd4">النسبية</text>
 </svg>`,
 
-'فترات\nالمتباينات': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
+'Intervals &\nInequalities': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
   <style>.dl{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:9.5px;fill:#8a8799}.lb{font-size:9px;fill:#c9a84c;font-family:monospace}</style>
   ${[['(a, b) مفتوحة','#1fad84',30,0,0],['[a, b] مغلقة','#7b6fd4',80,1,1],['[a, b) نصف مغلقة','#c94c4c',130,1,0],['(a, ∞) لانهائية','#c9a84c',180,0,2]].map(([lbl,col,y,L,R],i)=>{
     const x1=60,x2=190;
@@ -518,7 +517,7 @@ const DIAGRAMS = {
   }).join('')}
 </svg>`,
 
-'القيمة\nالمطلقة': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
+'Absolute\nValue': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
   <line x1="10" y1="90" x2="250" y2="90" stroke="#3e3c52" stroke-width="1"/>
   <line x1="130" y1="10" x2="130" y2="170" stroke="#3e3c52" stroke-width="1"/>
   <text x="252" y="94" font-size="10" fill="#3e3c52" font-family="monospace">x</text>
@@ -529,7 +528,7 @@ const DIAGRAMS = {
   <text x="118" y="104" font-size="9" fill="#c9a84c" font-family="monospace">(0,0)</text>
 </svg>`,
 
-'أنواع\nالدوال': ()=>`<svg xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
+'Types of\nFunctions': ()=>`<svg xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
 <style>.hd{font-size:8.5px;font-family:monospace;fill:#c9a84c;font-weight:600}.eq{font-size:9px;font-family:monospace;fill:#eeeaf2}.lb{font-size:8px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#8a8799}.dm{font-size:8px;font-family:monospace;fill:#1fad84}</style>
 
 <!-- Definition box -->
@@ -568,7 +567,7 @@ ${[
 <text x="175" y="246" class="lb">= مجال العملية</text>
 </svg>`,
 
-'أنواع\nالدوال': ()=>`<svg viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:369px">
+'Types of\nFunctions': ()=>`<svg viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:369px">
 <style>.ax{stroke:#2a2a3a;stroke-width:.8}.lbl{font-size:8px;font-family:monospace;fill:#8a8799}.ttl{font-size:8.5px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#c9a84c;font-weight:600}</style>
 <defs>
   <clipPath id="c1"><rect x="20" y="10" width="50" height="50"/></clipPath>
@@ -666,7 +665,7 @@ ${[
 <text x="70" y="317" text-anchor="middle" class="lbl">f(x)=|x|</text>
 </svg>`,
 
-'تعريف\nالدالة': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
+'Function\nDefinition': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
   <style>.fn{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px}</style>
   <rect x="15" y="30" width="80" height="120" rx="40" fill="none" stroke="#1fad84" stroke-width="1.5" opacity=".6"/>
   <rect x="165" y="30" width="80" height="120" rx="40" fill="none" stroke="#7b6fd4" stroke-width="1.5" opacity=".6"/>
@@ -681,7 +680,7 @@ ${[
   <text x="130" y="175" text-anchor="middle" class="fn" fill="#c9a84c">f: المجال → المدى</text>
 </svg>`,
 
-'العمليات\nوالتركيب': ()=>`<svg viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
+'Operations &\nComposition': ()=>`<svg viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
 <style>.hd{font-size:8.5px;font-family:monospace;fill:#c9a84c;font-weight:600}.eq{font-size:9px;font-family:monospace;fill:#eeeaf2}.lb{font-size:8px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#8a8799}</style>
 <rect x="8" y="8" width="244" height="120" rx="8" fill="rgba(31,173,132,.07)" stroke="#1fad84" stroke-width=".8"/>
 <text x="16" y="22" class="hd" fill="#1fad84">DEFINITION 1.2.7 — العمليات الأساسية</text>
@@ -707,7 +706,7 @@ ${[
 <text x="165" y="256" class="lb">= مجال العملية</text>
 </svg>`,
 
-'دالة واحد\nلواحد': ()=>`<svg viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
+'One-to-One\nFunction': ()=>`<svg viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
 <style>.hd{font-size:8.5px;font-family:monospace;font-weight:600}.eq{font-size:9px;font-family:monospace;fill:#eeeaf2}.lb{font-size:8px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#8a8799}</style>
 <rect x="8" y="8" width="244" height="72" rx="8" fill="rgba(31,173,132,.07)" stroke="#1fad84" stroke-width=".8"/>
 <text x="16" y="22" class="hd" fill="#1fad84">DEFINITION 1.3.1 — دالة واحد لواحد</text>
@@ -728,7 +727,7 @@ ${[
 <text x="130" y="272" text-anchor="middle" class="lb" fill="#1fad84">f(x)=x³ — تقطع الأفقي مرة واحدة فقط ✓</text>
 </svg>`,
 
-'الدالة\nالعكسية f⁻¹': ()=>`<svg viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:346px">
+'Inverse\nFunction f⁻¹': ()=>`<svg viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:346px">
 <style>.hd{font-size:8.5px;font-family:monospace;font-weight:600}.eq{font-size:9px;font-family:monospace;fill:#eeeaf2}.lb{font-size:8px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#8a8799}</style>
 <rect x="8" y="8" width="244" height="64" rx="8" fill="rgba(201,133,76,.07)" stroke="#c9854c" stroke-width=".8"/>
 <text x="16" y="22" class="hd" fill="#c9854c">DEFINITION 1.3.2 — الدالة العكسية</text>
@@ -753,7 +752,7 @@ ${[
 <text x="130" y="292" text-anchor="middle" class="lb">تماثل f و f⁻¹ حول خط y = x</text>
 </svg>`,
 
-'الزوايا\nوالقياسات': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:254px">
+'Angles &\nMeasurements': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:254px">
   <style>.lbl{font-size:9px;font-family:monospace;fill:#8a8799}</style>
   <circle cx="130" cy="110" r="80" fill="none" stroke="#3e3c52" stroke-width="1"/>
   <line x1="50" y1="110" x2="210" y2="110" stroke="#3e3c52" stroke-width=".8"/>
@@ -773,38 +772,61 @@ ${[
   <text x="118" y="198" class="lbl">3π/2</text>
 </svg>`,
 
-'الدوال الست\nوإشاراتها': ()=>`<svg viewBox="0 0 520 270" xmlns="http://www.w3.org/2000/svg" style="width:520px;height:270px">
-<style>.ql{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px}.sm{font-size:9.5px;font-family:monospace}</style>
+'6 Trig Functions\n& Signs': ()=>`<svg viewBox="0 0 520 420" xmlns="http://www.w3.org/2000/svg" style="width:520px;height:420px">
+<style>.ql{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px}.sm{font-size:9.5px;font-family:monospace}.fn{font-size:9px;font-family:monospace;fill:#eeeaf2}.fd{font-size:8.5px;font-family:monospace;fill:#8a8799}</style>
+<!-- ASTC quadrants -->
 <line x1="20" y1="135" x2="500" y2="135" stroke="#3e3c52" stroke-width="1.2"/>
 <line x1="260" y1="10" x2="260" y2="255" stroke="#3e3c52" stroke-width="1.2"/>
 <rect x="22" y="12" width="236" height="121" rx="6" fill="rgba(123,111,212,.07)" stroke="#7b6fd4" stroke-width="1"/>
-<text x="135" y="30" text-anchor="middle" class="ql" fill="#7b6fd4" font-weight="600">الربع الثاني — sin موجب فقط</text>
+<text x="135" y="30" text-anchor="middle" class="ql" fill="#7b6fd4" font-weight="600">Quadrant II — sin only</text>
 <text x="100" y="52" text-anchor="middle" class="sm" fill="#7b6fd4">sin θ +  ,  csc θ +</text>
 <text x="100" y="70" text-anchor="middle" class="sm" fill="#555">cos θ −  ,  sec θ −</text>
 <text x="100" y="88" text-anchor="middle" class="sm" fill="#555">tan θ −  ,  cot θ −</text>
 <text x="225" y="112" text-anchor="middle" font-size="30" fill="#c9a84c" font-family="monospace" font-weight="700" opacity=".5">S</text>
 <rect x="262" y="12" width="236" height="121" rx="6" fill="rgba(31,173,132,.07)" stroke="#1fad84" stroke-width="1"/>
-<text x="385" y="30" text-anchor="middle" class="ql" fill="#1fad84" font-weight="600">الربع الأول — الكل موجب</text>
+<text x="385" y="30" text-anchor="middle" class="ql" fill="#1fad84" font-weight="600">Quadrant I — All positive</text>
 <text x="350" y="52" text-anchor="middle" class="sm" fill="#1fad84">sin θ +  ,  csc θ +</text>
 <text x="350" y="70" text-anchor="middle" class="sm" fill="#1fad84">cos θ +  ,  sec θ +</text>
 <text x="350" y="88" text-anchor="middle" class="sm" fill="#1fad84">tan θ +  ,  cot θ +</text>
 <text x="475" y="112" text-anchor="middle" font-size="30" fill="#c9a84c" font-family="monospace" font-weight="700" opacity=".5">A</text>
 <rect x="22" y="137" width="236" height="116" rx="6" fill="rgba(201,133,76,.07)" stroke="#c9854c" stroke-width="1"/>
-<text x="135" y="155" text-anchor="middle" class="ql" fill="#c9854c" font-weight="600">الربع الثالث — tan موجب فقط</text>
+<text x="135" y="155" text-anchor="middle" class="ql" fill="#c9854c" font-weight="600">Quadrant III — tan only</text>
 <text x="100" y="176" text-anchor="middle" class="sm" fill="#555">sin θ −  ,  csc θ −</text>
 <text x="100" y="194" text-anchor="middle" class="sm" fill="#555">cos θ −  ,  sec θ −</text>
 <text x="100" y="212" text-anchor="middle" class="sm" fill="#c9854c">tan θ +  ,  cot θ +</text>
 <text x="225" y="240" text-anchor="middle" font-size="30" fill="#c9a84c" font-family="monospace" font-weight="700" opacity=".5">T</text>
 <rect x="262" y="137" width="236" height="116" rx="6" fill="rgba(201,76,76,.07)" stroke="#c94c4c" stroke-width="1"/>
-<text x="385" y="155" text-anchor="middle" class="ql" fill="#c94c4c" font-weight="600">الربع الرابع — cos موجب فقط</text>
+<text x="385" y="155" text-anchor="middle" class="ql" fill="#c94c4c" font-weight="600">Quadrant IV — cos only</text>
 <text x="350" y="176" text-anchor="middle" class="sm" fill="#555">sin θ −  ,  csc θ −</text>
 <text x="350" y="194" text-anchor="middle" class="sm" fill="#c94c4c">cos θ +  ,  sec θ +</text>
 <text x="350" y="212" text-anchor="middle" class="sm" fill="#555">tan θ −  ,  cot θ −</text>
 <text x="475" y="240" text-anchor="middle" font-size="30" fill="#c9a84c" font-family="monospace" font-weight="700" opacity=".5">C</text>
-<text x="260" y="265" text-anchor="middle" class="ql" fill="#c9a84c">قاعدة ASTC — All / Sin / Tan / Cos</text>
+<text x="260" y="268" text-anchor="middle" class="ql" fill="#c9a84c">ASTC Rule — All / Sin / Tan / Cos</text>
+
+<!-- Divider -->
+<line x1="20" y1="278" x2="500" y2="278" stroke="#3e3c52" stroke-width=".8" opacity=".6"/>
+<text x="260" y="293" text-anchor="middle" font-size="10" font-family="monospace" fill="#c9a84c">Definitions (Right Triangle)</text>
+
+<!-- 6 fractions — 3 per row -->
+${[
+  ['sin','opp','hyp','#1fad84', 55],
+  ['cos','adj','hyp','#7b6fd4',195],
+  ['tan','opp','adj','#c9854c',335],
+  ['csc','hyp','opp','#1fad84', 55],
+  ['sec','hyp','adj','#7b6fd4',195],
+  ['cot','adj','opp','#c9854c',335],
+].map(([fn,n,d,col,x],i)=>{
+  const row = i < 3 ? 0 : 1;
+  const cy = 320 + row * 60;
+  return `
+  <text x="${x}" y="${cy-8}" text-anchor="middle" class="fn" fill="${col}" font-weight="600">${fn} θ =</text>
+  <text x="${x+38}" y="${cy-14}" text-anchor="middle" class="fn" fill="#eeeaf2">${n}</text>
+  <line x1="${x+18}" y1="${cy-8}" x2="${x+58}" y2="${cy-8}" stroke="${col}" stroke-width="1.2"/>
+  <text x="${x+38}" y="${cy+2}" text-anchor="middle" class="fn" fill="#8a8799">${d}</text>`;
+}).join('')}
 </svg>`,
 
-'المتطابقات\nوالمعكوسات': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
+'Identities &\nInverses': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
   <style>.eq{font-family:monospace;font-size:11px;fill:#eeeaf2}.lbl{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:9px;fill:#8a8799}</style>
   <rect x="15" y="15" width="230" height="36" rx="8" fill="rgba(31,173,132,.12)" stroke="#1fad84" stroke-width=".8"/>
   <text x="130" y="38" text-anchor="middle" class="eq">sin²θ + cos²θ = 1</text>
@@ -818,7 +840,7 @@ ${[
   <text x="15" y="194" font-family="monospace" font-size="9.5" fill="#c9854c">tan⁻¹: (−π/2, π/2)</text>
 </svg>`,
 
-'تعريف\nالنهاية': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
+'Limit\nDefinition': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
   <line x1="15" y1="160" x2="245" y2="160" stroke="#3e3c52" stroke-width="1"/>
   <line x1="15" y1="160" x2="15" y2="20" stroke="#3e3c52" stroke-width="1"/>
   <path d="M25,155 Q80,130 120,80 Q135,60 140,55" fill="none" stroke="#1fad84" stroke-width="2"/>
@@ -832,7 +854,7 @@ ${[
   <text x="130" y="192" text-anchor="middle" font-size="9" fill="#8a8799" font-family="'IBM Plex Sans Arabic',sans-serif">النهاية L موجودة رغم عدم تعريف f(a)</text>
 </svg>`,
 
-'النهايات\nالجانبية': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
+'One-Sided\nLimits': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
   <line x1="15" y1="160" x2="245" y2="160" stroke="#3e3c52" stroke-width="1"/>
   <line x1="15" y1="160" x2="15" y2="20" stroke="#3e3c52" stroke-width="1"/>
   <path d="M20,148 Q60,120 100,80 Q120,60 135,52" fill="none" stroke="#1fad84" stroke-width="2"/>
@@ -846,7 +868,7 @@ ${[
   <text x="130" y="192" text-anchor="middle" font-size="9" fill="#c94c4c" font-family="'IBM Plex Sans Arabic',sans-serif">L₁ ≠ L₂ ← النهاية غير موجودة</text>
 </svg>`,
 
-'شرط\nالوجود': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
+'Existence\nCondition': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
   <line x1="20" y1="140" x2="240" y2="140" stroke="#3e3c52" stroke-width="1"/>
   <line x1="20" y1="140" x2="20" y2="20" stroke="#3e3c52" stroke-width="1"/>
   <path d="M25,135 Q70,110 105,75 Q120,58 128,50" fill="none" stroke="#1fad84" stroke-width="2"/>
@@ -859,7 +881,7 @@ ${[
   <text x="130" y="172" text-anchor="middle" font-size="9" fill="#1fad84" font-family="'IBM Plex Sans Arabic',sans-serif">lim x→a⁺ = lim x→a⁻ = L ✓</text>
 </svg>`,
 
-'طرق\nالتبسيط': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
+'Simplification\nMethods': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
   <style>.bx{font-family:monospace;font-size:10px}</style>
   <rect x="70" y="10" width="120" height="30" rx="8" fill="rgba(201,168,76,.15)" stroke="#c9a84c" stroke-width="1"/>
   <text x="130" y="30" text-anchor="middle" class="bx" fill="#c9a84c">0/0 عدم تعيين</text>
@@ -881,7 +903,7 @@ ${[
   <text x="205" y="132" text-anchor="middle" font-size="8.5" fill="#c9854c" font-family="monospace">= (x+y)/xy</text>
 </svg>`,
 
-'النهايات\nعند ±∞': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
+'Limits at\nInfinity': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
   <line x1="15" y1="140" x2="245" y2="140" stroke="#3e3c52" stroke-width="1"/>
   <line x1="15" y1="140" x2="15" y2="20" stroke="#3e3c52" stroke-width="1"/>
   <path d="M20,135 Q60,100 100,72 Q140,50 180,42 Q210,38 240,37" fill="none" stroke="#1fad84" stroke-width="2"/>
@@ -893,7 +915,7 @@ ${[
   <text x="200" y="60" font-size="9" fill="#1fad84" font-family="monospace">x→+∞</text>
 </svg>`,
 
-'النهايات\nاللانهائية': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
+'Infinite\nLimits': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
   <line x1="15" y1="140" x2="245" y2="140" stroke="#3e3c52" stroke-width="1"/>
   <line x1="15" y1="140" x2="15" y2="10" stroke="#3e3c52" stroke-width="1"/>
   <line x1="130" y1="10" x2="130" y2="145" stroke="#c94c4c" stroke-width="1.5" stroke-dasharray="6 4"/>
@@ -903,7 +925,7 @@ ${[
   <text x="130" y="178" text-anchor="middle" font-size="9" fill="#c94c4c" font-family="'IBM Plex Sans Arabic',sans-serif">خط تقارب رأسي: x = a</text>
 </svg>`,
 
-'خطوط\nالتقارب': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
+'Asymptotes': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
   <line x1="15" y1="150" x2="245" y2="150" stroke="#3e3c52" stroke-width="1"/>
   <line x1="15" y1="150" x2="15" y2="15" stroke="#3e3c52" stroke-width="1"/>
   <line x1="130" y1="15" x2="130" y2="155" stroke="#c94c4c" stroke-width="1.5" stroke-dasharray="5 4"/>
@@ -915,7 +937,7 @@ ${[
   <text x="130" y="192" text-anchor="middle" font-size="9" fill="#8a8799" font-family="'IBM Plex Sans Arabic',sans-serif">الدالة 1/(x-a) + L</text>
 </svg>`,
 
-'شروط\nالاتصال': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
+'Continuity\nConditions': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
   <style>.cnd{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px}</style>
   ${[['f(a) موجودة','#1fad84',20],['النهاية موجودة','#7b6fd4',72],['النهاية = f(a)','#c9a84c',124]].map(([txt,col,y])=>
     `<rect x="20" y="${y}" width="220" height="34" rx="8" fill="rgba(255,255,255,.03)" stroke="${col}" stroke-width="1"/>
@@ -926,7 +948,7 @@ ${[
   <text x="130" y="178" text-anchor="middle" font-size="9" fill="#1fad84" font-family="'IBM Plex Sans Arabic',sans-serif">يجب توفر الشروط الثلاثة معاً</text>
 </svg>`,
 
-'أنواع\nالانقطاع': ()=>`<svg viewBox="0 0 260 195" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:225px">
+'Types of\nDiscontinuity': ()=>`<svg viewBox="0 0 260 195" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:225px">
   <style>.tl{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:8.5px}</style>
   <text x="43" y="12" text-anchor="middle" class="tl" fill="#1fad84">نقطي (قابل للإزالة)</text>
   <line x1="10" y1="65" x2="76" y2="65" stroke="#3e3c52" stroke-width=".8"/>
@@ -961,7 +983,7 @@ ${[
   <text x="130" y="108" text-anchor="middle" class="tl" fill="#8a8799">الانقطاع النقطي يمكن إزالته — الآخران لا</text>
 </svg>`,
 
-'نظرية القيمة\nالمتوسطة': ()=>`<svg viewBox="0 0 260 195" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:225px">
+'IVT\nIntermediate Value': ()=>`<svg viewBox="0 0 260 195" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:225px">
   <line x1="20" y1="155" x2="240" y2="155" stroke="#3e3c52" stroke-width="1"/>
   <line x1="20" y1="155" x2="20" y2="20" stroke="#3e3c52" stroke-width="1"/>
   <path d="M40,140 Q80,120 120,75 Q150,45 200,30" fill="none" stroke="#1fad84" stroke-width="2"/>
@@ -981,7 +1003,7 @@ ${[
   <text x="130" y="185" text-anchor="middle" font-size="9" fill="#c94c4c" font-family="'IBM Plex Sans Arabic',sans-serif">∃ c ∈ (a,b) : f(c) = k</text>
 </svg>`,
 
-'نظرية\nالحصر': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
+'Squeeze\nTheorem': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
   <line x1="15" y1="150" x2="245" y2="150" stroke="#3e3c52" stroke-width="1"/>
   <line x1="15" y1="150" x2="15" y2="20" stroke="#3e3c52" stroke-width="1"/>
   <path d="M25,145 Q80,100 130,58 Q180,20 235,15" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-dasharray="5 4"/>
