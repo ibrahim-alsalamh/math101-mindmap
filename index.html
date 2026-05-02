@@ -127,72 +127,291 @@ html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);fo
 const DATA = [
   {
     id:1, color:'#1fad84', label:'Chapter 1\nNumbers & Functions',
-    desc:'مجموعات الأعداد، أنواع الدوال وعملياتها، الدوال العكسية، والدوال المثلثية.',
+    desc:'Number sets, function types and operations, inverse functions, and trigonometry.',
     tags:['Section 1.1 – 1.4'],
-    // background symbols for this chapter
     bgSyms:['ℝ','ℕ','ℤ','ℚ','f(x)','f⁻¹','∘','sin','cos','|x|','π','θ'],
     sections:[
-      { label:'1.1\nSets of Numbers &\nInequalities', desc:'أنواع الأعداد، فترات المتباينات، وخصائص القيمة المطلقة.', tags:['مجموعات الأعداد','فترات المتباينات','القيمة المطلقة'],
+      { label:'1.1\nSets of Numbers &\nInequalities',
+        desc:'Number sets, inequality intervals, and properties of absolute value.',
+        tags:['Number Sets','Intervals','Absolute Value'],
         leaves:[
-          {label:'Number\nSets', desc:'ℕ⊂W⊂ℤ⊂ℚ⊂ℝ — كل مجموعة تتضمن ما قبلها.', tags:['ℕ الطبيعية','W الكلية','ℤ الصحيحة','ℚ النسبية','ℝ الحقيقية']},
-          {label:'Intervals &\nInequalities', desc:'(a,b) مفتوحة، [a,b] مغلقة. عند الضرب أو القسمة في سالب تُقلب إشارة المتباينة.', tags:['(a,b) مفتوحة','[a,b] مغلقة','فترات ±∞','قلب الإشارة بالسالب']},
-          {label:'Absolute\nValue', desc:'|a|=a إذا a≥0، و |a|=−a إذا a<0. متباينة المثلث: |a+b|≤|a|+|b|.', tags:['التعريف الرياضي','متباينة المثلث','تطبيقات المتباينات']}
+          { label:'Number\nSets',
+            desc:'Number sets form a chain: ℕ⊂W⊂ℤ⊂ℚ⊂ℝ — each set contains the previous one.',
+            tags:['ℕ⊂W⊂ℤ⊂ℚ⊂ℝ'],
+            children:[
+              {label:'ℕ Natural\nNumbers',    desc:'Counting numbers starting from 1. No zero, no negatives.',       tags:['ℕ = {1,2,3,…}','No zero or negatives','Example: student count']},
+              {label:'W Whole\nNumbers',      desc:'Natural numbers plus zero.',                  tags:['W = {0,1,2,3,…}','ℕ ⊂ W','Example: empty shelf = 0']},
+              {label:'ℤ Integers',            desc:'Whole numbers and their negatives.',             tags:['ℤ = {…,−2,−1,0,1,2,…}','W ⊂ ℤ','Example: −5° temperature']},
+              {label:'ℚ Rational\nNumbers',   desc:'Written as p/q where p,q are integers and q≠0. Includes terminating and repeating decimals.',              tags:['ℚ = {p/q | q≠0}','ℤ ⊂ ℚ','Example: 3/4, −2/3']},
+              {label:'ℝ Real\nNumbers',       desc:'Includes rational and irrational numbers. Every point on the number line.',            tags:['ℚ ⊂ ℝ','Includes π, √2, e','Non-terminating, non-repeating']},
+            ]
+          },
+          { label:'Intervals &\nInequalities',
+            desc:'Representing inequality solutions as intervals, with the sign-flip rule.',
+            tags:['Open','Closed','Sign Rule'],
+            children:[
+              {label:'Open\n(a, b)',       desc:'Does not include endpoints: a < x < b.',            tags:['(a,b): a < x < b','Open endpoints ○','Example: (1,5)']},
+              {label:'Closed\n[a, b]',     desc:'Includes both endpoints: a ≤ x ≤ b.',              tags:['[a,b]: a ≤ x ≤ b','Closed endpoints ●','Example: [−2,3]']},
+              {label:'Half-Open\n[a,b)',    desc:'Includes exactly one endpoint.',               tags:['[a,b): a ≤ x < b','(a,b]: a < x ≤ b']},
+              {label:'Infinite\nIntervals', desc:'Intervals that extend to infinity in one or both directions.',           tags:['(a,∞): x > a','(−∞,b]: x ≤ b','(−∞,∞) = ℝ']},
+              {label:'Sign\nRule',          desc:'Multiplying or dividing by a negative flips the inequality sign.', tags:['−2x > 4 ⟹ x < −2','Multiply by −1 → flip sign','Example: −x ≤ 3 ⟹ x ≥ −3']},
+            ]
+          },
+          { label:'Absolute\nValue',
+            desc:'|a| measures the distance from zero on the number line.',
+            tags:['Definition','Triangle Inequality'],
+            children:[
+              {label:'Definition\n|a|',        desc:'|a|=a if a≥0, |a|=−a if a<0. Always non-negative.',         tags:['|3|=3','|−5|=5','|0|=0']},
+              {label:'Triangle\nInequality',   desc:'|a+b| ≤ |a|+|b| — always true for any real numbers.',              tags:['|a+b| ≤ |a|+|b|','مثال: |3+(−5)| ≤ 3+5','2 ≤ 8 ✓']},
+              {label:'Solving\n|x−a| < r',    desc:'Means a−r < x < a+r — an open interval around a.',    tags:['|x−2|<3 ⟹ −1<x<5','تمثيل على خط الأعداد','Distance less than r']},
+              {label:'Solving\n|x−a| > r',    desc:'Means x<a−r or x>a+r — union of two intervals.', tags:['|x|>2 ⟹ x<−2 أو x>2','Two directions on number line']},
+            ]
+          },
         ]
       },
-      { label:'1.2\nFunctions', desc:'تعريف الدالة، أنواعها، والعمليات عليها بما فيها التركيب.', tags:['تعريف الدالة','أنواع الدوال','التركيب'],
+      { label:'1.2\nFunctions',
+        desc:'Function definition, types, operations including composition.',
+        tags:['Definition','Types','Operations','Composition'],
         leaves:[
-          {label:'Function\nDefinition', desc:'علاقة تربط كل عنصر في المجال بعنصر واحد فقط في المدى.', tags:['المجال Domain','المدى Range','اختبار الخط العمودي']},
-          {label:'Types of\nFunctions', desc:'كثيرات الحدود (ℝ)، الكسرية (q(x)≠0)، الجذرية، ومتعددة التعريف Piecewise.', tags:['كثيرات الحدود','الكسرية q(x)≠0','الجذرية','Piecewise']},
-          {label:'Operations &\nComposition', desc:'الجمع والطرح: Df∩Dg. القسمة: g(x)≠0. التركيب: (f∘g)(x)=f(g(x)).', tags:['Df∩Dg','g(x)≠0 للقسمة','(f∘g)(x)=f(g(x))']}
+          { label:'Function\nDefinition',
+            desc:'A relation that maps each element in the domain to exactly one element in the range.',
+            tags:['Domain','Range','VLT'],
+            children:[
+              {label:'Domain', desc:'The set of all valid inputs for the function.', tags:['مثال: f(x)=√x ⟹ Domain=[0,∞)','Exclude values making function undefined']},
+              {label:'Range',  desc:'The set of all possible output values of the function.', tags:['مثال: f(x)=x² ⟹ Range=[0,∞)','لا تأخذ قيماً سالبة']},
+              {label:'Vertical\nLine Test', desc:'A graph represents a function if every vertical line intersects it at most once.', tags:['Circle: not a function ✗','Parabola: is a function ✓']},
+            ]
+          },
+          { label:'Types of\nFunctions',
+            desc:'The basic types of functions and their key properties.',
+            tags:['Linear','Power','Root','Rational','Piecewise'],
+            children:[
+              {label:'Linear\nf(x)=mx+b',   desc:'Straight line. m=slope, b=y-intercept.', tags:['f(x)=b: horizontal line','m>0: increasing','m<0: decreasing','Example: f(x)=2x+1']},
+              {label:'Power\nf(x)=xⁿ',      desc:'Behavior depends on n. Even n: symmetric about y-axis. Odd n: symmetric about origin.',            tags:['Even n: f(x)=x²','Odd n: f(x)=x³','Even n: symmetric about y-axis']},
+              {label:'Root\nf(x)=ⁿ√x',      desc:'Square root domain [0,∞). nth root domain depends on n.',         tags:['f(x)=√x: [0,∞)','f(x)=∛x: ℝ','Radicand must be ≥ 0']},
+              {label:'Rational\nf=p(x)/q(x)', desc:'Domain: all ℝ except where denominator = 0.', tags:['q(x)≠0','Example: 1/(x−2)','مجالها: ℝ−{2}']},
+              {label:'Piecewise',             desc:'Defined by different formulas on different intervals.', tags:['Example: |x|','Check each interval separately','Important for one-sided limits']},
+            ]
+          },
+          { label:'Operations &\nComposition',
+            desc:'Arithmetic operations on functions and their composition.',
+            tags:['Def 1.2.7 — Operations','Thm 1.2.1 — Domains'],
+            children:[
+              {label:'(f+g)(x)',  desc:'(f+g)(x)=f(x)+g(x). Domain: Df∩Dg.',     tags:['Df+g = Df∩Dg','مثال: f=x², g=x+1','(f+g)(x)=x²+x+1']},
+              {label:'(f−g)(x)',  desc:'(f−g)(x)=f(x)−g(x). Domain: Df∩Dg.',     tags:['Df−g = Df∩Dg','(f−g)(2)=f(2)−g(2)']},
+              {label:'(f·g)(x)',  desc:'(f·g)(x)=f(x)·g(x). Domain: Df∩Dg.',     tags:['Df·g = Df∩Dg','مثال: (x²)(x+1)=x³+x²']},
+              {label:'(f/g)(x)',  desc:'(f/g)(x)=f(x)/g(x). Domain: Df∩Dg, g(x)≠0.',tags:['Df/g = Df∩Dg، g≠0','مثال: x²/(x+1)، x≠−1']},
+              {label:'(f∘g)(x)',  desc:'(f∘g)(x)=f(g(x)). Apply g first, then f. Order matters.',   tags:['Order matters: f∘g ≠ g∘f','Example: g(x)=x+1, f(x)=x²','(f∘g)(2)=f(3)=9']},
+            ]
+          },
         ]
       },
-      { label:'1.3\nInverse Functions', desc:'شروط وجود الدالة العكسية وخصائص الإلغاء.', tags:['واحد لواحد','f⁻¹','خصائص الإلغاء'],
+      { label:'1.3\nInverse Functions',
+        desc:'Conditions for inverse functions to exist, and their properties.',
+        tags:['One-to-One','Inverse f⁻¹','Properties'],
         leaves:[
-          {label:'One-to-One\nFunction', desc:'f(x₁)=f(x₂) ⟹ x₁=x₂. يُتحقق منها باختبار الخط الأفقي.', tags:['اختبار HLT','التعريف الرياضي','شرط الوجود']},
-          {label:'Inverse\nFunction f⁻¹', desc:'مجال f⁻¹ = مدى f، ومدى f⁻¹ = مجال f. التماثل مع y=x بيانياً.', tags:['مجال f⁻¹ = مدى f','التماثل مع y=x']}
+          { label:'One-to-One\nFunction',
+            desc:'Every element in the range corresponds to exactly one element in the domain.',
+            tags:['Def 1.3.1'],
+            children:[
+              {label:'Definition', desc:'f(x₁)=f(x₂) ⟹ x₁=x₂ for all x₁,x₂ in the domain.', tags:['Equal outputs imply equal inputs','Formal definition']},
+              {label:'HLT\nHorizontal Line Test', desc:'One-to-one if every horizontal line intersects the graph at most once.', tags:['f(x)=x³: one-to-one ✓','f(x)=x²: not one-to-one ✗','Simplest graphical test']},
+              {label:'Examples', desc:'Examples of one-to-one and non-one-to-one functions.', tags:['f(x)=2x+1 ✓','f(x)=x² on ℝ ✗','f(x)=x² on [0,∞) ✓']},
+            ]
+          },
+          { label:'Inverse\nFunction f⁻¹',
+            desc:'If f is one-to-one, then f⁻¹ exists such that y=f(x) ⟺ x=f⁻¹(y).',
+            tags:['Def 1.3.2'],
+            children:[
+              {label:'How to\nFind f⁻¹', desc:'(1) Write y=f(x). (2) Swap x and y. (3) Solve for y.', tags:['Example: f(x)=2x+1','y=2x+1 ⟹ x=2y+1','f⁻¹(x)=(x−1)/2']},
+              {label:'Domain &\nRange',   desc:'Domain(f⁻¹)=Range(f). Range(f⁻¹)=Domain(f).', tags:['Domain(f⁻¹)=Range(f)','Range(f⁻¹)=Domain(f)','مثال: f(x)=√x ⟹ f⁻¹(x)=x²']},
+              {label:'Graph\ny = x',      desc:'Graph of f⁻¹ is the reflection of graph of f across y=x.', tags:['(a,b) on f ⟹ (b,a) on f⁻¹','Example: (2,8) on x³ ⟹ (8,2) on ∛x']},
+            ]
+          },
+          { label:'Cancellation\nLaws',
+            desc:'f⁻¹(f(x))=x for x in domain of f. f(f⁻¹(x))=x for x in domain of f⁻¹.',
+            tags:['f⁻¹(f(x)) = x','f(f⁻¹(x)) = x','Example: ln(eˣ)=x','Example: e^(ln x)=x']
+          },
         ]
       },
-      { label:'1.4\nTrigonometric Functions\n& Their Inverses', desc:'قياس الزوايا، الدوال الست، المتطابقات، والمعكوسات.', tags:['الزوايا','الدوال الست','المتطابقات'],
+      { label:'1.4\nTrigonometric Functions\n& Their Inverses',
+        desc:'Angle measurement, six trig functions, identities, and inverses.',
+        tags:['Angles','6 Functions','Identities','Inverses'],
         leaves:[
-          {label:'Angles &\nMeasurements', desc:'درجة→راديان: ×π/180. راديان→درجة: ×180/π. طول القوس: s=rθ.', tags:['×π/180 درجة→راديان','×180/π راديان→درجة','s=rθ طول القوس','الزاوية المرجعية θ\'']},
-          {label:'6 Trig Functions\n& Signs', desc:'sin = opp/hyp    cos = adj/hyp    tan = opp/adj\ncsc = hyp/opp    sec = hyp/adj    cot = adj/opp\nإشارات ASTC في الأرباع الأربعة.', tags:['sin, csc','cos, sec','tan, cot','ASTC Signs']},
-          {label:'Identities &\nInverses', desc:'sin²θ+cos²θ=1. المعكوسات: sin⁻¹∈[−π/2,π/2]، cos⁻¹∈[0,π]، tan⁻¹∈(−π/2,π/2).', tags:['sin²θ+cos²θ=1','قوانين ضعف الزاوية','sin⁻¹: [−π/2,π/2]','cos⁻¹: [0,π]']}
+          { label:'Angles &\nMeasurements',
+            desc:'Measuring angles in degrees and radians, and computing arc length.',
+            tags:['Radians','Arc Length','Reference Angle'],
+            children:[
+              {label:'Degree ↔\nRadian',      desc:'Degrees→radians: multiply by π/180. Radians→degrees: multiply by 180/π.', tags:['180° = π rad','90° = π/2','60° = π/3','45° = π/4','30° = π/6']},
+              {label:'Arc Length\ns = rθ',    desc:'Arc length = radius × angle in radians. s = rθ.', tags:['s = rθ','θ must be in radians','Example: r=5, θ=π/3','s=5π/3 ≈ 5.24']},
+              {label:'Reference\nAngle θ\'',  desc:'The positive acute angle between the terminal side and the x-axis.', tags:['Q1: θ\'=θ','Q2: θ\'=π−θ','Q3: θ\'=θ−π','Q4: θ\'=2π−θ']},
+            ]
+          },
+          { label:'6 Trig\nFunctions',
+            desc:'The six trig functions, their definitions, and signs in the four quadrants.',
+            tags:['sin,cos,tan','csc,sec,cot','ASTC'],
+            children:[
+              {label:'sin, cos,\ntan',  desc:'sin=opp/hyp, cos=adj/hyp, tan=opp/adj=sin/cos.', tags:['sin(30°)=1/2','cos(60°)=1/2','tan(45°)=1','tan=sin/cos']},
+              {label:'csc, sec,\ncot',  desc:'Reciprocals: csc=1/sin, sec=1/cos, cot=1/tan=cos/sin.', tags:['csc(30°)=2','sec(60°)=2','cot=cos/sin']},
+              {label:'ASTC\nSigns',     desc:'Signs in quadrants — ASTC: All/Sin/Tan/Cos positive.', tags:['Q1: All + (ASTC: A)','Q2: sin, csc + (ASTC: S)','Q3: tan, cot + (ASTC: T)','Q4: cos, sec + (ASTC: C)']},
+            ]
+          },
+          { label:'Trig\nIdentities',
+            desc:'Core identities derived from the Pythagorean identity sin²θ+cos²θ=1.',
+            tags:['Pythagorean','Double Angle'],
+            children:[
+              {label:'Pythagorean\nIdentities',  desc:'Three fundamental identities derived from the unit circle.', tags:['sin²θ+cos²θ=1','1+tan²θ=sec²θ','1+cot²θ=csc²θ']},
+              {label:'Double Angle\nFormulas',   desc:'Double-angle formulas for sin and cos.', tags:['sin(2θ)=2sinθcosθ','cos(2θ)=cos²θ−sin²θ','cos(2θ)=1−2sin²θ']},
+              {label:'Half Angle\nFormulas',     desc:'Half-angle formulas derived from double-angle identities.', tags:['sin²θ=(1−cos2θ)/2','cos²θ=(1+cos2θ)/2']},
+            ]
+          },
+          { label:'Inverse Trig\nFunctions',
+            desc:'sin⁻¹, cos⁻¹, tan⁻¹ — their definitions, domains, and ranges.',
+            tags:['sin⁻¹','cos⁻¹','tan⁻¹'],
+            children:[
+              {label:'sin⁻¹(x)',  desc:'Domain: [−1,1]. Range: [−π/2, π/2]. Increasing function.', tags:['sin⁻¹(1/2)=π/6','sin⁻¹(−1)=−π/2','sin⁻¹(0)=0']},
+              {label:'cos⁻¹(x)', desc:'Domain: [−1,1]. Range: [0, π]. Decreasing function.', tags:['cos⁻¹(1/2)=π/3','cos⁻¹(−1)=π','cos⁻¹(0)=π/2']},
+              {label:'tan⁻¹(x)', desc:'Domain: ℝ. Range: (−π/2, π/2). Horizontal asymptotes at ±π/2.', tags:['tan⁻¹(1)=π/4','tan⁻¹(0)=0','tan⁻¹(∞)=π/2']},
+            ]
+          },
         ]
       }
     ]
   },
   {
     id:2, color:'#7b6fd4', label:'Chapter 2\nLimits & Continuity',
-    desc:'مفهوم النهاية، طرق حسابها، النهايات عند اللانهاية، وشروط الاتصال.',
+    desc:'Limit concept, evaluation methods, limits at infinity, and continuity conditions.',
     tags:['Section 2.1 – 2.4'],
     bgSyms:['lim','→','∞','ε','δ','L','a⁺','a⁻','0/0','≈','∃','⟹'],
     sections:[
-      { label:'2.1\nDefinition of Limit', desc:'تعريف النهاية، النهايات الجانبية، وشرط الوجود.', tags:['تعريف النهاية','نهايات جانبية','شرط الوجود'],
+      { label:'2.1\nDefinition of Limit',
+        desc:'Definition of the limit, one-sided limits, and existence condition.',
+        tags:['Definition','One-Sided','Existence'],
         leaves:[
-          {label:'Limit\nDefinition', desc:'lim(x→a)f(x)=L — اقتراب f(x) من L عند اقتراب x من a دون بلوغها.', tags:['الاقتراب من L','x→a دون بلوغها','تعريف ε-δ الرسمي']},
-          {label:'One-Sided\nLimits', desc:'من اليمين: lim(x→a⁺)f(x). من اليسار: lim(x→a⁻)f(x).', tags:['lim x→a⁺ من اليمين','lim x→a⁻ من اليسار','مهمة في Piecewise']},
-          {label:'Existence\nCondition', desc:'النهاية موجودة فقط إذا تساوت النهاية من اليمين مع النهاية من اليسار.', tags:['lim a⁺ = lim a⁻','غياب أحد الجانبين','عدم وجود النهاية']}
+          { label:'Limit\nDefinition',
+            desc:'lim(x→a)f(x)=L — the value f(x) approaches as x→a.',
+            tags:['Intuitive','Formal ε-δ'],
+            children:[
+              {label:'Intuitive\nDefinition',  desc:'f(x) approaches L as x approaches a, without reaching a.', tags:['x approaches a but x≠a','f(a) may not exist','مثال: lim x→2 (x²−4)/(x−2)=4']},
+              {label:'Formal ε-δ\nDefinition', desc:'For all ε>0 there exists δ>0 such that: 0<|x−a|<δ ⟹ |f(x)−L|<ε.', tags:['For every ε>0 there exists δ>0','Formal mathematical definition','Used in rigorous proofs']},
+            ]
+          },
+          { label:'One-Sided\nLimits',
+            desc:'Right-hand limit (x→a⁺): x approaches a from the right. Left-hand limit (x→a⁻): x approaches a from the left.',
+            tags:['lim x→a⁺ (x>a)','lim x→a⁻ (x<a)','Example: lim x→0⁺ 1/x = +∞','Example: lim x→0⁻ 1/x = −∞']
+          },
+          { label:'Existence\nCondition',
+            desc:'The limit exists only if the right-hand and left-hand limits are equal: lim x→a⁺ = lim x→a⁻ = L.',
+            tags:['lim a⁺ = lim a⁻ = L','If unequal: limit does not exist','Example: |x|/x at 0 — right=1, left=−1 ✗','Example: sin(1/x) at 0 — oscillates ✗']
+          },
         ]
       },
-      { label:'2.2\nLimit Laws', desc:'التعويض المباشر، معالجة حالات عدم التعيين، ونظرية الحصر.', tags:['التعويض المباشر','0/0','نظرية الحصر'],
+      { label:'2.2\nLimit Laws',
+        desc:'Limit laws, direct substitution, and methods for 0/0 forms.',
+        tags:['Laws','Methods','Squeeze'],
         leaves:[
-          {label:'Direct\nSubstitution', desc:'الخطوة الأولى دائماً: تعويض قيمة x في الدالة مباشرةً.', tags:['الخطوة الأولى دائماً','ينجح مع المتصلة','إذا 0/0: طرق التبسيط']},
-          {label:'Simplification\nMethods', desc:'عند 0/0: التحليل واختصار العامل، الضرب بالمرافق، توحيد المقامات.', tags:['التحليل Factorization','الضرب بالمرافق','توحيد المقامات','اختصار العامل']},
-          {label:'Squeeze\nTheorem', desc:'إذا g(x)≤f(x)≤h(x) وlim g=lim h=L فإن lim f=L.', tags:['g≤f≤h','lim g = lim h = L','⟹ lim f = L','مثال: sin(x)/x→1']}
+          { label:'Basic\nLimit Laws',
+            desc:'Laws for sums, products, and quotients of limits.',
+            tags:['Sum','Product','Quotient'],
+            children:[
+              {label:'Sum & Diff\nLaw',     desc:'lim(f±g) = lim f ± lim g. Both limits must exist.', tags:['Both limits must exist','مثال: lim(x²+x)=lim x²+lim x']},
+              {label:'Product\nLaw',        desc:'lim(f·g) = lim f · lim g. Both limits must exist.', tags:['مثال: lim x·sin(x)','= lim x · lim sin(x)']},
+              {label:'Quotient\nLaw',       desc:'lim(f/g) = lim f / lim g, provided lim g ≠ 0.', tags:['Condition: lim g ≠ 0','If lim g=0: law does not apply']},
+              {label:'Power\nLaw',          desc:'lim(f)ⁿ = (lim f)ⁿ. The limit of a power is the power of the limit.', tags:['مثال: lim(x+1)² = (lim x+1)²','= 4 عند x→1']},
+            ]
+          },
+          { label:'Direct\nSubstitution',
+            desc:'Always try substituting x=a first. Works for continuous functions. If result is 0/0, use simplification methods.',
+            tags:['Step 1: substitute x=a','Works for: polynomials, trig, exp','0/0 → use simplification','Example: lim x→3 x²+1 = 10']
+          },
+          { label:'Simplification\nMethods',
+            desc:'Three methods for handling indeterminate forms like 0/0.',
+            tags:['Factoring','Rationalizing','LCD'],
+            children:[
+              {label:'Factorization', desc:'Factor numerator and denominator, then cancel the common zero factor.', tags:['مثال: (x²−4)/(x−2)','=(x+2)(x−2)/(x−2)','= x+2 → 4 as x→2']},
+              {label:'Rationalization', desc:'Multiply by the conjugate to eliminate radicals.', tags:['مثال: (√(x+1)−1)/x','اضرب في (√(x+1)+1)','الناتج: 1/(√(x+1)+1) → 1/2']},
+              {label:'LCD Method', desc:'Find the LCD to combine complex fractions, then simplify.', tags:['مثال: (1/x − 1/2)/(x−2)','اضرب في 2x','= (2−x)/(2x(x−2)) = −1/(2x)']},
+            ]
+          },
+          { label:'Squeeze\nTheorem',
+            desc:'إذا حُصرت f بين g و h وتقاربتا إلى نفس الحد فكذلك f.',
+            tags:['Sandwich Theorem'],
+            children:[
+              {label:'Statement', desc:'g(x)≤f(x)≤h(x) و lim g=lim h=L ⟹ lim f=L.', tags:['الشرط: تساوي النهايتين','تُثبت حصر f','مهمة في الإثباتات']},
+              {label:'Classic\nExample', desc:'lim x→0 sin(x)/x = 1.', tags:['cos x ≤ sin(x)/x ≤ 1','بالحصر: النهاية = 1','تُستخدم كثيراً في المشتقات']},
+            ]
+          },
         ]
       },
-      { label:'2.3\nLimits Involving Infinity', desc:'سلوك الدالة عند x→±∞ وعند النهايات اللانهائية.', tags:['x→±∞','خطوط التقارب'],
+      { label:'2.3\nLimits Involving Infinity',
+        desc:'Behavior of functions as x→±∞ and asymptote analysis.',
+        tags:['At Infinity','Infinite Limits','Asymptotes'],
         leaves:[
-          {label:'Limits at\nInfinity', desc:'دراسة السلوك عند x→∞ أو x→−∞. خط التقارب الأفقي يوجد إذا كانت النهاية ثابتاً.', tags:['x→+∞ أو x→−∞','خط التقارب الأفقي y=L','السلوك النهائي']},
-          {label:'Infinite\nLimits', desc:'عند اقتراب x من a، تتزايد الدالة بلا حدود (+∞) أو تتناقص (−∞).', tags:['lim f(x)=+∞','lim f(x)=−∞','خط التقارب الرأسي x=a']},
-          {label:'Asymptotes', desc:'الأفقي: النهاية عند ±∞ ثابتة. الرأسي: أصفار المقام بعد التبسيط.', tags:['الأفقي y=L','الرأسي x=a','إيجاد أصفار المقام']}
+          { label:'Limits at\nInfinity',
+            desc:'Behavior of the function as x→±∞.',
+            tags:['x→+∞','x→−∞'],
+            children:[
+              {label:'Limit at\n+∞',   desc:'lim x→+∞ f(x) — ماذا يحدث عندما يكبر x؟', tags:['lim 1/x = 0 عند ∞','lim xⁿ = ∞ إذا n>0','مقارنة الدرجات']},
+              {label:'Limit at\n−∞',   desc:'lim x→−∞ f(x) — ماذا يحدث عندما يصغر x؟', tags:['lim eˣ = 0 عند −∞','lim x³ = −∞','السلوك النهائي']},
+              {label:'Comparing\nDegrees', desc:'لكثيرات الحدود: Highest-degree term dominates.', tags:['deg(top)>deg(bot): ±∞','deg(top)<deg(bot): 0','deg(top)=deg(bot): نسبة المعاملات']},
+            ]
+          },
+          { label:'Infinite\nLimits',
+            desc:'The limit equals ±∞ as x approaches a point.',
+            tags:['lim f = ±∞'],
+            children:[
+              {label:'lim = +∞', desc:'الدالة تتزايد بلا حدود عند اقتراب x من a.', tags:['lim x→0⁺ 1/x = +∞','Occurs at zeros of denominator','يدل على خط تقارب رأسي']},
+              {label:'lim = −∞', desc:'الدالة تتناقص بلا حدود عند اقتراب x من a.', tags:['lim x→0⁻ 1/x = −∞','يدل على خط تقارب رأسي']},
+            ]
+          },
+          { label:'Asymptotes',
+            desc:'Horizontal and vertical asymptotes.',
+            tags:['Horizontal','Vertical'],
+            children:[
+              {label:'Horizontal\nAsymptote y=L', desc:'يوجد إذا كانت النهاية عند ±∞ ثابتاً L.', tags:['lim x→∞ f(x)=L ⟹ y=L','مثال: 1/x ⟹ y=0','قد يكون خطان']},
+              {label:'Vertical\nAsymptote x=a', desc:'Occurs at zeros of denominator بعد التبسيط.', tags:['lim x→a f(x)=±∞','Example: 1/(x−2) ⟹ x=2','تحقق من التبسيط أولاً']},
+            ]
+          },
         ]
       },
-      { label:'2.4\nContinuity of Functions', desc:'الشروط الثلاثة للاتصال، أنواع الانقطاع، ونظرية القيمة المتوسطة.', tags:['شروط الاتصال','الانقطاع','IVT'],
+      { label:'2.4\nContinuity of Functions',
+        desc:'Three conditions for continuity, types of discontinuity, IVT.',
+        tags:['Conditions','Discontinuity','IVT'],
         leaves:[
-          {label:'Continuity\nConditions', desc:'(١) f(a) موجودة. (٢) النهاية موجودة. (٣) النهاية = f(a). الثلاثة شرط.', tags:['f(a) موجودة','النهاية موجودة','النهاية = f(a)','الثلاثة معاً']},
-          {label:'Types of\nDiscontinuity', desc:'نقطي: النهاية موجودة لكن ≠f(a). قفزي: يمين≠يسار. لانهائي: عند التقارب الرأسي.', tags:['نقطي Removable','قفزي Jump','لانهائي Infinite']},
-          {label:'IVT\nIntermediate Value', desc:'إذا f متصلة على [a,b] وf(a)≤k≤f(b) فتوجد c∈(a,b) بحيث f(c)=k.', tags:['f متصلة على [a,b]','f(a)≤k≤f(b)','∃c: f(c)=k','إثبات وجود الجذور']}
+          { label:'Continuity\nConditions',
+            desc:'A function is continuous at x=a if all three conditions hold.',
+            tags:['3 Conditions'],
+            children:[
+              {label:'① f(a)\nexists',         desc:'f(a) is defined (the function exists at the point).', tags:['① f(a) is defined','مثال: f(x)=1/x غير معرفة عند 0','✓ خطوة 1']},
+              {label:'② limit\nexists',        desc:'lim x→a f(x) exists (right and left limits are equal).', tags:['lim a⁺ = lim a⁻','النهاية من الجانبين متساوية','✓ خطوة 2']},
+              {label:'③ limit = f(a)',          desc:'The limit value equals the function value: lim x→a f(x) = f(a).', tags:['lim x→a f(x) = f(a)','الثلاثة شرط لازم وكافٍ','✓ خطوة 3']},
+            ]
+          },
+          { label:'Types of\nDiscontinuity',
+            desc:'The three types of discontinuity and their properties.',
+            tags:['Removable','Jump','Infinite'],
+            children:[
+              {label:'Removable\nDiscontinuity',  desc:'Limit exists لكنها ≠ f(a) أو f(a) غير معرفة.', tags:['قابلة للإزالة','مثال: (x²−1)/(x−1) عند x=1','النهاية=2، f(1) غير معرفة']},
+              {label:'Jump\nDiscontinuity',       desc:'lim x→a⁺ ≠ lim x→a⁻ — الدالة تقفز.', tags:['Common in piecewise functions','مثال: ⌊x⌋ عند x=1','يمين=1، يسار=0']},
+              {label:'Infinite\nDiscontinuity',   desc:'إحدى النهايتين أو كلتاهما = ±∞.', tags:['At vertical asymptotes','مثال: 1/x عند x=0','lim 0⁺=+∞، lim 0⁻=−∞']},
+            ]
+          },
+          { label:'Continuity on\nan Interval',
+            desc:'Types of continuity on open and closed intervals.',
+            tags:['Open','Closed'],
+            children:[
+              {label:'On Open\nInterval (a,b)',   desc:'Continuous at every point inside the interval.', tags:['عند كل x في (a,b)','Polynomials: continuous on all ℝ','الدوال الكسرية: على مجالها']},
+              {label:'On Closed\nInterval [a,b]', desc:'Continuous on (a,b) plus right-continuous at a and left-continuous at b.', tags:['تشمل الطرفين','مهمة لتطبيق IVT','f متصلة على [a,b] ⟹ IVT']},
+            ]
+          },
+          { label:'Intermediate\nValue Theorem',
+            desc:'If f is continuous on [a,b] and f(a)≤k≤f(b), then ∃c∈(a,b) with f(c)=k.',
+            tags:['IVT'],
+            children:[
+              {label:'IVT\nStatement',    desc:'f continuous + f(a)≤k≤f(b) ⟹ ∃c∈(a,b): f(c)=k.', tags:['الدالة تأخذ كل القيم بين f(a) وf(b)','ضمان وجود النقطة c']},
+              {label:'Root Finding\nApplication', desc:'If f changes sign on [a,b], there exists a root in (a,b).', tags:['f(a)<0 و f(b)>0','⟹ ∃c: f(c)=0','Example: f(1)=−1, f(2)=3 ⟹ root in (1,2) في (1,2)']},
+            ]
+          },
         ]
       }
     ]
@@ -276,106 +495,181 @@ const NS='http://www.w3.org/2000/svg';
 let G=null;
 const chCenters=[];
 
-// Canvas world size
-const W=3000, H=3000, CX=W/2, CY=H/2;
+// Canvas world — very large so nothing overlaps
+const W=10000, H=10000, CX=W/2, CY=H/2;
 
 // Radial distances
-const D_CH   = 280;   // root → chapter
-const D_SEC  = 560;   // root → section
-const D_LEAF = 820;   // root → leaf
-const D_TAG  = 980;   // root → first tag
+const D_CH   = 240;
+const D_SEC  = 530;
+const D_LEAF = 980;
+const D_SUB  = 1880;
 
-// Node sizes
-const ROOT_R=64, CH_R=46, SEC_R=33;
-const LW=136, LH=50;   // leaf width/height
-const TH=20, TG=25;    // tag height/gap
+const GAP_PX = 22;
+
+const ROOT_R=64, CH_R=48, SEC_R=34;
+const LW=124, LH=48;
+const SW=104, SH=36;
+
+// Animation lists
+let animLines=[];
+let _animNodeList=[];
 
 function se(tag,a,p){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a||{}))e.setAttribute(k,v);if(p)p.appendChild(e);return e}
+function polar(cx,cy,deg,r){const a=deg*Math.PI/180;return{x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)}}
 
-function polar(cx,cy,deg,r){
-  const a=deg*Math.PI/180;
-  return{x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)};
+// Convert pixel width to degrees at a given radius
+function px2deg(px,r){return (px/r)*(180/Math.PI)}
+
+// Angular span needed for one sub-leaf at D_SUB
+function subSpanDeg(){return px2deg(SW+GAP_PX, D_SUB)}
+// Angular span needed for one topic (= max of its own size vs its children's total)
+function topicSpanDeg(topic){
+  const subs=topic.children||[];
+  const fromSubs=subs.length * subSpanDeg();
+  const fromSelf=px2deg(LW+GAP_PX, D_LEAF);
+  return Math.max(fromSubs, fromSelf);
+}
+// Angular span needed for one section
+function secSpanDeg(sec){
+  const topics=sec.leaves||[];
+  return topics.reduce((s,t)=>s+topicSpanDeg(t),0);
 }
 
 function buildMap(){
   const svg=document.getElementById('svg');
   svg.innerHTML=''; chCenters.length=0;
+  animLines=[]; _animNodeList=[];
   svg.setAttribute('width',W); svg.setAttribute('height',H);
   G=se('g',{},svg);
   const LG=se('g',{},G), NG=se('g',{},G);
 
-  // ── Background themed symbols per chapter sector ──────
-  // Draw as SVG text elements — drift with the map
-  const bgG=se('g',{'opacity':'1'},LG);
+  // BG symbols
   DATA.forEach((ch,ci)=>{
-    const baseAngle = ci===0 ? 180 : 0; // ch1 left, ch2 right
-    const sectorSpan = 160; // degrees of sector
-    ;(ch.bgSyms||[]).forEach((sym,si)=>{
-      const angle=baseAngle-sectorSpan/2+Math.random()*sectorSpan;
-      const dist=200+Math.random()*700;
-      const pos=polar(CX,CY,angle,dist);
-      se('text',{
-        x:pos.x, y:pos.y,
-        'text-anchor':'middle','dominant-baseline':'central',
-        fill:ch.color,
-        opacity:(0.04+Math.random()*0.06).toFixed(3),
-        'font-size':(28+Math.random()*60).toFixed(0),
-        'font-family':'Cormorant Garamond,serif',
-        'font-style':'italic','font-weight':'300',
-        'transform':`rotate(${(Math.random()*20-10).toFixed(1)},${pos.x},${pos.y})`
-      },bgG).textContent=sym;
+    const base=ci===0?180:0;
+    (ch.bgSyms||[]).forEach(sym=>{
+      const a=base-80+Math.random()*160, d=500+Math.random()*1500;
+      const p=polar(CX,CY,a,d);
+      se('text',{x:p.x,y:p.y,'text-anchor':'middle','dominant-baseline':'central',
+        fill:ch.color,opacity:(0.022+Math.random()*0.03).toFixed(3),
+        'font-size':(35+Math.random()*80).toFixed(0),
+        'font-family':'Cormorant Garamond,serif','font-style':'italic','font-weight':'300',
+        transform:`rotate(${(Math.random()*24-12).toFixed(1)},${p.x},${p.y})`},LG).textContent=sym;
     });
   });
 
-  // ── Root ─────────────────────────────────────────────
-  drawRoot(NG, LG, CX, CY);
+  // ROOT
+  drawRoot(NG,LG,CX,CY);
 
-  // ── Chapters: ch1 goes LEFT (angle~180°), ch2 goes RIGHT (angle~0°) ──
-  const chAngles=[180, 0];
+  // Both chapters animate together — same delay bucket
+  const chSectors=[
+    {center:180, span:183},
+    {center:0,   span:183},
+  ];
 
   DATA.forEach((ch,ci)=>{
-    const chAngle=chAngles[ci];
-    const chPos=polar(CX,CY,chAngle,D_CH);
+    const sector=chSectors[ci];
+    let delay=200;  // both start at same time
+
+    const chPos=polar(CX,CY,sector.center,D_CH);
     chCenters[ci]={x:chPos.x,y:chPos.y};
+    animLine(LG,CX,CY,chPos.x,chPos.y,ch.color,2.5,delay);
+    drawChNode(NG,chPos.x,chPos.y,ch,delay+60);
+    delay+=140;
 
-    drawLine(LG,CX,CY,chPos.x,chPos.y,ch.color,2.5);
-    drawChNode(NG,chPos.x,chPos.y,ch);
+    // Compute total section span and center in sector
+    const secs=ch.sections;
+    const spans=secs.map(s=>Math.max(secSpanDeg(s), px2deg(SEC_R*2+GAP_PX, D_SEC)));
+    const totalSpan=spans.reduce((s,a)=>s+a,0);
+    let curAngle=sector.center - totalSpan/2;
 
-    const nSec=ch.sections.length;
-    // Sections spread vertically around the chapter direction
-    // For ch1 (left), sections fan ±70° around 180°
-    // For ch2 (right), sections fan ±70° around 0°
-    const secSpread=46; // degrees between sections
-    const secOffset=(nSec-1)/2;
+    secs.forEach((sec,si)=>{
+      const span=spans[si];
+      const secCenter=curAngle+span/2;
+      curAngle+=span;
 
-    ch.sections.forEach((sec,si)=>{
-      const secAngle=chAngle+(si-secOffset)*secSpread;
-      const secPos=polar(CX,CY,secAngle,D_SEC);
+      const secPos=polar(CX,CY,secCenter,D_SEC);
+      animLine(LG,chPos.x,chPos.y,secPos.x,secPos.y,ch.color,1.6,delay);
+      drawSecNode(NG,secPos.x,secPos.y,ch.color,sec,delay+50);
+      delay+=110;
 
-      drawLine(LG,chPos.x,chPos.y,secPos.x,secPos.y,ch.color,1.6);
-      drawSecNode(NG,secPos.x,secPos.y,ch.color,sec);
+      // Topics
+      const topics=sec.leaves||[];
+      const tSpans=topics.map(t=>topicSpanDeg(t));
+      const totalTSpan=tSpans.reduce((s,a)=>s+a,0);
+      let tAngle=secCenter-totalTSpan/2;
 
-      const nLeaf=sec.leaves.length;
-      const leafSpread=14;
+      topics.forEach((topic,ti)=>{
+        const tSpan=tSpans[ti];
+        const topicCenter=tAngle+tSpan/2;
+        tAngle+=tSpan;
 
-      sec.leaves.forEach((leaf,li)=>{
-        const leafAngle=secAngle+(li-(nLeaf-1)/2)*leafSpread;
-        const leafPos=polar(CX,CY,leafAngle,D_LEAF);
+        const topicPos=polar(CX,CY,topicCenter,D_LEAF);
+        animLine(LG,secPos.x,secPos.y,topicPos.x,topicPos.y,ch.color,1.2,delay);
+        drawLeaf(NG,topicPos.x,topicPos.y,ch.color,topic,delay+40);
+        delay+=90;
 
-        drawLine(LG,secPos.x,secPos.y,leafPos.x,leafPos.y,ch.color,1.2);
-        drawLeaf(NG,leafPos.x,leafPos.y,ch.color,leaf);
+        // Sub-leaves — evenly spaced
+        const subs=topic.children||[];
+        if(subs.length){
+          const sDeg=subSpanDeg();
+          const totalS=subs.length*sDeg;
+          let sAngle=topicCenter-totalS/2+sDeg/2;
+
+          subs.forEach((sub)=>{
+            const subPos=polar(CX,CY,sAngle,D_SUB);
+            animLine(LG,topicPos.x,topicPos.y,subPos.x,subPos.y,ch.color,0.8,delay,true);
+            drawSubLeaf(NG,subPos.x,subPos.y,ch.color,sub,delay+30);
+            sAngle+=sDeg;
+            delay+=60;
+          });
+        }
       });
     });
   });
+
+  setTimeout(runEntranceAnimation,100);
 }
 
-function drawLine(p,x1,y1,x2,y2,col,w,dashed=false){
-  // Glow
-  const g=se('path',{d:`M${x1},${y1}L${x2},${y2}`,fill:'none',stroke:col,'stroke-width':w*2.5,opacity:'.07','stroke-linecap':'round'},p);
-  if(dashed)g.setAttribute('stroke-dasharray','5 5');
-  const e=se('path',{d:`M${x1},${y1}L${x2},${y2}`,fill:'none',stroke:col,'stroke-width':w,opacity:'.38','stroke-linecap':'round'},p);
-  if(dashed)e.setAttribute('stroke-dasharray','5 5');
+// ── Animated line ──────────────────────────────────────
+function animLine(p,x1,y1,x2,y2,col,w,delay,dashed=false){
+  const len=Math.hypot(x2-x1,y2-y1);
+  const g=se('path',{d:`M${x1},${y1}L${x2},${y2}`,fill:'none',stroke:col,
+    'stroke-width':w*2.5,opacity:'0','stroke-linecap':'round'},p);
+  const e=se('path',{d:`M${x1},${y1}L${x2},${y2}`,fill:'none',stroke:col,
+    'stroke-width':w,opacity:'0','stroke-linecap':'round',
+    'stroke-dasharray':len,'stroke-dashoffset':len},p);
+  if(dashed){g.setAttribute('stroke-dasharray','7 7');e.setAttribute('stroke-dasharray','7 7');}
+  animLines.push({glow:g,line:e,len,delay,dashed});
 }
+
+function runEntranceAnimation(){
+  animLines.forEach(({glow,line,len,delay,dashed})=>{
+    setTimeout(()=>{
+      glow.style.transition='opacity 0.3s';
+      glow.setAttribute('opacity',dashed?'.04':'.07');
+      line.style.transition=`stroke-dashoffset 0.55s cubic-bezier(0.4,0,0.2,1),opacity 0.3s`;
+      line.setAttribute('opacity',dashed?'.22':'.38');
+      line.setAttribute('stroke-dashoffset','0');
+    },delay);
+  });
+  _animNodeList.forEach(({g,delay})=>{
+    setTimeout(()=>{
+      g.style.transition='opacity 0.4s ease,transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+      g.style.opacity='1';
+      g.style.transform='scale(1)';
+    },delay);
+  });
+}
+
+
+function animatedNode(g,delay){
+  g.style.opacity='0';
+  g.style.transform='scale(0.5)';
+  g.style.transformBox='fill-box';
+  g.style.transformOrigin='center';
+  _animNodeList.push({g,delay});
+}
+
 
 function drawRoot(NG,LG,x,y){
   const g=se('g',{class:'ng'},NG);
@@ -386,11 +680,12 @@ function drawRoot(NG,LG,x,y){
   se('ellipse',{cx:x-ROOT_R*.17,cy:y-ROOT_R*.23,rx:ROOT_R*.33,ry:ROOT_R*.15,fill:'rgba(255,255,255,.05)'},g);
   ['Math','101'].forEach((ln,i)=>se('text',{x,y:y-10+i*20,'text-anchor':'middle','dominant-baseline':'central',fill:'#c9a84c','font-size':'15','font-weight':'700','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
   g.addEventListener('click',()=>openDp('Math 101','Interactive mind map for Calculus — King Saud University.',['Chapter 1: Numbers & Functions','Chapter 2: Limits & Continuity'],'#c9a84c','Math 101 — KSU'));
-  g.addEventListener('mouseenter',()=>g.setAttribute('transform',`translate(0,-5)`));
+  g.addEventListener('mouseenter',()=>g.setAttribute('transform','translate(0,-5)'));
   g.addEventListener('mouseleave',()=>g.removeAttribute('transform'));
+  animatedNode(g,0);
 }
 
-function drawChNode(NG,x,y,ch){
+function drawChNode(NG,x,y,ch,delay){
   const g=se('g',{class:'ng'},NG);
   se('circle',{cx:x,cy:y,r:CH_R+9,fill:'none',stroke:ch.color,'stroke-width':'1',opacity:'.1'},g);
   const fill=se('circle',{cx:x,cy:y,r:CH_R,fill:ch.color,opacity:'.12'},g);
@@ -401,9 +696,10 @@ function drawChNode(NG,x,y,ch){
   g.addEventListener('click',e=>{e.stopPropagation();openDp(ch.label,ch.desc,ch.tags,ch.color,`Chapter ${ch.id}`)});
   g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-6)');fill.setAttribute('opacity','.22')});
   g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');fill.setAttribute('opacity','.12')});
+  animatedNode(g,delay);
 }
 
-function drawSecNode(NG,x,y,col,sec){
+function drawSecNode(NG,x,y,col,sec,delay){
   const g=se('g',{class:'ng'},NG);
   const fill=se('circle',{cx:x,cy:y,r:SEC_R,fill:col,opacity:'.14'},g);
   se('circle',{cx:x,cy:y,r:SEC_R,fill:'none',stroke:col,'stroke-width':'1.5'},g);
@@ -412,9 +708,10 @@ function drawSecNode(NG,x,y,col,sec){
   g.addEventListener('click',e=>{e.stopPropagation();openDp(sec.label,sec.desc,sec.tags,col,'Section')});
   g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-5)');fill.setAttribute('opacity','.25')});
   g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');fill.setAttribute('opacity','.14')});
+  animatedNode(g,delay);
 }
 
-function drawLeaf(NG,x,y,col,node){
+function drawLeaf(NG,x,y,col,node,delay){
   const g=se('g',{class:'ng'},NG);
   se('rect',{x:x-LW/2+2,y:y-LH/2+2,width:LW,height:LH,rx:'11',fill:'rgba(0,0,0,.5)'},g);
   const rect=se('rect',{x:x-LW/2,y:y-LH/2,width:LW,height:LH,rx:'11',fill:'#090a10',stroke:col,'stroke-width':'1.5'},g);
@@ -422,9 +719,24 @@ function drawLeaf(NG,x,y,col,node){
   se('rect',{x:x-LW/2+4,y:y-LH/2+10,width:LW-8,height:LH-18,rx:'7',fill:col,opacity:'.04'},g);
   const lines=node.label.split('\n');
   lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*15+(lines.length>1?2:0),'text-anchor':'middle','dominant-baseline':'central',fill:'#eeeaf2','font-size':'10.5','font-weight':'600','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',e=>{e.stopPropagation();openDp(node.label,node.desc,node.tags||[],col,'Concept')});
+  g.addEventListener('click',e=>{e.stopPropagation();openDp(node.label,node.desc,node.tags||[],col,'Topic')});
   g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-5)');rect.setAttribute('stroke-width','2.3')});
   g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');rect.setAttribute('stroke-width','1.5')});
+  animatedNode(g,delay);
+}
+
+// Sub-leaf pill
+function drawSubLeaf(NG,x,y,col,node,delay){
+  const g=se('g',{class:'ng'},NG);
+  se('rect',{x:x-SW/2+1,y:y-SH/2+1,width:SW,height:SH,rx:'9',fill:'rgba(0,0,0,.4)'},g);
+  const rect=se('rect',{x:x-SW/2,y:y-SH/2,width:SW,height:SH,rx:'9',fill:'#0d0e16',stroke:col,'stroke-width':'1',opacity:'.85'},g);
+  se('rect',{x:x-SW/2+1,y:y-SH/2+1,width:SW-2,height:4,rx:'7',fill:col,opacity:'.5'},g);
+  const lines=node.label.split('\n');
+  lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*13+(lines.length>1?1:0),'text-anchor':'middle','dominant-baseline':'central',fill:'rgba(238,234,242,.8)','font-size':'9','font-weight':'500','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
+  g.addEventListener('click',e=>{e.stopPropagation();openDp(node.label,node.desc,node.tags||[],col,'Detail')});
+  g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-4)');rect.setAttribute('stroke-width','1.8')});
+  g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');rect.setAttribute('stroke-width','1')});
+  animatedNode(g,delay);
 }
 
 function drawTag(NG,x,y,text,col){
@@ -452,9 +764,8 @@ function bz(f){zoomAt(cw.clientWidth/2,cw.clientHeight/2,f)}
 function resetV(){
   const vw=window.innerWidth;
   const vh=window.innerHeight-48;
-  // Show center + chapter level comfortably — not the whole map
-  const viewR=(D_SEC+SEC_R+60)*2;
-  sc=Math.min(vw,vh)/viewR*.9;
+  const viewR=(D_LEAF+LH+150)*2;
+  sc=Math.min(vw,vh)/viewR*1.1;
   tx=vw/2 - CX*sc;
   ty=vh/2 - CY*sc;
   applyT();
@@ -939,7 +1250,7 @@ ${[
 
 'Continuity\nConditions': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
   <style>.cnd{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px}</style>
-  ${[['f(a) موجودة','#1fad84',20],['النهاية موجودة','#7b6fd4',72],['النهاية = f(a)','#c9a84c',124]].map(([txt,col,y])=>
+  ${[['① f(a) is defined','#1fad84',20],['Limit exists','#7b6fd4',72],['③ Limit = f(a)','#c9a84c',124]].map(([txt,col,y])=>
     `<rect x="20" y="${y}" width="220" height="34" rx="8" fill="rgba(255,255,255,.03)" stroke="${col}" stroke-width="1"/>
      <circle cx="38" cy="${y+17}" r="8" fill="${col}" opacity=".2" stroke="${col}" stroke-width="1"/>
      <text x="38" y="${y+21}" text-anchor="middle" font-size="9" fill="${col}" font-family="monospace">✓</text>
@@ -982,6 +1293,189 @@ ${[
 
   <text x="130" y="108" text-anchor="middle" class="tl" fill="#8a8799">الانقطاع النقطي يمكن إزالته — الآخران لا</text>
 </svg>`,
+
+
+'Natural\nNumbers ℕ': ()=>DIAGRAMS['Number\nSets'](),
+'Whole\nNumbers W': ()=>DIAGRAMS['Number\nSets'](),
+'Integers\nℤ': ()=>DIAGRAMS['Number\nSets'](),
+'Rational\nNumbers ℚ': ()=>DIAGRAMS['Number\nSets'](),
+'Real\nNumbers ℝ': ()=>DIAGRAMS['Number\nSets'](),
+'Open &\nClosed Intervals': ()=>DIAGRAMS['Intervals &\nInequalities'](),
+'Inequalities\n& Sign Rule': ()=>DIAGRAMS['Intervals &\nInequalities'](),
+'Absolute\nValue |x|': ()=>DIAGRAMS['Absolute\nValue'](),
+'Linear\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
+'Power\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
+'Root\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
+'Rational\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
+'Piecewise\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
+'Operations\non Functions': ()=>DIAGRAMS['Operations &\nComposition'](),
+'Composition\nf∘g': ()=>DIAGRAMS['Operations &\nComposition'](),
+'One-to-One\nTest': ()=>DIAGRAMS['One-to-One\nFunction'](),
+'Finding\nf⁻¹(x)': ()=>DIAGRAMS['Inverse\nFunction f⁻¹'](),
+'Domain &\nRange of f⁻¹': ()=>DIAGRAMS['Inverse\nFunction f⁻¹'](),
+'Cancellation\nLaws': ()=>DIAGRAMS['Inverse\nFunction f⁻¹'](),
+'Graph\nSymmetry': ()=>DIAGRAMS['Inverse\nFunction f⁻¹'](),
+'Radians &\nDegrees': ()=>DIAGRAMS['Angles &\nMeasurements'](),
+'Arc Length\ns = rθ': ()=>DIAGRAMS['Angles &\nMeasurements'](),
+'Reference\nAngle θ\'': ()=>DIAGRAMS['Angles &\nMeasurements'](),
+'sin, cos,\ntan': ()=>`<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" style="width:520px;height:310px">
+<style>.gl{font-family:monospace;font-size:9px}.ax{stroke:#2a2a3a;stroke-width:.8}</style>
+<!-- Title -->
+<text x="260" y="14" text-anchor="middle" font-size="10" fill="#c9a84c" font-family="monospace">Graphs of sin(x), cos(x), tan(x)</text>
+
+<!-- sin(x) -->
+<text x="8" y="56" class="gl" fill="#1fad84" font-weight="600">sin(x)</text>
+<line x1="18" y1="72" x2="510" y2="72" class="ax"/>
+<line x1="18" y1="42" x2="18" y2="100" class="ax"/>
+<path d="M18,72 C55,42 91,42 128,72 C165,102 201,102 238,72 C275,42 311,42 348,72 C385,102 421,102 458,72 C476,58 494,48 510,44" fill="none" stroke="#1fad84" stroke-width="1.8"/>
+<text x="130" y="88" class="gl" fill="#1fad84">period 2π</text>
+<text x="22" y="46" class="gl" fill="#1fad84">1</text>
+<text x="22" y="101" class="gl" fill="#1fad84">-1</text>
+
+<!-- cos(x) -->
+<text x="8" y="126" class="gl" fill="#7b6fd4" font-weight="600">cos(x)</text>
+<line x1="18" y1="142" x2="510" y2="142" class="ax"/>
+<line x1="18" y1="112" x2="18" y2="170" class="ax"/>
+<path d="M18,112 C36,112 54,122 72,142 C108,172 144,172 180,142 C216,112 252,112 288,142 C324,172 360,172 396,142 C432,112 468,112 510,118" fill="none" stroke="#7b6fd4" stroke-width="1.8"/>
+<text x="130" y="158" class="gl" fill="#7b6fd4">shifted π/2 from sin</text>
+<text x="22" y="116" class="gl" fill="#7b6fd4">1</text>
+<text x="22" y="171" class="gl" fill="#7b6fd4">-1</text>
+
+<!-- tan(x) -->
+<text x="8" y="196" class="gl" fill="#c9854c" font-weight="600">tan(x)</text>
+<line x1="18" y1="240" x2="510" y2="240" class="ax"/>
+<line x1="18" y1="200" x2="18" y2="300" class="ax"/>
+<!-- tan branches -->
+<path d="M18,285 Q55,270 90,240 Q110,220 118,210" fill="none" stroke="#c9854c" stroke-width="1.8"/>
+<line x1="128" y1="200" x2="128" y2="300" stroke="#c94c4c" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
+<path d="M138,300 Q150,270 180,240 Q210,210 248,205" fill="none" stroke="#c9854c" stroke-width="1.8"/>
+<line x1="258" y1="200" x2="258" y2="300" stroke="#c94c4c" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
+<path d="M268,300 Q280,270 310,240 Q340,210 378,205" fill="none" stroke="#c9854c" stroke-width="1.8"/>
+<line x1="388" y1="200" x2="388" y2="300" stroke="#c94c4c" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
+<path d="M398,300 Q412,270 440,240 Q470,215 510,210" fill="none" stroke="#c9854c" stroke-width="1.8"/>
+<text x="120" y="307" class="gl" fill="#c94c4c" text-anchor="middle">x=π/2</text>
+<text x="250" y="307" class="gl" fill="#c94c4c" text-anchor="middle">x=3π/2</text>
+<text x="200" y="215" class="gl" fill="#c9854c">vertical asymptotes</text>
+</svg>`,
+
+'csc, sec,\ncot': ()=>`<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" style="width:520px;height:310px">
+<style>.gl{font-family:monospace;font-size:9px}.ax{stroke:#2a2a3a;stroke-width:.8}</style>
+<text x="260" y="14" text-anchor="middle" font-size="10" fill="#c9a84c" font-family="monospace">Graphs of csc(x), sec(x), cot(x)</text>
+
+<!-- csc(x) = 1/sin -->
+<text x="8" y="34" class="gl" fill="#1fad84" font-weight="600">csc(x) = 1/sin(x)</text>
+<line x1="18" y1="68" x2="510" y2="68" class="ax"/>
+<line x1="18" y1="30" x2="18" y2="105" class="ax"/>
+<line x1="18" y1="30" x2="18" y2="105" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="128" y1="30" x2="128" y2="105" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="238" y1="30" x2="238" y2="105" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="348" y1="30" x2="348" y2="105" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<path d="M22,38 Q40,50 55,68 Q70,86 88,98" fill="none" stroke="#1fad84" stroke-width="1.6"/>
+<path d="M140,98 Q158,86 183,68 Q208,50 226,38" fill="none" stroke="#1fad84" stroke-width="1.6"/>
+<path d="M252,38 Q270,50 295,68 Q320,86 338,98" fill="none" stroke="#1fad84" stroke-width="1.6"/>
+<path d="M360,98 Q378,86 403,68 Q428,50 446,38" fill="none" stroke="#1fad84" stroke-width="1.6"/>
+<text x="270" y="56" class="gl" fill="#1fad84">≥1 or ≤-1</text>
+
+<!-- sec(x) = 1/cos -->
+<text x="8" y="120" class="gl" fill="#7b6fd4" font-weight="600">sec(x) = 1/cos(x)</text>
+<line x1="18" y1="155" x2="510" y2="155" class="ax"/>
+<line x1="73" y1="115" x2="73" y2="190" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="183" y1="115" x2="183" y2="190" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="293" y1="115" x2="293" y2="190" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="403" y1="115" x2="403" y2="190" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<path d="M18,125 Q36,130 55,155 Q68,180 72,188" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
+<path d="M75,188 Q78,180 92,155 Q112,130 130,125 Q152,123 183,125" fill="none" stroke="#7b6fd4" stroke-width="1.6" opacity=".3"/>
+<path d="M75,122 Q90,130 110,155 Q125,175 135,185" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
+<path d="M230,122 Q248,130 268,155 Q283,175 292,185" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
+<path d="M295,185 Q305,170 325,155 Q350,135 380,125 Q395,122 403,122" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
+<path d="M340,122 Q358,130 378,155 Q393,175 402,185" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
+<text x="450" y="145" class="gl" fill="#7b6fd4">≥1 or ≤-1</text>
+
+<!-- cot(x) = cos/sin -->
+<text x="8" y="206" class="gl" fill="#c9854c" font-weight="600">cot(x) = cos(x)/sin(x)</text>
+<line x1="18" y1="250" x2="510" y2="250" class="ax"/>
+<line x1="18" y1="210" x2="18" y2="295" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="128" y1="210" x2="128" y2="295" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="238" y1="210" x2="238" y2="295" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<line x1="348" y1="210" x2="348" y2="295" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
+<path d="M22,215 Q55,230 90,250 Q110,265 118,290" fill="none" stroke="#c9854c" stroke-width="1.8"/>
+<path d="M138,215 Q168,230 198,250 Q218,265 228,290" fill="none" stroke="#c9854c" stroke-width="1.8"/>
+<path d="M248,215 Q278,230 308,250 Q328,265 338,290" fill="none" stroke="#c9854c" stroke-width="1.8"/>
+<path d="M358,215 Q388,230 418,250 Q438,265 448,290" fill="none" stroke="#c9854c" stroke-width="1.8"/>
+<text x="160" y="240" class="gl" fill="#c9854c">decreasing on each period</text>
+<text x="260" y="305" text-anchor="middle" class="gl" fill="#8a8799">asymptotes at x = nπ for all three</text>
+</svg>`,
+'ASTC\nSigns': ()=>DIAGRAMS['6 Trig Functions\n& Signs'](),
+'ASTC\nSigns': ()=>DIAGRAMS['6 Trig Functions\n& Signs'](),
+'Pythagorean\nIdentities': ()=>DIAGRAMS['Identities &\nInverses'](),
+'Double Angle\nFormulas': ()=>DIAGRAMS['Identities &\nInverses'](),
+'Inverse Trig\nFunctions': ()=>DIAGRAMS['Identities &\nInverses'](),
+'sin⁻¹(x)': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:260px;height:220px">
+<style>.gl{font-size:9px;font-family:monospace}</style>
+<line x1="20" y1="110" x2="240" y2="110" stroke="#2a2a3a" stroke-width=".8"/>
+<line x1="130" y1="15" x2="130" y2="205" stroke="#2a2a3a" stroke-width=".8"/>
+<!-- Horizontal asymptote hints -->
+<line x1="20" y1="40" x2="240" y2="40" stroke="#1fad84" stroke-width=".8" stroke-dasharray="4 4" opacity=".4"/>
+<line x1="20" y1="180" x2="240" y2="180" stroke="#1fad84" stroke-width=".8" stroke-dasharray="4 4" opacity=".4"/>
+<!-- sin⁻¹ curve: domain [-1,1], range [-π/2,π/2] -->
+<path d="M60,180 Q80,160 100,140 Q115,125 130,110 Q145,95 160,80 Q180,60 200,40" fill="none" stroke="#1fad84" stroke-width="2"/>
+<circle cx="60" cy="180" r="3" fill="#1fad84"/>
+<circle cx="200" cy="40" r="3" fill="#1fad84"/>
+<text x="42" y="176" class="gl" fill="#1fad84">(-1,-π/2)</text>
+<text x="202" y="38" class="gl" fill="#1fad84">(1,π/2)</text>
+<text x="135" y="44" class="gl" fill="#1fad84">π/2</text>
+<text x="135" y="184" class="gl" fill="#1fad84">-π/2</text>
+<text x="130" y="210" text-anchor="middle" class="gl" fill="#8a8799">Domain: [−1,1]  Range: [−π/2, π/2]</text>
+</svg>`,
+'cos⁻¹(x)': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:260px;height:220px">
+<style>.gl{font-size:9px;font-family:monospace}</style>
+<line x1="20" y1="110" x2="240" y2="110" stroke="#2a2a3a" stroke-width=".8"/>
+<line x1="130" y1="15" x2="130" y2="205" stroke="#2a2a3a" stroke-width=".8"/>
+<line x1="20" y1="25" x2="240" y2="25" stroke="#7b6fd4" stroke-width=".8" stroke-dasharray="4 4" opacity=".4"/>
+<!-- cos⁻¹ curve: domain [-1,1], range [0,π] — strictly decreasing -->
+<path d="M60,25 Q80,45 100,70 Q115,90 130,110 Q145,130 160,155 Q180,175 200,195" fill="none" stroke="#7b6fd4" stroke-width="2"/>
+<circle cx="60" cy="25" r="3" fill="#7b6fd4"/>
+<circle cx="200" cy="195" r="3" fill="#7b6fd4"/>
+<text x="42" y="22" class="gl" fill="#7b6fd4">(-1, π)</text>
+<text x="202" y="198" class="gl" fill="#7b6fd4">(1, 0)</text>
+<text x="135" y="28" class="gl" fill="#7b6fd4">π</text>
+<text x="130" y="210" text-anchor="middle" class="gl" fill="#8a8799">Domain: [−1,1]  Range: [0, π]  (decreasing)</text>
+</svg>`,
+'tan⁻¹(x)': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:260px;height:220px">
+<style>.gl{font-size:9px;font-family:monospace}</style>
+<line x1="20" y1="110" x2="240" y2="110" stroke="#2a2a3a" stroke-width=".8"/>
+<line x1="130" y1="15" x2="130" y2="205" stroke="#2a2a3a" stroke-width=".8"/>
+<line x1="20" y1="40" x2="240" y2="40" stroke="#c9854c" stroke-width=".8" stroke-dasharray="5 4" opacity=".5"/>
+<line x1="20" y1="180" x2="240" y2="180" stroke="#c9854c" stroke-width=".8" stroke-dasharray="5 4" opacity=".5"/>
+<!-- tan⁻¹ curve: domain ℝ, range (-π/2, π/2) — S-shaped -->
+<path d="M20,175 Q40,172 60,165 Q90,152 110,135 Q120,124 130,110 Q140,96 150,85 Q170,68 200,55 Q220,48 240,45" fill="none" stroke="#c9854c" stroke-width="2"/>
+<text x="135" y="44" class="gl" fill="#c9854c">y = π/2 (asymptote)</text>
+<text x="135" y="184" class="gl" fill="#c9854c">y = −π/2 (asymptote)</text>
+<circle cx="130" cy="110" r="3" fill="#c9854c"/>
+<text x="134" y="108" class="gl" fill="#c9854c">(0,0)</text>
+<text x="130" y="210" text-anchor="middle" class="gl" fill="#8a8799">Domain: ℝ  Range: (−π/2, π/2)  horizontal asymptotes</text>
+</svg>`,
+'Intuitive\nDefinition': ()=>DIAGRAMS['Limit\nDefinition'](),
+'ε-δ Formal\nDefinition': ()=>DIAGRAMS['Limit\nDefinition'](),
+'Right-Hand\nLimit x→a⁺': ()=>DIAGRAMS['One-Sided\nLimits'](),
+'Left-Hand\nLimit x→a⁻': ()=>DIAGRAMS['One-Sided\nLimits'](),
+'Existence\nCondition': ()=>DIAGRAMS['Existence\nCondition'](),
+'Basic Limit\nLaws': ()=>DIAGRAMS['Direct\nSubstitution'](),
+'Direct\nSubstitution': ()=>DIAGRAMS['Direct\nSubstitution'](),
+'Factorization\nMethod': ()=>DIAGRAMS['Simplification\nMethods'](),
+'Rationalization\nMethod': ()=>DIAGRAMS['Simplification\nMethods'](),
+'Squeeze\nTheorem': ()=>DIAGRAMS['Squeeze\nTheorem'](),
+'Limit\nat +∞': ()=>DIAGRAMS['Limits at\nInfinity'](),
+'Limit\nat −∞': ()=>DIAGRAMS['Limits at\nInfinity'](),
+'Horizontal\nAsymptote': ()=>DIAGRAMS['Asymptotes'](),
+'Vertical\nAsymptote': ()=>DIAGRAMS['Asymptotes'](),
+'Infinite\nLimits': ()=>DIAGRAMS['Infinite\nLimits'](),
+'3 Conditions\nfor Continuity': ()=>DIAGRAMS['Continuity\nConditions'](),
+'Removable\nDiscontinuity': ()=>DIAGRAMS['Types of\nDiscontinuity'](),
+'Jump\nDiscontinuity': ()=>DIAGRAMS['Types of\nDiscontinuity'](),
+'Infinite\nDiscontinuity': ()=>DIAGRAMS['Types of\nDiscontinuity'](),
+'Continuity\non Interval': ()=>DIAGRAMS['Continuity\nConditions'](),
+'IVT\nTheorem': ()=>DIAGRAMS['IVT\nIntermediate Value'](),
 
 'IVT\nIntermediate Value': ()=>`<svg viewBox="0 0 260 195" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:225px">
   <line x1="20" y1="155" x2="240" y2="155" stroke="#3e3c52" stroke-width="1"/>
