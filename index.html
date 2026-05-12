@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Math 101 — King Saud University</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -17,1549 +17,676 @@
   --border:rgba(255,255,255,0.07);
   --c1:#1fad84;
   --c2:#7b6fd4;
+  --red:#c94c4c;
+  --ora:#c9854c;
 }
-html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif}
-
-
-/* BG CANVAS */
+html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
 #bgc{position:fixed;inset:0;pointer-events:none;z-index:0}
+#vig{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 0%,rgba(6,7,11,.55) 100%)}
 
-/* VIGNETTE */
-#vig{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse 65% 65% at 50% 50%,transparent 0%,rgba(6,7,11,.65) 100%)}
+/* ── DECK ── */
+#deck{position:fixed;inset:0;z-index:10;overflow:hidden}
 
-/* HEADER */
-#hdr{position:fixed;top:0;left:0;right:0;height:48px;z-index:100;background:rgba(6,7,11,.88);backdrop-filter:blur(20px);border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px}
-.hlogo{display:flex;align-items:center;gap:10px}
-.hring{width:29px;height:29px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--gold)}
-.htxt{font-size:13px;font-weight:600}
-.hsub{font-size:10px;color:var(--text3);letter-spacing:.05em}
-.hacts{display:flex;gap:6px}
-.hab{background:transparent;border:.5px solid var(--border);border-radius:7px;color:var(--text2);font-family:inherit;font-size:11px;padding:5px 13px;transition:all .18s}
-.hab:hover{color:var(--text);background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+/* ── SLIDES ── */
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  padding:52px 80px 68px;
+  overflow:hidden;
+  will-change:transform,opacity;
+  transform:translateX(100%);
+  opacity:0;
+  pointer-events:none;
+}
+.slide.active{
+  transform:translateX(0);
+  opacity:1;
+  pointer-events:all;
+  transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .45s ease;
+}
 
-/* LEGEND */
-#leg{position:fixed;top:60px;right:14px;z-index:90;background:rgba(6,7,11,.82);backdrop-filter:blur(14px);border:.5px solid var(--border);border-radius:12px;padding:12px 16px;min-width:182px}
-.lt{font-size:9.5px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:9px}
-.li{display:flex;align-items:center;gap:9px;padding:3px 0;border-radius:5px;transition:all .15s}
-.li:hover .ll{color:var(--text)}
-.ld{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.ll{font-size:11px;color:var(--text2);transition:color .15s}
+/* ── PROGRESS BAR ── */
+#prog{position:fixed;top:0;left:0;height:2.5px;background:var(--gold);z-index:200;transition:width .4s ease;box-shadow:0 0 8px rgba(201,168,76,.5)}
 
-/* CANVAS */
-#cw{position:fixed;top:48px;inset-inline:0;bottom:0;overflow:hidden;z-index:10}
-#svg{position:absolute;overflow:visible}
+/* ── SLIDE DOTS ── */
+#dots{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:9px;z-index:200}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:background .3s,transform .3s,box-shadow .3s}
+.dot.on{background:var(--gold);transform:scale(1.5);box-shadow:0 0 6px rgba(201,168,76,.6)}
 
-/* ZOOM */
-#zf{position:fixed;bottom:20px;left:16px;display:flex;flex-direction:column;gap:4px;z-index:90}
-.zb{width:32px;height:32px;background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.1);color:var(--text2);border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
-.zb:hover{color:var(--text);background:rgba(255,255,255,.08)}
+/* ── COUNTER ── */
+#ctr{position:fixed;bottom:22px;right:28px;font-size:12px;color:var(--text3);z-index:200;letter-spacing:.08em;font-variant-numeric:tabular-nums}
 
-/* DETAIL PANEL */
-#dp{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(6,7,11,.97);backdrop-filter:blur(32px);border-top:.5px solid var(--border);transform:translateY(102%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto}
-#dp.open{transform:translateY(0)}
-#dp-l{position:sticky;top:0;left:0;right:0;height:2px;transition:background .3s;z-index:1;flex-shrink:0}
-#dp-layout{display:flex;flex-direction:column;padding:28px 36px 36px;gap:24px;max-width:900px}
-#dp-left{flex:1;min-width:0}
-#dp-right{width:100%;display:flex;align-items:flex-start;justify-content:flex-start;padding:20px 0 0;border-top:.5px solid var(--border)}
-#dp-right svg{max-width:100%;height:auto}
-#dp-x{position:absolute;top:14px;left:20px;background:none;border:none;color:var(--text3);font-size:16px;padding:3px 7px;border-radius:5px;transition:color .15s;font-family:inherit;cursor:pointer;z-index:2}
-#dp-x:hover{color:var(--text)}
-#dp-meta{font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
-#dp-t{font-size:22px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.3}
-#dp-d{font-size:13.5px;color:var(--text2);line-height:1.9;margin-bottom:22px;border-right:2px solid var(--dp-col,#c9a84c);padding-right:14px}
-#dp-pts{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px}
-#dp-pts li{font-size:12.5px;color:var(--text2);background:rgba(255,255,255,.03);border:.5px solid rgba(255,255,255,.08);border-radius:11px;padding:10px 14px;display:flex;align-items:flex-start;gap:9px;line-height:1.6}
-#dp-pts li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--dp-col,#c9a84c);flex-shrink:0;margin-top:6px}
-#dp-no-diagram{font-size:11px;color:var(--text3);padding:12px 0}
+/* ── HINT ── */
+#hint{position:fixed;bottom:22px;left:28px;font-size:11px;color:var(--text3);z-index:200}
 
-#hint{position:fixed;bottom:18px;right:16px;z-index:90;font-size:10px;color:var(--text3);background:rgba(6,7,11,.7);border:.5px solid var(--border);border-radius:20px;padding:4px 12px;pointer-events:none}
+/* ════════════════════════════
+   ANIMATION ITEMS
+   ════════════════════════════ */
+.ai{opacity:0;transform:translateY(20px)}
+.ai.in{opacity:1;transform:translateY(0);transition:opacity .48s ease,transform .48s cubic-bezier(.34,1.08,.64,1)}
+
+/* ════════════════════════════
+   SLIDE 1 — TITLE
+   ════════════════════════════ */
+#s1{align-items:center;justify-content:center;text-align:center;gap:0}
+.t-ring{width:90px;height:90px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:42px;font-style:italic;color:var(--gold);margin:0 auto 38px}
+.t-main{font-size:96px;font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--text);margin-bottom:12px}
+.t-main em{color:var(--gold);font-style:normal}
+.t-ksu{font-size:15px;color:var(--text2);letter-spacing:.2em;text-transform:uppercase;margin-bottom:56px}
+.t-pills{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.pill{padding:15px 32px;border-radius:50px;font-size:16px;font-weight:600;border:1.5px solid;cursor:default}
+.pill.c1{color:var(--c1);border-color:var(--c1);background:rgba(31,173,132,.07)}
+.pill.c2{color:var(--c2);border-color:var(--c2);background:rgba(123,111,212,.07)}
+
+/* ════════════════════════════
+   OVERVIEW SLIDES
+   ════════════════════════════ */
+.ov-top{margin-bottom:28px;flex-shrink:0}
+.ov-ch{font-size:54px;font-weight:700;line-height:1;margin-bottom:8px}
+.ov-sub{font-size:14px;color:var(--text2);letter-spacing:.14em;text-transform:uppercase}
+.ov-body{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;flex:1;min-height:0}
+.ov-cards{display:flex;flex-direction:column;gap:13px;justify-content:center}
+.sc{background:rgba(255,255,255,.025);border:.5px solid var(--border);border-radius:14px;padding:18px 22px;border-left:3px solid var(--cc,var(--gold))}
+.sc-num{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cc,var(--gold));margin-bottom:5px}
+.sc-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:7px}
+.sc-topics{font-size:13px;color:var(--text2);line-height:1.7}
+.ov-map{display:flex;align-items:center;justify-content:center;min-height:0}
+.ov-map svg{width:100%;height:100%;max-height:450px}
+
+/* ════════════════════════════
+   DETAIL SLIDES
+   ════════════════════════════ */
+.d-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;flex-shrink:0;border-bottom:.5px solid var(--border);padding-bottom:18px}
+.d-title{font-size:40px;font-weight:700;letter-spacing:-.015em}
+.d-ch{font-size:12px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:44px;flex:1;min-height:0;overflow:hidden}
+.col{display:flex;flex-direction:column;gap:13px;overflow:hidden}
+
+/* Section label */
+.sec-lbl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:7px 16px;border-radius:20px;display:inline-block;margin-bottom:4px;flex-shrink:0;width:fit-content}
+.sec-lbl.c1{color:var(--c1);background:rgba(31,173,132,.1);border:.5px solid rgba(31,173,132,.3)}
+.sec-lbl.c2{color:var(--c2);background:rgba(123,111,212,.1);border:.5px solid rgba(123,111,212,.3)}
+
+/* Concept card */
+.ccard{background:rgba(255,255,255,.022);border:.5px solid var(--border);border-radius:13px;padding:17px 22px;flex-shrink:0}
+.ccard-title{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.eq-stack{display:flex;flex-direction:column;gap:9px}
+
+/* Equation box */
+.eq{
+  border:1.5px solid var(--ec,var(--gold));
+  border-radius:9px;
+  padding:13px 22px;
+  background:rgba(255,255,255,.025);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:19px;
+  color:var(--text);
+  text-align:center;
+}
+.eq.sm{font-size:14.5px;padding:9px 16px}
+.eq.lg{font-size:24px;padding:16px 26px}
+.eq-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.eq-row .eq{font-size:14px;padding:9px 12px}
+
+/* Bullet list */
+.blist{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.blist li{font-size:15px;color:var(--text2);display:flex;align-items:flex-start;gap:10px;line-height:1.55}
+.blist li::before{content:'›';color:var(--gold);flex-shrink:0;font-size:17px;line-height:1.3}
+.blist li strong{color:var(--text)}
+
+.note{font-size:13px;color:var(--text2);line-height:1.65;margin-top:8px}
 </style>
 </head>
 <body>
-
 <canvas id="bgc"></canvas>
 <div id="vig"></div>
 
-<div id="hdr">
-  <div class="hlogo">
-    <div class="hring">∑</div>
-    <div><div class="htxt">Math 101</div><div class="hsub">King Saud University</div></div>
+<div id="deck">
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 1 — TITLE
+     ══════════════════════════════════════════════════ -->
+<div class="slide active" id="s1">
+  <div class="t-ring ai">∑</div>
+  <div class="t-main ai">Math <em>101</em></div>
+  <div class="t-ksu ai">King Saud University</div>
+  <div class="t-pills ai">
+    <span class="pill c1">Chapter 1 — Numbers &amp; Functions</span>
+    <span class="pill c2">Chapter 2 — Limits &amp; Continuity</span>
   </div>
-  <div class="hacts">
-    <button class="hab" onclick="resetV()">↺ إعادة ضبط</button>
-    <button class="hab" onclick="exportS()">⬇ SVG</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 2 — CHAPTER 1 OVERVIEW
+     ══════════════════════════════════════════════════ -->
+<div class="slide" id="s2">
+  <div class="ov-top ai">
+    <div class="ov-ch" style="color:var(--c1)">Chapter 1</div>
+    <div class="ov-sub">Numbers &amp; Functions — Sections 1.1 – 1.4</div>
   </div>
-</div>
-
-<div id="leg">
-  <div class="lt">Chapters</div>
-  <div class="li" onclick="focusCh(0)"><div class="ld" style="background:var(--c1)"></div><span class="ll">Chapter 1 — Numbers & Functions</span></div>
-  <div class="li" onclick="focusCh(1)"><div class="ld" style="background:var(--c2)"></div><span class="ll">Chapter 2 — Limits & Continuity</span></div>
-</div>
-
-<div id="cw"><svg id="svg"></svg></div>
-
-<div id="zf">
-  <button class="zb" onclick="bz(1.15)">＋</button>
-  <button class="zb" onclick="bz(.87)">－</button>
-</div>
-
-<p id="hint">Drag • Scroll to zoom • Click node for details</p>
-
-<div id="dp">
-  <div id="dp-l"></div>
-  <button id="dp-x" onclick="closeDp()">✕</button>
-  <div id="dp-layout">
-    <div id="dp-right"><div id="dp-diagram"></div></div>
-    <div id="dp-left">
-      <div id="dp-meta"></div>
-      <div id="dp-t"></div>
-      <p id="dp-d"></p>
-      <ul id="dp-pts"></ul>
+  <div class="ov-body">
+    <div class="ov-cards">
+      <div class="sc ai" style="--cc:var(--c1)">
+        <div class="sc-num">Section 1.1</div>
+        <div class="sc-title">Sets of Numbers &amp; Inequalities</div>
+        <div class="sc-topics">ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ &nbsp;·&nbsp; Intervals &nbsp;·&nbsp; Absolute Value &nbsp;·&nbsp; Sign Rule</div>
+      </div>
+      <div class="sc ai" style="--cc:var(--c1)">
+        <div class="sc-num">Section 1.2</div>
+        <div class="sc-title">Functions</div>
+        <div class="sc-topics">Domain &amp; Range &nbsp;·&nbsp; VLT &nbsp;·&nbsp; Linear / Power / Root / Rational &nbsp;·&nbsp; Composition f∘g</div>
+      </div>
+      <div class="sc ai" style="--cc:var(--gold)">
+        <div class="sc-num">Section 1.3</div>
+        <div class="sc-title">Inverse Functions</div>
+        <div class="sc-topics">One-to-One &nbsp;·&nbsp; Horizontal Line Test &nbsp;·&nbsp; Finding f⁻¹ &nbsp;·&nbsp; Cancellation Laws</div>
+      </div>
+      <div class="sc ai" style="--cc:var(--gold)">
+        <div class="sc-num">Section 1.4</div>
+        <div class="sc-title">Trigonometric Functions &amp; Inverses</div>
+        <div class="sc-topics">Radians &nbsp;·&nbsp; 6 Trig Functions &nbsp;·&nbsp; ASTC Rule &nbsp;·&nbsp; Identities &nbsp;·&nbsp; sin⁻¹ cos⁻¹ tan⁻¹</div>
+      </div>
+    </div>
+    <div class="ov-map ai">
+      <svg viewBox="0 0 440 460" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow1"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <circle cx="220" cy="230" r="82" fill="none" stroke="#1fad84" stroke-width="1" opacity=".07"/>
+        <circle cx="220" cy="230" r="70" fill="none" stroke="#1fad84" stroke-width=".7" opacity=".11"/>
+        <line x1="176" y1="186" x2="110" y2="120" stroke="#1fad84" stroke-width="1.6" opacity=".3"/>
+        <line x1="176" y1="274" x2="110" y2="340" stroke="#1fad84" stroke-width="1.6" opacity=".3"/>
+        <line x1="264" y1="274" x2="330" y2="340" stroke="#c9a84c" stroke-width="1.6" opacity=".3"/>
+        <line x1="264" y1="186" x2="330" y2="120" stroke="#c9a84c" stroke-width="1.6" opacity=".3"/>
+        <circle cx="220" cy="230" r="62" fill="#1fad84" fill-opacity=".09" stroke="#1fad84" stroke-width="2" filter="url(#glow1)"/>
+        <text x="220" y="223" text-anchor="middle" fill="#eeeaf2" font-size="15" font-weight="700" font-family="IBM Plex Sans,sans-serif">Chapter 1</text>
+        <text x="220" y="241" text-anchor="middle" fill="#1fad84" font-size="11" font-family="IBM Plex Sans,sans-serif">Numbers &amp;</text>
+        <text x="220" y="255" text-anchor="middle" fill="#1fad84" font-size="11" font-family="IBM Plex Sans,sans-serif">Functions</text>
+        <!-- 1.1 upper-left -->
+        <circle cx="86" cy="96" r="40" fill="#1fad84" fill-opacity=".09" stroke="#1fad84" stroke-width="1.6"/>
+        <text x="86" y="92" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">1.1</text>
+        <text x="86" y="107" text-anchor="middle" fill="#1fad84" font-size="10" font-family="IBM Plex Sans,sans-serif">Numbers</text>
+        <text x="86" y="148" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ</text>
+        <text x="86" y="162" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Intervals · |x|</text>
+        <!-- 1.2 lower-left -->
+        <circle cx="86" cy="364" r="40" fill="#1fad84" fill-opacity=".09" stroke="#1fad84" stroke-width="1.6"/>
+        <text x="86" y="360" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">1.2</text>
+        <text x="86" y="375" text-anchor="middle" fill="#1fad84" font-size="10" font-family="IBM Plex Sans,sans-serif">Functions</text>
+        <text x="86" y="316" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Domain · Range</text>
+        <text x="86" y="330" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Types · f∘g</text>
+        <!-- 1.3 lower-right -->
+        <circle cx="354" cy="364" r="40" fill="#c9a84c" fill-opacity=".09" stroke="#c9a84c" stroke-width="1.6"/>
+        <text x="354" y="360" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">1.3</text>
+        <text x="354" y="375" text-anchor="middle" fill="#c9a84c" font-size="10" font-family="IBM Plex Sans,sans-serif">Inverses</text>
+        <text x="354" y="316" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">1-to-1 · HLT</text>
+        <text x="354" y="330" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">f⁻¹ · Cancel</text>
+        <!-- 1.4 upper-right -->
+        <circle cx="354" cy="96" r="40" fill="#c9a84c" fill-opacity=".09" stroke="#c9a84c" stroke-width="1.6"/>
+        <text x="354" y="92" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">1.4</text>
+        <text x="354" y="107" text-anchor="middle" fill="#c9a84c" font-size="10" font-family="IBM Plex Sans,sans-serif">Trig</text>
+        <text x="354" y="148" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">sin cos tan</text>
+        <text x="354" y="162" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">sin⁻¹ cos⁻¹ tan⁻¹</text>
+      </svg>
     </div>
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════
+     SLIDE 3 — SECTIONS 1.1 & 1.2
+     ══════════════════════════════════════════════════ -->
+<div class="slide" id="s3">
+  <div class="d-head ai">
+    <div class="d-title">Numbers, Inequalities &amp; Functions</div>
+    <div class="d-ch">Chapter 1 &nbsp;·&nbsp; Sections 1.1 – 1.2</div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <span class="sec-lbl c1 ai">1.1 — Sets of Numbers &amp; Inequalities</span>
+      <div class="ccard ai">
+        <div class="ccard-title">Number Sets Chain</div>
+        <div class="eq lg" style="--ec:var(--c1)">ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ</div>
+        <ul class="blist" style="margin-top:12px">
+          <li><strong>ℕ</strong> = {1, 2, 3, …} — Natural (counting, no zero)</li>
+          <li><strong>ℤ</strong> = {…, −2, −1, 0, 1, 2, …} — Integers</li>
+          <li><strong>ℚ</strong> = {p/q | q≠0} — Rational (terminating/repeating decimals)</li>
+          <li><strong>ℝ</strong> — All reals, including irrational numbers (π, √2, e)</li>
+        </ul>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Intervals</div>
+        <div class="eq-row">
+          <div class="eq" style="--ec:var(--c1)">(a, b) : a &lt; x &lt; b</div>
+          <div class="eq" style="--ec:var(--c2)">[a, b] : a ≤ x ≤ b</div>
+        </div>
+        <div class="eq sm" style="--ec:var(--gold);margin-top:9px">Sign Rule — multiply/divide by negative → flip the inequality</div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Absolute Value</div>
+        <div class="eq-stack">
+          <div class="eq" style="--ec:var(--c1)">|a| = a if a ≥ 0, &nbsp;−a if a &lt; 0</div>
+          <div class="eq" style="--ec:var(--gold)">Triangle Inequality: &nbsp;|a+b| ≤ |a| + |b|</div>
+          <div class="eq sm" style="--ec:var(--text3)">|x − a| &lt; r &nbsp;⟹&nbsp; a − r &lt; x &lt; a + r</div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <span class="sec-lbl c1 ai">1.2 — Functions</span>
+      <div class="ccard ai">
+        <div class="ccard-title">Definition &amp; Tests</div>
+        <div class="eq" style="--ec:var(--c1)">f : Domain → Range</div>
+        <ul class="blist" style="margin-top:11px">
+          <li><strong>Domain</strong> — all valid inputs (x-values)</li>
+          <li><strong>Range</strong> — all possible outputs (y-values)</li>
+          <li><strong>VLT</strong> — every vertical line crosses the graph at most once</li>
+        </ul>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Types of Functions</div>
+        <div class="eq-stack">
+          <div class="eq sm" style="--ec:var(--c1)">Linear: &nbsp;f(x) = mx + b</div>
+          <div class="eq sm" style="--ec:var(--c2)">Power: &nbsp;f(x) = xⁿ</div>
+          <div class="eq sm" style="--ec:var(--gold)">Root: &nbsp;f(x) = ⁿ√x &nbsp;(√x domain: [0, ∞))</div>
+          <div class="eq sm" style="--ec:var(--ora)">Rational: &nbsp;f(x) = p(x)/q(x), &nbsp;q(x) ≠ 0</div>
+        </div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Operations &amp; Composition</div>
+        <div class="eq-stack">
+          <div class="eq sm" style="--ec:var(--c1)">(f ± g)(x) = f(x) ± g(x), &nbsp;D = Df ∩ Dg</div>
+          <div class="eq sm" style="--ec:var(--c2)">(f / g)(x) = f(x) / g(x), &nbsp;g(x) ≠ 0</div>
+          <div class="eq" style="--ec:var(--gold)">(f ∘ g)(x) = f(g(x))</div>
+        </div>
+        <div class="note">Order matters: f∘g ≠ g∘f in general</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 4 — SECTIONS 1.3 & 1.4
+     ══════════════════════════════════════════════════ -->
+<div class="slide" id="s4">
+  <div class="d-head ai">
+    <div class="d-title">Inverse Functions &amp; Trigonometry</div>
+    <div class="d-ch">Chapter 1 &nbsp;·&nbsp; Sections 1.3 – 1.4</div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <span class="sec-lbl c1 ai">1.3 — Inverse Functions</span>
+      <div class="ccard ai">
+        <div class="ccard-title">One-to-One Condition</div>
+        <div class="eq" style="--ec:var(--c1)">f(x₁) = f(x₂) &nbsp;⟹&nbsp; x₁ = x₂</div>
+        <div class="note"><strong style="color:var(--gold)">Horizontal Line Test (HLT):</strong> every horizontal line intersects the graph at most once → one-to-one</div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Finding f⁻¹(x) — 3 Steps</div>
+        <ul class="blist">
+          <li>Write y = f(x)</li>
+          <li>Swap x and y</li>
+          <li>Solve for y — that is f⁻¹(x)</li>
+        </ul>
+        <div class="eq-stack" style="margin-top:11px">
+          <div class="eq sm" style="--ec:var(--gold)">Domain(f⁻¹) = Range(f)</div>
+          <div class="eq sm" style="--ec:var(--gold)">Range(f⁻¹) = Domain(f)</div>
+        </div>
+        <div class="note">Graph of f⁻¹ is the reflection of f across y = x</div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Cancellation Laws</div>
+        <div class="eq-stack">
+          <div class="eq" style="--ec:var(--c2)">f⁻¹(f(x)) = x &nbsp;for x in domain of f</div>
+          <div class="eq" style="--ec:var(--c2)">f(f⁻¹(x)) = x &nbsp;for x in domain of f⁻¹</div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <span class="sec-lbl c1 ai">1.4 — Trig Functions &amp; Inverses</span>
+      <div class="ccard ai">
+        <div class="ccard-title">Angles &amp; ASTC Rule</div>
+        <div class="eq-row">
+          <div class="eq" style="--ec:var(--gold)">180° = π rad</div>
+          <div class="eq" style="--ec:var(--gold)">s = rθ</div>
+        </div>
+        <div class="note" style="margin-top:10px">
+          <strong style="color:var(--text)">ASTC</strong> — which trig functions are positive per quadrant:<br>
+          Q1: <strong style="color:var(--c1)">All</strong> &nbsp;·&nbsp; Q2: <strong style="color:var(--c2)">Sin</strong> &nbsp;·&nbsp; Q3: <strong style="color:var(--ora)">Tan</strong> &nbsp;·&nbsp; Q4: <strong style="color:var(--red)">Cos</strong>
+        </div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Pythagorean Identities</div>
+        <div class="eq-stack">
+          <div class="eq" style="--ec:var(--c1)">sin²θ + cos²θ = 1</div>
+          <div class="eq" style="--ec:var(--c2)">1 + tan²θ = sec²θ</div>
+          <div class="eq" style="--ec:var(--ora)">cot²θ + 1 = csc²θ</div>
+        </div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Inverse Trig — Domains &amp; Ranges</div>
+        <div class="eq-stack">
+          <div class="eq sm" style="--ec:var(--c1)">sin⁻¹(x) : [−1, 1] → [−π/2, π/2]</div>
+          <div class="eq sm" style="--ec:var(--c2)">cos⁻¹(x) : [−1, 1] → [0, π] &nbsp;(decreasing)</div>
+          <div class="eq sm" style="--ec:var(--ora)">tan⁻¹(x) : ℝ → (−π/2, π/2)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 5 — CHAPTER 2 OVERVIEW
+     ══════════════════════════════════════════════════ -->
+<div class="slide" id="s5">
+  <div class="ov-top ai">
+    <div class="ov-ch" style="color:var(--c2)">Chapter 2</div>
+    <div class="ov-sub">Limits &amp; Continuity — Sections 2.1 – 2.4</div>
+  </div>
+  <div class="ov-body">
+    <div class="ov-cards">
+      <div class="sc ai" style="--cc:var(--c2)">
+        <div class="sc-num">Section 2.1</div>
+        <div class="sc-title">Definition of the Limit</div>
+        <div class="sc-topics">Intuitive &amp; ε-δ Definition &nbsp;·&nbsp; One-Sided Limits &nbsp;·&nbsp; Existence Condition</div>
+      </div>
+      <div class="sc ai" style="--cc:var(--c2)">
+        <div class="sc-num">Section 2.2</div>
+        <div class="sc-title">Limit Laws</div>
+        <div class="sc-topics">Sum · Product · Quotient &nbsp;·&nbsp; Direct Substitution &nbsp;·&nbsp; 0/0 Methods &nbsp;·&nbsp; Squeeze Theorem</div>
+      </div>
+      <div class="sc ai" style="--cc:var(--gold)">
+        <div class="sc-num">Section 2.3</div>
+        <div class="sc-title">Limits Involving Infinity</div>
+        <div class="sc-topics">x → ±∞ &nbsp;·&nbsp; Infinite Limits &nbsp;·&nbsp; Horizontal &amp; Vertical Asymptotes</div>
+      </div>
+      <div class="sc ai" style="--cc:var(--gold)">
+        <div class="sc-num">Section 2.4</div>
+        <div class="sc-title">Continuity of Functions</div>
+        <div class="sc-topics">3 Conditions &nbsp;·&nbsp; Removable / Jump / Infinite Discontinuity &nbsp;·&nbsp; IVT</div>
+      </div>
+    </div>
+    <div class="ov-map ai">
+      <svg viewBox="0 0 440 460" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow2"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <circle cx="220" cy="230" r="82" fill="none" stroke="#7b6fd4" stroke-width="1" opacity=".07"/>
+        <circle cx="220" cy="230" r="70" fill="none" stroke="#7b6fd4" stroke-width=".7" opacity=".11"/>
+        <line x1="176" y1="186" x2="110" y2="120" stroke="#7b6fd4" stroke-width="1.6" opacity=".3"/>
+        <line x1="176" y1="274" x2="110" y2="340" stroke="#7b6fd4" stroke-width="1.6" opacity=".3"/>
+        <line x1="264" y1="274" x2="330" y2="340" stroke="#c9a84c" stroke-width="1.6" opacity=".3"/>
+        <line x1="264" y1="186" x2="330" y2="120" stroke="#c9a84c" stroke-width="1.6" opacity=".3"/>
+        <circle cx="220" cy="230" r="62" fill="#7b6fd4" fill-opacity=".09" stroke="#7b6fd4" stroke-width="2" filter="url(#glow2)"/>
+        <text x="220" y="223" text-anchor="middle" fill="#eeeaf2" font-size="15" font-weight="700" font-family="IBM Plex Sans,sans-serif">Chapter 2</text>
+        <text x="220" y="241" text-anchor="middle" fill="#7b6fd4" font-size="11" font-family="IBM Plex Sans,sans-serif">Limits &amp;</text>
+        <text x="220" y="255" text-anchor="middle" fill="#7b6fd4" font-size="11" font-family="IBM Plex Sans,sans-serif">Continuity</text>
+        <!-- 2.1 upper-left -->
+        <circle cx="86" cy="96" r="40" fill="#7b6fd4" fill-opacity=".09" stroke="#7b6fd4" stroke-width="1.6"/>
+        <text x="86" y="92" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">2.1</text>
+        <text x="86" y="107" text-anchor="middle" fill="#7b6fd4" font-size="10" font-family="IBM Plex Sans,sans-serif">Limits</text>
+        <text x="86" y="148" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">ε-δ Definition</text>
+        <text x="86" y="162" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">One-Sided</text>
+        <!-- 2.2 lower-left -->
+        <circle cx="86" cy="364" r="40" fill="#7b6fd4" fill-opacity=".09" stroke="#7b6fd4" stroke-width="1.6"/>
+        <text x="86" y="360" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">2.2</text>
+        <text x="86" y="375" text-anchor="middle" fill="#7b6fd4" font-size="10" font-family="IBM Plex Sans,sans-serif">Laws</text>
+        <text x="86" y="316" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Direct Sub.</text>
+        <text x="86" y="330" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">0/0 Methods</text>
+        <!-- 2.3 lower-right -->
+        <circle cx="354" cy="364" r="40" fill="#c9a84c" fill-opacity=".09" stroke="#c9a84c" stroke-width="1.6"/>
+        <text x="354" y="360" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">2.3</text>
+        <text x="354" y="375" text-anchor="middle" fill="#c9a84c" font-size="10" font-family="IBM Plex Sans,sans-serif">Infinity</text>
+        <text x="354" y="316" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">x → ±∞</text>
+        <text x="354" y="330" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Asymptotes</text>
+        <!-- 2.4 upper-right -->
+        <circle cx="354" cy="96" r="40" fill="#c9a84c" fill-opacity=".09" stroke="#c9a84c" stroke-width="1.6"/>
+        <text x="354" y="92" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">2.4</text>
+        <text x="354" y="107" text-anchor="middle" fill="#c9a84c" font-size="10" font-family="IBM Plex Sans,sans-serif">Continuity</text>
+        <text x="354" y="148" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">3 Conditions</text>
+        <text x="354" y="162" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">IVT</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 6 — SECTIONS 2.1 & 2.2
+     ══════════════════════════════════════════════════ -->
+<div class="slide" id="s6">
+  <div class="d-head ai">
+    <div class="d-title">Limits — Definition &amp; Laws</div>
+    <div class="d-ch">Chapter 2 &nbsp;·&nbsp; Sections 2.1 – 2.2</div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <span class="sec-lbl c2 ai">2.1 — Definition of the Limit</span>
+      <div class="ccard ai">
+        <div class="ccard-title">Core Concept</div>
+        <div class="eq lg" style="--ec:var(--c2)">lim x→a f(x) = L</div>
+        <div class="note">f(x) gets arbitrarily close to L as x approaches a — without x actually equaling a</div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Formal ε-δ Definition</div>
+        <div class="eq sm" style="--ec:var(--gold)">∀ε &gt; 0 &nbsp;∃δ &gt; 0 : &nbsp;0 &lt; |x−a| &lt; δ &nbsp;⟹&nbsp; |f(x)−L| &lt; ε</div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">One-Sided Limits &amp; Existence</div>
+        <div class="eq-stack">
+          <div class="eq sm" style="--ec:var(--c1)">lim x→a⁺ — approach from the right (x &gt; a)</div>
+          <div class="eq sm" style="--ec:var(--red)">lim x→a⁻ — approach from the left (x &lt; a)</div>
+          <div class="eq" style="--ec:var(--gold)">Limit exists &nbsp;⟺&nbsp; lim a⁺ = lim a⁻ = L</div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <span class="sec-lbl c2 ai">2.2 — Limit Laws</span>
+      <div class="ccard ai">
+        <div class="ccard-title">Basic Laws</div>
+        <div class="eq-stack">
+          <div class="eq sm" style="--ec:var(--c2)">lim(f ± g) = lim f ± lim g</div>
+          <div class="eq sm" style="--ec:var(--c2)">lim(f · g) = lim f · lim g</div>
+          <div class="eq sm" style="--ec:var(--c2)">lim(f / g) = lim f / lim g &nbsp;(lim g ≠ 0)</div>
+        </div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Handling 0/0 Indeterminate Forms</div>
+        <div class="eq-stack">
+          <div class="eq sm" style="--ec:var(--c1)">Factoring — cancel the common zero factor</div>
+          <div class="eq sm" style="--ec:var(--gold)">Rationalize — multiply by conjugate</div>
+          <div class="eq sm" style="--ec:var(--ora)">LCD — combine fractions, then simplify</div>
+        </div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Squeeze Theorem</div>
+        <div class="eq sm" style="--ec:var(--c2)">g(x) ≤ f(x) ≤ h(x) &nbsp;and&nbsp; lim g = lim h = L &nbsp;⟹&nbsp; lim f = L</div>
+        <div class="eq" style="--ec:var(--gold);margin-top:9px">lim x→0 &nbsp;sin(x) / x &nbsp;= 1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     SLIDE 7 — SECTIONS 2.3 & 2.4
+     ══════════════════════════════════════════════════ -->
+<div class="slide" id="s7">
+  <div class="d-head ai">
+    <div class="d-title">Limits at Infinity &amp; Continuity</div>
+    <div class="d-ch">Chapter 2 &nbsp;·&nbsp; Sections 2.3 – 2.4</div>
+  </div>
+  <div class="two-col">
+    <div class="col">
+      <span class="sec-lbl c2 ai">2.3 — Limits Involving Infinity</span>
+      <div class="ccard ai">
+        <div class="ccard-title">Limits at ±∞</div>
+        <div class="eq-row">
+          <div class="eq" style="--ec:var(--c2)">lim x→+∞ 1/x = 0</div>
+          <div class="eq" style="--ec:var(--c2)">lim x→−∞ eˣ = 0</div>
+        </div>
+        <div class="note" style="margin-top:10px">
+          Rational functions — highest-degree term dominates:<br>
+          deg top &gt; bot → ±∞ &nbsp;|&nbsp; deg top &lt; bot → 0 &nbsp;|&nbsp; equal → ratio of leading coefficients
+        </div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Asymptotes</div>
+        <div class="eq-stack">
+          <div class="eq" style="--ec:var(--c2)">Horizontal: &nbsp;lim x→±∞ f(x) = L &nbsp;⟹&nbsp; y = L</div>
+          <div class="eq" style="--ec:var(--red)">Vertical: &nbsp;lim x→a f(x) = ±∞ &nbsp;⟹&nbsp; x = a</div>
+        </div>
+        <div class="note">Vertical asymptotes occur at zeros of denominator — simplify first</div>
+      </div>
+    </div>
+    <div class="col">
+      <span class="sec-lbl c2 ai">2.4 — Continuity of Functions</span>
+      <div class="ccard ai">
+        <div class="ccard-title">3 Conditions for Continuity at x = a</div>
+        <div class="eq-stack">
+          <div class="eq sm" style="--ec:var(--c1)">① &nbsp;f(a) is defined</div>
+          <div class="eq sm" style="--ec:var(--c1)">② &nbsp;lim x→a f(x) exists</div>
+          <div class="eq" style="--ec:var(--c1)">③ &nbsp;lim x→a f(x) = f(a)</div>
+        </div>
+        <div class="note">All three conditions must hold simultaneously</div>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Types of Discontinuity</div>
+        <ul class="blist">
+          <li><strong style="color:var(--c1)">Removable</strong> — limit exists but ≠ f(a), or f(a) undefined</li>
+          <li><strong style="color:var(--red)">Jump</strong> — lim a⁺ ≠ lim a⁻ (common in piecewise functions)</li>
+          <li><strong style="color:var(--c2)">Infinite</strong> — limit equals ±∞ (at vertical asymptotes)</li>
+        </ul>
+      </div>
+      <div class="ccard ai">
+        <div class="ccard-title">Intermediate Value Theorem (IVT)</div>
+        <div class="eq sm" style="--ec:var(--gold)">f continuous on [a,b], &nbsp;f(a) ≤ k ≤ f(b) &nbsp;⟹&nbsp; ∃c ∈ (a,b) : f(c) = k</div>
+        <div class="note">If f changes sign on [a,b] → guaranteed root exists in (a,b)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #deck -->
+
+<div id="prog"></div>
+<div id="dots">
+  <div class="dot on"></div><div class="dot"></div><div class="dot"></div>
+  <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+</div>
+<div id="ctr">1 / 7</div>
+<div id="hint">← → Space</div>
+
 <script>
-// ═══════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════
-const DATA = [
-  {
-    id:1, color:'#1fad84', label:'Chapter 1\nNumbers & Functions',
-    desc:'Number sets, function types and operations, inverse functions, and trigonometry.',
-    tags:['Section 1.1 – 1.4'],
-    bgSyms:['ℝ','ℕ','ℤ','ℚ','f(x)','f⁻¹','∘','sin','cos','|x|','π','θ'],
-    sections:[
-      { label:'1.1\nSets of Numbers &\nInequalities',
-        desc:'Number sets, inequality intervals, and properties of absolute value.',
-        tags:['Number Sets','Intervals','Absolute Value'],
-        leaves:[
-          { label:'Number\nSets',
-            desc:'Number sets form a chain: ℕ⊂W⊂ℤ⊂ℚ⊂ℝ — each set contains the previous one.',
-            tags:['ℕ⊂W⊂ℤ⊂ℚ⊂ℝ'],
-            children:[
-              {label:'ℕ Natural\nNumbers',    desc:'Counting numbers starting from 1. No zero, no negatives.',       tags:['ℕ = {1,2,3,…}','No zero or negatives','Example: student count']},
-              {label:'W Whole\nNumbers',      desc:'Natural numbers plus zero.',                  tags:['W = {0,1,2,3,…}','ℕ ⊂ W','Example: empty shelf = 0']},
-              {label:'ℤ Integers',            desc:'Whole numbers and their negatives.',             tags:['ℤ = {…,−2,−1,0,1,2,…}','W ⊂ ℤ','Example: −5° temperature']},
-              {label:'ℚ Rational\nNumbers',   desc:'Written as p/q where p,q are integers and q≠0. Includes terminating and repeating decimals.',              tags:['ℚ = {p/q | q≠0}','ℤ ⊂ ℚ','Example: 3/4, −2/3']},
-              {label:'ℝ Real\nNumbers',       desc:'Includes rational and irrational numbers. Every point on the number line.',            tags:['ℚ ⊂ ℝ','Includes π, √2, e','Non-terminating, non-repeating']},
-            ]
-          },
-          { label:'Intervals &\nInequalities',
-            desc:'Representing inequality solutions as intervals, with the sign-flip rule.',
-            tags:['Open','Closed','Sign Rule'],
-            children:[
-              {label:'Open\n(a, b)',       desc:'Does not include endpoints: a < x < b.',            tags:['(a,b): a < x < b','Open endpoints ○','Example: (1,5)']},
-              {label:'Closed\n[a, b]',     desc:'Includes both endpoints: a ≤ x ≤ b.',              tags:['[a,b]: a ≤ x ≤ b','Closed endpoints ●','Example: [−2,3]']},
-              {label:'Half-Open\n[a,b)',    desc:'Includes exactly one endpoint.',               tags:['[a,b): a ≤ x < b','(a,b]: a < x ≤ b']},
-              {label:'Infinite\nIntervals', desc:'Intervals that extend to infinity in one or both directions.',           tags:['(a,∞): x > a','(−∞,b]: x ≤ b','(−∞,∞) = ℝ']},
-              {label:'Sign\nRule',          desc:'Multiplying or dividing by a negative flips the inequality sign.', tags:['−2x > 4 ⟹ x < −2','Multiply by −1 → flip sign','Example: −x ≤ 3 ⟹ x ≥ −3']},
-            ]
-          },
-          { label:'Absolute\nValue',
-            desc:'|a| measures the distance from zero on the number line.',
-            tags:['Definition','Triangle Inequality'],
-            children:[
-              {label:'Definition\n|a|',        desc:'|a|=a if a≥0, |a|=−a if a<0. Always non-negative.',         tags:['|3|=3','|−5|=5','|0|=0']},
-              {label:'Triangle\nInequality',   desc:'|a+b| ≤ |a|+|b| — always true for any real numbers.',              tags:['|a+b| ≤ |a|+|b|','مثال: |3+(−5)| ≤ 3+5','2 ≤ 8 ✓']},
-              {label:'Solving\n|x−a| < r',    desc:'Means a−r < x < a+r — an open interval around a.',    tags:['|x−2|<3 ⟹ −1<x<5','تمثيل على خط الأعداد','Distance less than r']},
-              {label:'Solving\n|x−a| > r',    desc:'Means x<a−r or x>a+r — union of two intervals.', tags:['|x|>2 ⟹ x<−2 أو x>2','Two directions on number line']},
-            ]
-          },
-        ]
-      },
-      { label:'1.2\nFunctions',
-        desc:'Function definition, types, operations including composition.',
-        tags:['Definition','Types','Operations','Composition'],
-        leaves:[
-          { label:'Function\nDefinition',
-            desc:'A relation that maps each element in the domain to exactly one element in the range.',
-            tags:['Domain','Range','VLT'],
-            children:[
-              {label:'Domain', desc:'The set of all valid inputs for the function.', tags:['مثال: f(x)=√x ⟹ Domain=[0,∞)','Exclude values making function undefined']},
-              {label:'Range',  desc:'The set of all possible output values of the function.', tags:['مثال: f(x)=x² ⟹ Range=[0,∞)','لا تأخذ قيماً سالبة']},
-              {label:'Vertical\nLine Test', desc:'A graph represents a function if every vertical line intersects it at most once.', tags:['Circle: not a function ✗','Parabola: is a function ✓']},
-            ]
-          },
-          { label:'Types of\nFunctions',
-            desc:'The basic types of functions and their key properties.',
-            tags:['Linear','Power','Root','Rational','Piecewise'],
-            children:[
-              {label:'Linear\nf(x)=mx+b',   desc:'Straight line. m=slope, b=y-intercept.', tags:['f(x)=b: horizontal line','m>0: increasing','m<0: decreasing','Example: f(x)=2x+1']},
-              {label:'Power\nf(x)=xⁿ',      desc:'Behavior depends on n. Even n: symmetric about y-axis. Odd n: symmetric about origin.',            tags:['Even n: f(x)=x²','Odd n: f(x)=x³','Even n: symmetric about y-axis']},
-              {label:'Root\nf(x)=ⁿ√x',      desc:'Square root domain [0,∞). nth root domain depends on n.',         tags:['f(x)=√x: [0,∞)','f(x)=∛x: ℝ','Radicand must be ≥ 0']},
-              {label:'Rational\nf=p(x)/q(x)', desc:'Domain: all ℝ except where denominator = 0.', tags:['q(x)≠0','Example: 1/(x−2)','مجالها: ℝ−{2}']},
-              {label:'Piecewise',             desc:'Defined by different formulas on different intervals.', tags:['Example: |x|','Check each interval separately','Important for one-sided limits']},
-            ]
-          },
-          { label:'Operations &\nComposition',
-            desc:'Arithmetic operations on functions and their composition.',
-            tags:['Def 1.2.7 — Operations','Thm 1.2.1 — Domains'],
-            children:[
-              {label:'(f+g)(x)',  desc:'(f+g)(x)=f(x)+g(x). Domain: Df∩Dg.',     tags:['Df+g = Df∩Dg','مثال: f=x², g=x+1','(f+g)(x)=x²+x+1']},
-              {label:'(f−g)(x)',  desc:'(f−g)(x)=f(x)−g(x). Domain: Df∩Dg.',     tags:['Df−g = Df∩Dg','(f−g)(2)=f(2)−g(2)']},
-              {label:'(f·g)(x)',  desc:'(f·g)(x)=f(x)·g(x). Domain: Df∩Dg.',     tags:['Df·g = Df∩Dg','مثال: (x²)(x+1)=x³+x²']},
-              {label:'(f/g)(x)',  desc:'(f/g)(x)=f(x)/g(x). Domain: Df∩Dg, g(x)≠0.',tags:['Df/g = Df∩Dg، g≠0','مثال: x²/(x+1)، x≠−1']},
-              {label:'(f∘g)(x)',  desc:'(f∘g)(x)=f(g(x)). Apply g first, then f. Order matters.',   tags:['Order matters: f∘g ≠ g∘f','Example: g(x)=x+1, f(x)=x²','(f∘g)(2)=f(3)=9']},
-            ]
-          },
-        ]
-      },
-      { label:'1.3\nInverse Functions',
-        desc:'Conditions for inverse functions to exist, and their properties.',
-        tags:['One-to-One','Inverse f⁻¹','Properties'],
-        leaves:[
-          { label:'One-to-One\nFunction',
-            desc:'Every element in the range corresponds to exactly one element in the domain.',
-            tags:['Def 1.3.1'],
-            children:[
-              {label:'Definition', desc:'f(x₁)=f(x₂) ⟹ x₁=x₂ for all x₁,x₂ in the domain.', tags:['Equal outputs imply equal inputs','Formal definition']},
-              {label:'HLT\nHorizontal Line Test', desc:'One-to-one if every horizontal line intersects the graph at most once.', tags:['f(x)=x³: one-to-one ✓','f(x)=x²: not one-to-one ✗','Simplest graphical test']},
-              {label:'Examples', desc:'Examples of one-to-one and non-one-to-one functions.', tags:['f(x)=2x+1 ✓','f(x)=x² on ℝ ✗','f(x)=x² on [0,∞) ✓']},
-            ]
-          },
-          { label:'Inverse\nFunction f⁻¹',
-            desc:'If f is one-to-one, then f⁻¹ exists such that y=f(x) ⟺ x=f⁻¹(y).',
-            tags:['Def 1.3.2'],
-            children:[
-              {label:'How to\nFind f⁻¹', desc:'(1) Write y=f(x). (2) Swap x and y. (3) Solve for y.', tags:['Example: f(x)=2x+1','y=2x+1 ⟹ x=2y+1','f⁻¹(x)=(x−1)/2']},
-              {label:'Domain &\nRange',   desc:'Domain(f⁻¹)=Range(f). Range(f⁻¹)=Domain(f).', tags:['Domain(f⁻¹)=Range(f)','Range(f⁻¹)=Domain(f)','مثال: f(x)=√x ⟹ f⁻¹(x)=x²']},
-              {label:'Graph\ny = x',      desc:'Graph of f⁻¹ is the reflection of graph of f across y=x.', tags:['(a,b) on f ⟹ (b,a) on f⁻¹','Example: (2,8) on x³ ⟹ (8,2) on ∛x']},
-            ]
-          },
-          { label:'Cancellation\nLaws',
-            desc:'f⁻¹(f(x))=x for x in domain of f. f(f⁻¹(x))=x for x in domain of f⁻¹.',
-            tags:['f⁻¹(f(x)) = x','f(f⁻¹(x)) = x','Example: ln(eˣ)=x','Example: e^(ln x)=x']
-          },
-        ]
-      },
-      { label:'1.4\nTrigonometric Functions\n& Their Inverses',
-        desc:'Angle measurement, six trig functions, identities, and inverses.',
-        tags:['Angles','6 Functions','Identities','Inverses'],
-        leaves:[
-          { label:'Angles &\nMeasurements',
-            desc:'Measuring angles in degrees and radians, and computing arc length.',
-            tags:['Radians','Arc Length','Reference Angle'],
-            children:[
-              {label:'Degree ↔\nRadian',      desc:'Degrees→radians: multiply by π/180. Radians→degrees: multiply by 180/π.', tags:['180° = π rad','90° = π/2','60° = π/3','45° = π/4','30° = π/6']},
-              {label:'Arc Length\ns = rθ',    desc:'Arc length = radius × angle in radians. s = rθ.', tags:['s = rθ','θ must be in radians','Example: r=5, θ=π/3','s=5π/3 ≈ 5.24']},
-              {label:'Reference\nAngle θ\'',  desc:'The positive acute angle between the terminal side and the x-axis.', tags:['Q1: θ\'=θ','Q2: θ\'=π−θ','Q3: θ\'=θ−π','Q4: θ\'=2π−θ']},
-            ]
-          },
-          { label:'6 Trig\nFunctions',
-            desc:'The six trig functions, their definitions, and signs in the four quadrants.',
-            tags:['sin,cos,tan','csc,sec,cot','ASTC'],
-            children:[
-              {label:'sin, cos,\ntan',  desc:'sin=opp/hyp, cos=adj/hyp, tan=opp/adj=sin/cos.', tags:['sin(30°)=1/2','cos(60°)=1/2','tan(45°)=1','tan=sin/cos']},
-              {label:'csc, sec,\ncot',  desc:'Reciprocals: csc=1/sin, sec=1/cos, cot=1/tan=cos/sin.', tags:['csc(30°)=2','sec(60°)=2','cot=cos/sin']},
-              {label:'ASTC\nSigns',     desc:'Signs in quadrants — ASTC: All/Sin/Tan/Cos positive.', tags:['Q1: All + (ASTC: A)','Q2: sin, csc + (ASTC: S)','Q3: tan, cot + (ASTC: T)','Q4: cos, sec + (ASTC: C)']},
-            ]
-          },
-          { label:'Trig\nIdentities',
-            desc:'Core identities derived from the Pythagorean identity sin²θ+cos²θ=1.',
-            tags:['Pythagorean','Double Angle'],
-            children:[
-              {label:'Pythagorean\nIdentities',  desc:'Three fundamental identities derived from the unit circle.', tags:['sin²θ+cos²θ=1','1+tan²θ=sec²θ','1+cot²θ=csc²θ']},
-              {label:'Double Angle\nFormulas',   desc:'Double-angle formulas for sin and cos.', tags:['sin(2θ)=2sinθcosθ','cos(2θ)=cos²θ−sin²θ','cos(2θ)=1−2sin²θ']},
-              {label:'Half Angle\nFormulas',     desc:'Half-angle formulas derived from double-angle identities.', tags:['sin²θ=(1−cos2θ)/2','cos²θ=(1+cos2θ)/2']},
-            ]
-          },
-          { label:'Inverse Trig\nFunctions',
-            desc:'sin⁻¹, cos⁻¹, tan⁻¹ — their definitions, domains, and ranges.',
-            tags:['sin⁻¹','cos⁻¹','tan⁻¹'],
-            children:[
-              {label:'sin⁻¹(x)',  desc:'Domain: [−1,1]. Range: [−π/2, π/2]. Increasing function.', tags:['sin⁻¹(1/2)=π/6','sin⁻¹(−1)=−π/2','sin⁻¹(0)=0']},
-              {label:'cos⁻¹(x)', desc:'Domain: [−1,1]. Range: [0, π]. Decreasing function.', tags:['cos⁻¹(1/2)=π/3','cos⁻¹(−1)=π','cos⁻¹(0)=π/2']},
-              {label:'tan⁻¹(x)', desc:'Domain: ℝ. Range: (−π/2, π/2). Horizontal asymptotes at ±π/2.', tags:['tan⁻¹(1)=π/4','tan⁻¹(0)=0','tan⁻¹(∞)=π/2']},
-            ]
-          },
-        ]
-      }
-    ]
-  },
-  {
-    id:2, color:'#7b6fd4', label:'Chapter 2\nLimits & Continuity',
-    desc:'Limit concept, evaluation methods, limits at infinity, and continuity conditions.',
-    tags:['Section 2.1 – 2.4'],
-    bgSyms:['lim','→','∞','ε','δ','L','a⁺','a⁻','0/0','≈','∃','⟹'],
-    sections:[
-      { label:'2.1\nDefinition of Limit',
-        desc:'Definition of the limit, one-sided limits, and existence condition.',
-        tags:['Definition','One-Sided','Existence'],
-        leaves:[
-          { label:'Limit\nDefinition',
-            desc:'lim(x→a)f(x)=L — the value f(x) approaches as x→a.',
-            tags:['Intuitive','Formal ε-δ'],
-            children:[
-              {label:'Intuitive\nDefinition',  desc:'f(x) approaches L as x approaches a, without reaching a.', tags:['x approaches a but x≠a','f(a) may not exist','مثال: lim x→2 (x²−4)/(x−2)=4']},
-              {label:'Formal ε-δ\nDefinition', desc:'For all ε>0 there exists δ>0 such that: 0<|x−a|<δ ⟹ |f(x)−L|<ε.', tags:['For every ε>0 there exists δ>0','Formal mathematical definition','Used in rigorous proofs']},
-            ]
-          },
-          { label:'One-Sided\nLimits',
-            desc:'Right-hand limit (x→a⁺): x approaches a from the right. Left-hand limit (x→a⁻): x approaches a from the left.',
-            tags:['lim x→a⁺ (x>a)','lim x→a⁻ (x<a)','Example: lim x→0⁺ 1/x = +∞','Example: lim x→0⁻ 1/x = −∞']
-          },
-          { label:'Existence\nCondition',
-            desc:'The limit exists only if the right-hand and left-hand limits are equal: lim x→a⁺ = lim x→a⁻ = L.',
-            tags:['lim a⁺ = lim a⁻ = L','If unequal: limit does not exist','Example: |x|/x at 0 — right=1, left=−1 ✗','Example: sin(1/x) at 0 — oscillates ✗']
-          },
-        ]
-      },
-      { label:'2.2\nLimit Laws',
-        desc:'Limit laws, direct substitution, and methods for 0/0 forms.',
-        tags:['Laws','Methods','Squeeze'],
-        leaves:[
-          { label:'Basic\nLimit Laws',
-            desc:'Laws for sums, products, and quotients of limits.',
-            tags:['Sum','Product','Quotient'],
-            children:[
-              {label:'Sum & Diff\nLaw',     desc:'lim(f±g) = lim f ± lim g. Both limits must exist.', tags:['Both limits must exist','مثال: lim(x²+x)=lim x²+lim x']},
-              {label:'Product\nLaw',        desc:'lim(f·g) = lim f · lim g. Both limits must exist.', tags:['مثال: lim x·sin(x)','= lim x · lim sin(x)']},
-              {label:'Quotient\nLaw',       desc:'lim(f/g) = lim f / lim g, provided lim g ≠ 0.', tags:['Condition: lim g ≠ 0','If lim g=0: law does not apply']},
-              {label:'Power\nLaw',          desc:'lim(f)ⁿ = (lim f)ⁿ. The limit of a power is the power of the limit.', tags:['مثال: lim(x+1)² = (lim x+1)²','= 4 عند x→1']},
-            ]
-          },
-          { label:'Direct\nSubstitution',
-            desc:'Always try substituting x=a first. Works for continuous functions. If result is 0/0, use simplification methods.',
-            tags:['Step 1: substitute x=a','Works for: polynomials, trig, exp','0/0 → use simplification','Example: lim x→3 x²+1 = 10']
-          },
-          { label:'Simplification\nMethods',
-            desc:'Three methods for handling indeterminate forms like 0/0.',
-            tags:['Factoring','Rationalizing','LCD'],
-            children:[
-              {label:'Factorization', desc:'Factor numerator and denominator, then cancel the common zero factor.', tags:['مثال: (x²−4)/(x−2)','=(x+2)(x−2)/(x−2)','= x+2 → 4 as x→2']},
-              {label:'Rationalization', desc:'Multiply by the conjugate to eliminate radicals.', tags:['مثال: (√(x+1)−1)/x','اضرب في (√(x+1)+1)','الناتج: 1/(√(x+1)+1) → 1/2']},
-              {label:'LCD Method', desc:'Find the LCD to combine complex fractions, then simplify.', tags:['مثال: (1/x − 1/2)/(x−2)','اضرب في 2x','= (2−x)/(2x(x−2)) = −1/(2x)']},
-            ]
-          },
-          { label:'Squeeze\nTheorem',
-            desc:'إذا حُصرت f بين g و h وتقاربتا إلى نفس الحد فكذلك f.',
-            tags:['Sandwich Theorem'],
-            children:[
-              {label:'Statement', desc:'g(x)≤f(x)≤h(x) و lim g=lim h=L ⟹ lim f=L.', tags:['الشرط: تساوي النهايتين','تُثبت حصر f','مهمة في الإثباتات']},
-              {label:'Classic\nExample', desc:'lim x→0 sin(x)/x = 1.', tags:['cos x ≤ sin(x)/x ≤ 1','بالحصر: النهاية = 1','تُستخدم كثيراً في المشتقات']},
-            ]
-          },
-        ]
-      },
-      { label:'2.3\nLimits Involving Infinity',
-        desc:'Behavior of functions as x→±∞ and asymptote analysis.',
-        tags:['At Infinity','Infinite Limits','Asymptotes'],
-        leaves:[
-          { label:'Limits at\nInfinity',
-            desc:'Behavior of the function as x→±∞.',
-            tags:['x→+∞','x→−∞'],
-            children:[
-              {label:'Limit at\n+∞',   desc:'lim x→+∞ f(x) — ماذا يحدث عندما يكبر x؟', tags:['lim 1/x = 0 عند ∞','lim xⁿ = ∞ إذا n>0','مقارنة الدرجات']},
-              {label:'Limit at\n−∞',   desc:'lim x→−∞ f(x) — ماذا يحدث عندما يصغر x؟', tags:['lim eˣ = 0 عند −∞','lim x³ = −∞','السلوك النهائي']},
-              {label:'Comparing\nDegrees', desc:'لكثيرات الحدود: Highest-degree term dominates.', tags:['deg(top)>deg(bot): ±∞','deg(top)<deg(bot): 0','deg(top)=deg(bot): نسبة المعاملات']},
-            ]
-          },
-          { label:'Infinite\nLimits',
-            desc:'The limit equals ±∞ as x approaches a point.',
-            tags:['lim f = ±∞'],
-            children:[
-              {label:'lim = +∞', desc:'الدالة تتزايد بلا حدود عند اقتراب x من a.', tags:['lim x→0⁺ 1/x = +∞','Occurs at zeros of denominator','يدل على خط تقارب رأسي']},
-              {label:'lim = −∞', desc:'الدالة تتناقص بلا حدود عند اقتراب x من a.', tags:['lim x→0⁻ 1/x = −∞','يدل على خط تقارب رأسي']},
-            ]
-          },
-          { label:'Asymptotes',
-            desc:'Horizontal and vertical asymptotes.',
-            tags:['Horizontal','Vertical'],
-            children:[
-              {label:'Horizontal\nAsymptote y=L', desc:'يوجد إذا كانت النهاية عند ±∞ ثابتاً L.', tags:['lim x→∞ f(x)=L ⟹ y=L','مثال: 1/x ⟹ y=0','قد يكون خطان']},
-              {label:'Vertical\nAsymptote x=a', desc:'Occurs at zeros of denominator بعد التبسيط.', tags:['lim x→a f(x)=±∞','Example: 1/(x−2) ⟹ x=2','تحقق من التبسيط أولاً']},
-            ]
-          },
-        ]
-      },
-      { label:'2.4\nContinuity of Functions',
-        desc:'Three conditions for continuity, types of discontinuity, IVT.',
-        tags:['Conditions','Discontinuity','IVT'],
-        leaves:[
-          { label:'Continuity\nConditions',
-            desc:'A function is continuous at x=a if all three conditions hold.',
-            tags:['3 Conditions'],
-            children:[
-              {label:'① f(a)\nexists',         desc:'f(a) is defined (the function exists at the point).', tags:['① f(a) is defined','مثال: f(x)=1/x غير معرفة عند 0','✓ خطوة 1']},
-              {label:'② limit\nexists',        desc:'lim x→a f(x) exists (right and left limits are equal).', tags:['lim a⁺ = lim a⁻','النهاية من الجانبين متساوية','✓ خطوة 2']},
-              {label:'③ limit = f(a)',          desc:'The limit value equals the function value: lim x→a f(x) = f(a).', tags:['lim x→a f(x) = f(a)','الثلاثة شرط لازم وكافٍ','✓ خطوة 3']},
-            ]
-          },
-          { label:'Types of\nDiscontinuity',
-            desc:'The three types of discontinuity and their properties.',
-            tags:['Removable','Jump','Infinite'],
-            children:[
-              {label:'Removable\nDiscontinuity',  desc:'Limit exists لكنها ≠ f(a) أو f(a) غير معرفة.', tags:['قابلة للإزالة','مثال: (x²−1)/(x−1) عند x=1','النهاية=2، f(1) غير معرفة']},
-              {label:'Jump\nDiscontinuity',       desc:'lim x→a⁺ ≠ lim x→a⁻ — الدالة تقفز.', tags:['Common in piecewise functions','مثال: ⌊x⌋ عند x=1','يمين=1، يسار=0']},
-              {label:'Infinite\nDiscontinuity',   desc:'إحدى النهايتين أو كلتاهما = ±∞.', tags:['At vertical asymptotes','مثال: 1/x عند x=0','lim 0⁺=+∞، lim 0⁻=−∞']},
-            ]
-          },
-          { label:'Continuity on\nan Interval',
-            desc:'Types of continuity on open and closed intervals.',
-            tags:['Open','Closed'],
-            children:[
-              {label:'On Open\nInterval (a,b)',   desc:'Continuous at every point inside the interval.', tags:['عند كل x في (a,b)','Polynomials: continuous on all ℝ','الدوال الكسرية: على مجالها']},
-              {label:'On Closed\nInterval [a,b]', desc:'Continuous on (a,b) plus right-continuous at a and left-continuous at b.', tags:['تشمل الطرفين','مهمة لتطبيق IVT','f متصلة على [a,b] ⟹ IVT']},
-            ]
-          },
-          { label:'Intermediate\nValue Theorem',
-            desc:'If f is continuous on [a,b] and f(a)≤k≤f(b), then ∃c∈(a,b) with f(c)=k.',
-            tags:['IVT'],
-            children:[
-              {label:'IVT\nStatement',    desc:'f continuous + f(a)≤k≤f(b) ⟹ ∃c∈(a,b): f(c)=k.', tags:['الدالة تأخذ كل القيم بين f(a) وf(b)','ضمان وجود النقطة c']},
-              {label:'Root Finding\nApplication', desc:'If f changes sign on [a,b], there exists a root in (a,b).', tags:['f(a)<0 و f(b)>0','⟹ ∃c: f(c)=0','Example: f(1)=−1, f(2)=3 ⟹ root in (1,2) في (1,2)']},
-            ]
-          },
-        ]
-      }
-    ]
-  }
-];
-
-// ═══════════════════════════════════════════════════════
-// BACKGROUND CANVAS — themed per chapter region
-// ═══════════════════════════════════════════════════════
-const bgCanvas=document.getElementById('bgc');
-const bgCtx=bgCanvas.getContext('2d');
-
-// ── AUTONOMOUS FLOATING SYMBOLS ───────────────────────────
-const SYM_LIST=['π','∑','∫','∞','∂','Δ','∇','√','α','β','θ','λ','lim','sin','cos','f⁻¹','ℝ','|x|','dx','xⁿ','∀','∃','≤','≥','±','φ','μ','σ'];
-const FLOATS=[];
-function makeFloat(startY){
-  return{
-    sym: SYM_LIST[Math.floor(Math.random()*SYM_LIST.length)],
-    x: Math.random()*window.innerWidth,
-    y: startY!==undefined ? startY : Math.random()*window.innerHeight,
-    size: Math.random()*58+12,
-    speed: Math.random()*.28+.08,
-    opacity: Math.random()*.038+.016,
-    drift: (Math.random()-.5)*.18,
-    rot: (Math.random()-.5)*.004,
-    angle: (Math.random()-.5)*.4,
-  };
+// ── BACKGROUND ──────────────────────────────────────────
+const bgC = document.getElementById('bgc');
+const bgX = bgC.getContext('2d');
+const SYMS = ['π','∑','∫','∞','∂','Δ','∇','√','α','β','θ','λ','lim','sin','cos','f⁻¹','ℝ','|x|','dx','xⁿ','∀','∃','≤','≥','±','ε','δ','φ'];
+const FL = [];
+function mf(sy) {
+  return { sym: SYMS[Math.floor(Math.random()*SYMS.length)], x: Math.random()*innerWidth,
+    y: sy!==undefined?sy:Math.random()*innerHeight, size: Math.random()*54+14,
+    speed: Math.random()*.25+.07, opacity: Math.random()*.035+.013,
+    drift: (Math.random()-.5)*.17, rot: (Math.random()-.5)*.003, angle: (Math.random()-.5)*.35 };
 }
-for(let i=0;i<32;i++) FLOATS.push(makeFloat());
-
-// Dot grid — draw once on a separate offscreen canvas for perf
-let dotCanvas=null;
-function buildDotGrid(){
-  dotCanvas=document.createElement('canvas');
-  dotCanvas.width=bgCanvas.width;
-  dotCanvas.height=bgCanvas.height;
-  const ctx=dotCanvas.getContext('2d');
-  ctx.fillStyle='rgba(255,255,255,0.028)';
-  for(let x=0;x<dotCanvas.width;x+=26)
-    for(let y=0;y<dotCanvas.height;y+=26){
-      ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill();
-    }
+for(let i=0;i<30;i++) FL.push(mf());
+let dc=null;
+function buildDots() {
+  dc=document.createElement('canvas'); dc.width=bgC.width; dc.height=bgC.height;
+  const c=dc.getContext('2d'); c.fillStyle='rgba(255,255,255,0.025)';
+  for(let x=0;x<dc.width;x+=28) for(let y=0;y<dc.height;y+=28){c.beginPath();c.arc(x,y,1,0,Math.PI*2);c.fill();}
 }
-
-function drawBg(){
-  const BW=bgCanvas.width, BH=bgCanvas.height;
-  // Skip frame if canvas not ready
-  if(!BW||!BH){requestAnimationFrame(drawBg);return;}
-  bgCtx.clearRect(0,0,BW,BH);
-
-  // Dot grid (pre-rendered)
-  if(dotCanvas&&dotCanvas.width>0&&dotCanvas.height>0) bgCtx.drawImage(dotCanvas,0,0);
-
-  // Floating symbols
-  FLOATS.forEach(s=>{
-    s.y+=s.speed;s.x+=s.drift;s.angle+=s.rot;
-    if(s.y>BH+s.size*2) Object.assign(s,makeFloat(-s.size*2-Math.random()*80));
-    bgCtx.save();
-    bgCtx.translate(s.x,s.y);bgCtx.rotate(s.angle);
-    bgCtx.font=`300 italic ${s.size}px "Cormorant Garamond",Georgia,serif`;
-    bgCtx.fillStyle=`rgba(201,168,76,${s.opacity})`;
-    bgCtx.fillText(s.sym,0,0);
-    bgCtx.restore();
+function drawBg() {
+  const W=bgC.width,H=bgC.height; if(!W||!H){requestAnimationFrame(drawBg);return;}
+  bgX.clearRect(0,0,W,H);
+  if(dc&&dc.width>0) bgX.drawImage(dc,0,0);
+  FL.forEach(s=>{
+    s.y+=s.speed; s.x+=s.drift; s.angle+=s.rot;
+    if(s.y>H+s.size*2) Object.assign(s,mf(-s.size*2-Math.random()*80));
+    bgX.save(); bgX.translate(s.x,s.y); bgX.rotate(s.angle);
+    bgX.font=`300 italic ${s.size}px "Cormorant Garamond",serif`;
+    bgX.fillStyle=`rgba(201,168,76,${s.opacity})`; bgX.fillText(s.sym,0,0); bgX.restore();
   });
   requestAnimationFrame(drawBg);
 }
+function setupBg(){ bgC.width=innerWidth; bgC.height=innerHeight; buildDots(); }
+window.addEventListener('resize',setupBg); setupBg(); drawBg();
 
-function setupBg(){
-  bgCanvas.width=window.innerWidth;
-  bgCanvas.height=window.innerHeight;
-  buildDotGrid();
-}
-window.addEventListener('resize',setupBg);
-setupBg();
-drawBg();
+// ── SLIDES ───────────────────────────────────────────────
+const slides = Array.from(document.querySelectorAll('.slide'));
+const TOTAL  = slides.length;
+let cur = 0, busy = false;
 
-// ═══════════════════════════════════════════════════════
-// SVG ENGINE
-// ═══════════════════════════════════════════════════════
-const NS='http://www.w3.org/2000/svg';
-let G=null;
-const chCenters=[];
+const progEl = document.getElementById('prog');
+const ctrEl  = document.getElementById('ctr');
+const dotEls = Array.from(document.querySelectorAll('.dot'));
 
-// Canvas world — very large so nothing overlaps
-const W=10000, H=10000, CX=W/2, CY=H/2;
-
-// Radial distances
-const D_CH   = 240;
-const D_SEC  = 530;
-const D_LEAF = 980;
-const D_SUB  = 1880;
-
-const GAP_PX = 22;
-
-const ROOT_R=64, CH_R=48, SEC_R=34;
-const LW=124, LH=48;
-const SW=104, SH=36;
-
-// Animation lists
-let animLines=[];
-let _animNodeList=[];
-
-function se(tag,a,p){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a||{}))e.setAttribute(k,v);if(p)p.appendChild(e);return e}
-function polar(cx,cy,deg,r){const a=deg*Math.PI/180;return{x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)}}
-
-// Convert pixel width to degrees at a given radius
-function px2deg(px,r){return (px/r)*(180/Math.PI)}
-
-// Angular span needed for one sub-leaf at D_SUB
-function subSpanDeg(){return px2deg(SW+GAP_PX, D_SUB)}
-// Angular span needed for one topic (= max of its own size vs its children's total)
-function topicSpanDeg(topic){
-  const subs=topic.children||[];
-  const fromSubs=subs.length * subSpanDeg();
-  const fromSelf=px2deg(LW+GAP_PX, D_LEAF);
-  return Math.max(fromSubs, fromSelf);
-}
-// Angular span needed for one section
-function secSpanDeg(sec){
-  const topics=sec.leaves||[];
-  return topics.reduce((s,t)=>s+topicSpanDeg(t),0);
+function updateUI() {
+  ctrEl.textContent = `${cur+1} / ${TOTAL}`;
+  progEl.style.width = `${((cur+1)/TOTAL)*100}%`;
+  dotEls.forEach((d,i) => d.classList.toggle('on', i===cur));
 }
 
-function buildMap(){
-  const svg=document.getElementById('svg');
-  svg.innerHTML=''; chCenters.length=0;
-  animLines=[]; _animNodeList=[];
-  svg.setAttribute('width',W); svg.setAttribute('height',H);
-  G=se('g',{},svg);
-  const LG=se('g',{},G), NG=se('g',{},G);
-
-  // BG symbols
-  DATA.forEach((ch,ci)=>{
-    const base=ci===0?180:0;
-    (ch.bgSyms||[]).forEach(sym=>{
-      const a=base-80+Math.random()*160, d=500+Math.random()*1500;
-      const p=polar(CX,CY,a,d);
-      se('text',{x:p.x,y:p.y,'text-anchor':'middle','dominant-baseline':'central',
-        fill:ch.color,opacity:(0.022+Math.random()*0.03).toFixed(3),
-        'font-size':(35+Math.random()*80).toFixed(0),
-        'font-family':'Cormorant Garamond,serif','font-style':'italic','font-weight':'300',
-        transform:`rotate(${(Math.random()*24-12).toFixed(1)},${p.x},${p.y})`},LG).textContent=sym;
-    });
-  });
-
-  // ROOT
-  drawRoot(NG,LG,CX,CY);
-
-  // Both chapters animate together — same delay bucket
-  const chSectors=[
-    {center:180, span:183},
-    {center:0,   span:183},
-  ];
-
-  DATA.forEach((ch,ci)=>{
-    const sector=chSectors[ci];
-    let delay=200;  // both start at same time
-
-    const chPos=polar(CX,CY,sector.center,D_CH);
-    chCenters[ci]={x:chPos.x,y:chPos.y};
-    animLine(LG,CX,CY,chPos.x,chPos.y,ch.color,2.5,delay);
-    drawChNode(NG,chPos.x,chPos.y,ch,delay+60);
-    delay+=140;
-
-    // Compute total section span and center in sector
-    const secs=ch.sections;
-    const spans=secs.map(s=>Math.max(secSpanDeg(s), px2deg(SEC_R*2+GAP_PX, D_SEC)));
-    const totalSpan=spans.reduce((s,a)=>s+a,0);
-    let curAngle=sector.center - totalSpan/2;
-
-    secs.forEach((sec,si)=>{
-      const span=spans[si];
-      const secCenter=curAngle+span/2;
-      curAngle+=span;
-
-      const secPos=polar(CX,CY,secCenter,D_SEC);
-      animLine(LG,chPos.x,chPos.y,secPos.x,secPos.y,ch.color,1.6,delay);
-      drawSecNode(NG,secPos.x,secPos.y,ch.color,sec,delay+50);
-      delay+=110;
-
-      // Topics
-      const topics=sec.leaves||[];
-      const tSpans=topics.map(t=>topicSpanDeg(t));
-      const totalTSpan=tSpans.reduce((s,a)=>s+a,0);
-      let tAngle=secCenter-totalTSpan/2;
-
-      topics.forEach((topic,ti)=>{
-        const tSpan=tSpans[ti];
-        const topicCenter=tAngle+tSpan/2;
-        tAngle+=tSpan;
-
-        const topicPos=polar(CX,CY,topicCenter,D_LEAF);
-        animLine(LG,secPos.x,secPos.y,topicPos.x,topicPos.y,ch.color,1.2,delay);
-        drawLeaf(NG,topicPos.x,topicPos.y,ch.color,topic,delay+40);
-        delay+=90;
-
-        // Sub-leaves — evenly spaced
-        const subs=topic.children||[];
-        if(subs.length){
-          const sDeg=subSpanDeg();
-          const totalS=subs.length*sDeg;
-          let sAngle=topicCenter-totalS/2+sDeg/2;
-
-          subs.forEach((sub)=>{
-            const subPos=polar(CX,CY,sAngle,D_SUB);
-            animLine(LG,topicPos.x,topicPos.y,subPos.x,subPos.y,ch.color,0.8,delay,true);
-            drawSubLeaf(NG,subPos.x,subPos.y,ch.color,sub,delay+30);
-            sAngle+=sDeg;
-            delay+=60;
-          });
-        }
-      });
-    });
-  });
-
-  setTimeout(runEntranceAnimation,100);
-}
-
-// ── Animated line ──────────────────────────────────────
-function animLine(p,x1,y1,x2,y2,col,w,delay,dashed=false){
-  const len=Math.hypot(x2-x1,y2-y1);
-  const g=se('path',{d:`M${x1},${y1}L${x2},${y2}`,fill:'none',stroke:col,
-    'stroke-width':w*2.5,opacity:'0','stroke-linecap':'round'},p);
-  const e=se('path',{d:`M${x1},${y1}L${x2},${y2}`,fill:'none',stroke:col,
-    'stroke-width':w,opacity:'0','stroke-linecap':'round',
-    'stroke-dasharray':len,'stroke-dashoffset':len},p);
-  if(dashed){g.setAttribute('stroke-dasharray','7 7');e.setAttribute('stroke-dasharray','7 7');}
-  animLines.push({glow:g,line:e,len,delay,dashed});
-}
-
-function runEntranceAnimation(){
-  animLines.forEach(({glow,line,len,delay,dashed})=>{
-    setTimeout(()=>{
-      glow.style.transition='opacity 0.3s';
-      glow.setAttribute('opacity',dashed?'.04':'.07');
-      line.style.transition=`stroke-dashoffset 0.55s cubic-bezier(0.4,0,0.2,1),opacity 0.3s`;
-      line.setAttribute('opacity',dashed?'.22':'.38');
-      line.setAttribute('stroke-dashoffset','0');
-    },delay);
-  });
-  _animNodeList.forEach(({g,delay})=>{
-    setTimeout(()=>{
-      g.style.transition='opacity 0.4s ease,transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
-      g.style.opacity='1';
-      g.style.transform='scale(1)';
-    },delay);
+function animIn(idx) {
+  const items = slides[idx].querySelectorAll('.ai');
+  items.forEach((el,i) => {
+    el.classList.remove('in');
+    void el.offsetWidth;
+    setTimeout(() => el.classList.add('in'), i*75 + 100);
   });
 }
 
+function goTo(next) {
+  if (busy) return;
+  next = Math.max(0, Math.min(TOTAL-1, next));
+  if (next === cur) return;
+  busy = true;
 
-function animatedNode(g,delay){
-  g.style.opacity='0';
-  g.style.transform='scale(0.5)';
-  g.style.transformBox='fill-box';
-  g.style.transformOrigin='center';
-  _animNodeList.push({g,delay});
+  const dir = next > cur ? 1 : -1;
+  const out = slides[cur];
+  const inn = slides[next];
+
+  inn.style.transition = 'none';
+  inn.style.transform  = `translateX(${dir > 0 ? 100 : -100}%)`;
+  inn.style.opacity    = '0';
+  inn.style.pointerEvents = 'none';
+  inn.classList.remove('active');
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const T = 'transform .52s cubic-bezier(.4,0,.2,1), opacity .44s ease';
+    out.style.transition    = T;
+    out.style.transform     = `translateX(${dir > 0 ? -7 : 7}%)`;
+    out.style.opacity       = '0';
+    out.style.pointerEvents = 'none';
+    out.classList.remove('active');
+
+    inn.style.transition    = T;
+    inn.style.transform     = 'translateX(0)';
+    inn.style.opacity       = '1';
+    inn.style.pointerEvents = 'all';
+    inn.classList.add('active');
+
+    cur = next;
+    updateUI();
+    animIn(cur);
+
+    setTimeout(() => { out.style.cssText = ''; busy = false; }, 570);
+  }));
 }
 
-
-function drawRoot(NG,LG,x,y){
-  const g=se('g',{class:'ng'},NG);
-  [ROOT_R+22,ROOT_R+12,ROOT_R+4].forEach((r,i)=>
-    se('circle',{cx:x,cy:y,r,fill:'none',stroke:'#c9a84c','stroke-width':'1',opacity:['.04','.08','.14'][i]},g));
-  se('circle',{cx:x,cy:y,r:ROOT_R,fill:'#06070b',stroke:'#c9a84c','stroke-width':'2'},g);
-  se('circle',{cx:x,cy:y,r:ROOT_R-4,fill:'#c9a84c',opacity:'.06'},g);
-  se('ellipse',{cx:x-ROOT_R*.17,cy:y-ROOT_R*.23,rx:ROOT_R*.33,ry:ROOT_R*.15,fill:'rgba(255,255,255,.05)'},g);
-  ['Math','101'].forEach((ln,i)=>se('text',{x,y:y-10+i*20,'text-anchor':'middle','dominant-baseline':'central',fill:'#c9a84c','font-size':'15','font-weight':'700','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',()=>openDp('Math 101','Interactive mind map for Calculus — King Saud University.',['Chapter 1: Numbers & Functions','Chapter 2: Limits & Continuity'],'#c9a84c','Math 101 — KSU'));
-  g.addEventListener('mouseenter',()=>g.setAttribute('transform','translate(0,-5)'));
-  g.addEventListener('mouseleave',()=>g.removeAttribute('transform'));
-  animatedNode(g,0);
-}
-
-function drawChNode(NG,x,y,ch,delay){
-  const g=se('g',{class:'ng'},NG);
-  se('circle',{cx:x,cy:y,r:CH_R+9,fill:'none',stroke:ch.color,'stroke-width':'1',opacity:'.1'},g);
-  const fill=se('circle',{cx:x,cy:y,r:CH_R,fill:ch.color,opacity:'.12'},g);
-  se('circle',{cx:x,cy:y,r:CH_R,fill:'none',stroke:ch.color,'stroke-width':'2'},g);
-  se('ellipse',{cx:x-CH_R*.16,cy:y-CH_R*.22,rx:CH_R*.3,ry:CH_R*.14,fill:'rgba(255,255,255,.06)'},g);
-  const lines=ch.label.split('\n');
-  lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*17+(lines.length>1?2:0),'text-anchor':'middle','dominant-baseline':'central',fill:'#eeeaf2','font-size':'11.5','font-weight':'700','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',e=>{e.stopPropagation();openDp(ch.label,ch.desc,ch.tags,ch.color,`Chapter ${ch.id}`)});
-  g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-6)');fill.setAttribute('opacity','.22')});
-  g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');fill.setAttribute('opacity','.12')});
-  animatedNode(g,delay);
-}
-
-function drawSecNode(NG,x,y,col,sec,delay){
-  const g=se('g',{class:'ng'},NG);
-  const fill=se('circle',{cx:x,cy:y,r:SEC_R,fill:col,opacity:'.14'},g);
-  se('circle',{cx:x,cy:y,r:SEC_R,fill:'none',stroke:col,'stroke-width':'1.5'},g);
-  const lines=sec.label.split('\n');
-  lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*14+(lines.length>1?1:0),'text-anchor':'middle','dominant-baseline':'central',fill:'#eeeaf2','font-size':'10','font-weight':'600','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',e=>{e.stopPropagation();openDp(sec.label,sec.desc,sec.tags,col,'Section')});
-  g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-5)');fill.setAttribute('opacity','.25')});
-  g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');fill.setAttribute('opacity','.14')});
-  animatedNode(g,delay);
-}
-
-function drawLeaf(NG,x,y,col,node,delay){
-  const g=se('g',{class:'ng'},NG);
-  se('rect',{x:x-LW/2+2,y:y-LH/2+2,width:LW,height:LH,rx:'11',fill:'rgba(0,0,0,.5)'},g);
-  const rect=se('rect',{x:x-LW/2,y:y-LH/2,width:LW,height:LH,rx:'11',fill:'#090a10',stroke:col,'stroke-width':'1.5'},g);
-  se('rect',{x:x-LW/2+1,y:y-LH/2+1,width:LW-2,height:6,rx:'9',fill:col,opacity:'.6'},g);
-  se('rect',{x:x-LW/2+4,y:y-LH/2+10,width:LW-8,height:LH-18,rx:'7',fill:col,opacity:'.04'},g);
-  const lines=node.label.split('\n');
-  lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*15+(lines.length>1?2:0),'text-anchor':'middle','dominant-baseline':'central',fill:'#eeeaf2','font-size':'10.5','font-weight':'600','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',e=>{e.stopPropagation();openDp(node.label,node.desc,node.tags||[],col,'Topic')});
-  g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-5)');rect.setAttribute('stroke-width','2.3')});
-  g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');rect.setAttribute('stroke-width','1.5')});
-  animatedNode(g,delay);
-}
-
-// Sub-leaf pill
-function drawSubLeaf(NG,x,y,col,node,delay){
-  const g=se('g',{class:'ng'},NG);
-  se('rect',{x:x-SW/2+1,y:y-SH/2+1,width:SW,height:SH,rx:'9',fill:'rgba(0,0,0,.4)'},g);
-  const rect=se('rect',{x:x-SW/2,y:y-SH/2,width:SW,height:SH,rx:'9',fill:'#0d0e16',stroke:col,'stroke-width':'1',opacity:'.85'},g);
-  se('rect',{x:x-SW/2+1,y:y-SH/2+1,width:SW-2,height:4,rx:'7',fill:col,opacity:'.5'},g);
-  const lines=node.label.split('\n');
-  lines.forEach((ln,i)=>se('text',{x,y:y+(i-(lines.length-1)/2)*13+(lines.length>1?1:0),'text-anchor':'middle','dominant-baseline':'central',fill:'rgba(238,234,242,.8)','font-size':'9','font-weight':'500','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=ln);
-  g.addEventListener('click',e=>{e.stopPropagation();openDp(node.label,node.desc,node.tags||[],col,'Detail')});
-  g.addEventListener('mouseenter',()=>{g.setAttribute('transform','translate(0,-4)');rect.setAttribute('stroke-width','1.8')});
-  g.addEventListener('mouseleave',()=>{g.removeAttribute('transform');rect.setAttribute('stroke-width','1')});
-  animatedNode(g,delay);
-}
-
-function drawTag(NG,x,y,text,col){
-  const pw=Math.max(text.length*6.5+22,70);
-  const g=se('g',{opacity:'.65'},NG);
-  se('rect',{x:x-pw/2,y:y-9.5,width:pw,height:19,rx:'9.5',fill:'rgba(255,255,255,.025)',stroke:col,'stroke-width':'.65',opacity:'.38'},g);
-  se('text',{x,y,'text-anchor':'middle','dominant-baseline':'central',fill:'#6a6882','font-size':'8.5','font-weight':'400','font-family':'IBM Plex Sans Arabic,sans-serif'},g).textContent=text;
-}
-
-// ═══════════════════════════════════════════════════════
-// PAN & ZOOM
-// ═══════════════════════════════════════════════════════
-let sc=1,tx=0,ty=0,dragging=false,dsx=0,dsy=0;
-const cw=document.getElementById('cw');
-
-function applyT(){if(G)G.setAttribute('transform',`translate(${tx},${ty}) scale(${sc})`)}
-
-function zoomAt(mx,my,f){
-  const ns=Math.max(.07,Math.min(5,sc*f));
-  tx=mx-(mx-tx)*(ns/sc); ty=my-(my-ty)*(ns/sc);
-  sc=ns; applyT();
-}
-function bz(f){zoomAt(cw.clientWidth/2,cw.clientHeight/2,f)}
-
-function resetV(){
-  const vw=window.innerWidth;
-  const vh=window.innerHeight-48;
-  const viewR=(D_LEAF+LH+150)*2;
-  sc=Math.min(vw,vh)/viewR*1.1;
-  tx=vw/2 - CX*sc;
-  ty=vh/2 - CY*sc;
-  applyT();
-}
-
-function focusCh(i){
-  if(!chCenters[i])return;
-  const{x,y}=chCenters[i];
-  sc=.32;
-  tx=cw.clientWidth/2-x*sc;
-  ty=cw.clientHeight/2-y*sc;
-  applyT();
-}
-
-cw.addEventListener('mousedown',e=>{if(e.target.closest('.ng'))return;dragging=true;dsx=e.clientX-tx;dsy=e.clientY-ty;cw.style.cursor='grabbing'});
-window.addEventListener('mousemove',e=>{if(!dragging)return;tx=e.clientX-dsx;ty=e.clientY-dsy;applyT()});
-window.addEventListener('mouseup',()=>{dragging=false;cw.style.cursor=''});
-cw.addEventListener('wheel',e=>{
-  e.preventDefault();
-  const r=cw.getBoundingClientRect();
-  zoomAt(e.clientX-r.left,e.clientY-r.top,e.deltaY<0?1.1:.91);
-},{passive:false});
-
-let ltd=null;
-cw.addEventListener('touchstart',e=>{if(e.touches.length===1){dragging=true;dsx=e.touches[0].clientX-tx;dsy=e.touches[0].clientY-ty}if(e.touches.length===2)ltd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY)},{passive:true});
-cw.addEventListener('touchmove',e=>{if(e.touches.length===1&&dragging){tx=e.touches[0].clientX-dsx;ty=e.touches[0].clientY-dsy;applyT()}if(e.touches.length===2&&ltd){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);const mx=(e.touches[0].clientX+e.touches[1].clientX)/2-cw.getBoundingClientRect().left;const my=(e.touches[0].clientY+e.touches[1].clientY)/2-cw.getBoundingClientRect().top;zoomAt(mx,my,d/ltd);ltd=d}},{passive:true});
-cw.addEventListener('touchend',()=>{dragging=false;ltd=null});
-
-// ═══════════════════════════════════════════════════════
-// DETAIL PANEL
-// ═══════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════
-// DIAGRAMS LIBRARY
-// ═══════════════════════════════════════════════════════
-const DIAGRAMS = {
-
-'Number\nSets': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
-  <style>.dl{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:9px;fill:#8a8799}.dv{font-size:10px;fill:#c9a84c;font-weight:600}</style>
-  <ellipse cx="130" cy="95" rx="118" ry="78" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".35"/>
-  <ellipse cx="130" cy="95" rx="95" ry="62" fill="none" stroke="#7b6fd4" stroke-width="1" opacity=".35"/>
-  <ellipse cx="130" cy="95" rx="72" ry="46" fill="none" stroke="#1fad84" stroke-width="1" opacity=".35"/>
-  <ellipse cx="130" cy="95" rx="50" ry="31" fill="none" stroke="#c94c4c" stroke-width="1" opacity=".35"/>
-  <ellipse cx="130" cy="95" rx="28" ry="17" fill="#c94c4c" fill-opacity=".15" stroke="#c94c4c" stroke-width="1.5"/>
-  <text x="130" y="98" text-anchor="middle" class="dv" fill="#c94c4c">ℕ</text>
-  <text x="130" y="136" text-anchor="middle" class="dl" fill="#c94c4c">الطبيعية</text>
-  <text x="48" y="98" text-anchor="middle" class="dv" fill="#1fad84">ℤ</text>
-  <text x="210" y="98" text-anchor="middle" class="dv" fill="#7b6fd4">ℚ</text>
-  <text x="18" y="158" text-anchor="start" class="dl" fill="#c9a84c">ℝ الحقيقية</text>
-  <text x="48" y="108" text-anchor="middle" class="dl" fill="#1fad84">الصحيحة</text>
-  <text x="210" y="108" text-anchor="middle" class="dl" fill="#7b6fd4">النسبية</text>
-</svg>`,
-
-'Intervals &\nInequalities': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
-  <style>.dl{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:9.5px;fill:#8a8799}.lb{font-size:9px;fill:#c9a84c;font-family:monospace}</style>
-  ${[['(a, b) مفتوحة','#1fad84',30,0,0],['[a, b] مغلقة','#7b6fd4',80,1,1],['[a, b) نصف مغلقة','#c94c4c',130,1,0],['(a, ∞) لانهائية','#c9a84c',180,0,2]].map(([lbl,col,y,L,R],i)=>{
-    const x1=60,x2=190;
-    const lDot=L===1?`<circle cx="${x1}" cy="${y}" r="4" fill="${col}"/>`:`<circle cx="${x1}" cy="${y}" r="4" fill="none" stroke="${col}" stroke-width="1.5"/>`;
-    const rDot=R===1?`<circle cx="${x2}" cy="${y}" r="4" fill="${col}"/>`:R===2?`<text x="${x2+8}" y="${y+4}" style="font-size:13px;fill:${col}">→</text><circle cx="${x2}" cy="${y}" r="4" fill="none" stroke="${col}" stroke-width="1.5"/>`:`<circle cx="${x2}" cy="${y}" r="4" fill="none" stroke="${col}" stroke-width="1.5"/>`;
-    return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="2.5" opacity=".7"/>${lDot}${rDot}<text x="${x1-8}" y="${y+4}" text-anchor="end" class="dl" fill="${col}">${lbl}</text>`;
-  }).join('')}
-</svg>`,
-
-'Absolute\nValue': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
-  <line x1="10" y1="90" x2="250" y2="90" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="130" y1="10" x2="130" y2="170" stroke="#3e3c52" stroke-width="1"/>
-  <text x="252" y="94" font-size="10" fill="#3e3c52" font-family="monospace">x</text>
-  <text x="133" y="14" font-size="10" fill="#3e3c52" font-family="monospace">y</text>
-  <polyline points="30,150 130,50 230,150" fill="none" stroke="#1fad84" stroke-width="2.5" stroke-linejoin="round"/>
-  <text x="135" y="48" font-size="10" fill="#1fad84" font-family="monospace">|x|</text>
-  <circle cx="130" cy="90" r="3" fill="#c9a84c"/>
-  <text x="118" y="104" font-size="9" fill="#c9a84c" font-family="monospace">(0,0)</text>
-</svg>`,
-
-'Types of\nFunctions': ()=>`<svg xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
-<style>.hd{font-size:8.5px;font-family:monospace;fill:#c9a84c;font-weight:600}.eq{font-size:9px;font-family:monospace;fill:#eeeaf2}.lb{font-size:8px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#8a8799}.dm{font-size:8px;font-family:monospace;fill:#1fad84}</style>
-
-<!-- Definition box -->
-<rect x="8" y="8" width="244" height="118" rx="8" fill="rgba(31,173,132,.07)" stroke="#1fad84" stroke-width=".8"/>
-<text x="16" y="22" class="hd" fill="#1fad84">DEFINITION 1.2.7 — العمليات الأساسية</text>
-<line x1="8" y1="27" x2="252" y2="27" stroke="#1fad84" stroke-width=".5" opacity=".4"/>
-
-<text x="130" y="42" text-anchor="middle" class="eq">(f + g)(x) = f(x) + g(x)</text>
-<text x="130" y="58" text-anchor="middle" class="eq">(f − g)(x) = f(x) − g(x)</text>
-<text x="130" y="74" text-anchor="middle" class="eq">(f · g)(x) = f(x) · g(x)</text>
-<text x="130" y="90" text-anchor="middle" class="eq">(f/g)(x) = f(x)/g(x)</text>
-<text x="130" y="106" text-anchor="middle" class="lb">شرط: g(x) ≠ 0 في القسمة</text>
-<text x="130" y="120" text-anchor="middle" class="eq">(f∘g)(x) = f(g(x))</text>
-
-<!-- Theorem box -->
-<rect x="8" y="134" width="244" height="118" rx="8" fill="rgba(123,111,212,.07)" stroke="#7b6fd4" stroke-width=".8"/>
-<text x="16" y="148" class="hd" fill="#7b6fd4">THEOREM 1.2.1 — مجالات العمليات</text>
-<line x1="8" y1="153" x2="252" y2="153" stroke="#7b6fd4" stroke-width=".5" opacity=".4"/>
-
-${[
-  ['D f+g','= Df ∩ Dg','#1fad84',168],
-  ['D f−g','= Df ∩ Dg','#1fad84',186],
-  ['D f·g','= Df ∩ Dg','#1fad84',204],
-  ['D f/g','= Df ∩ Dg  ,  g(x)≠0','#c94c4c',222],
-].map(([l,r,c,y])=>`
-  <text x="55" y="${y}" text-anchor="end" class="eq" fill="#8a8799">${l}</text>
-  <text x="60" y="${y}" class="eq" fill="${c}">${r}</text>
-`).join('')}
-
-<!-- Venn diagram for Df ∩ Dg -->
-<ellipse cx="95" cy="242" rx="28" ry="14" fill="rgba(31,173,132,.15)" stroke="#1fad84" stroke-width="1"/>
-<ellipse cx="115" cy="242" rx="28" ry="14" fill="rgba(123,111,212,.15)" stroke="#7b6fd4" stroke-width="1"/>
-<text x="78" y="246" class="lb" fill="#1fad84">Df</text>
-<text x="130" y="246" class="lb" fill="#7b6fd4">Dg</text>
-<text x="105" y="246" class="lb" fill="#c9a84c" text-anchor="middle">∩</text>
-<text x="175" y="246" class="lb">= مجال العملية</text>
-</svg>`,
-
-'Types of\nFunctions': ()=>`<svg viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:369px">
-<style>.ax{stroke:#2a2a3a;stroke-width:.8}.lbl{font-size:8px;font-family:monospace;fill:#8a8799}.ttl{font-size:8.5px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#c9a84c;font-weight:600}</style>
-<defs>
-  <clipPath id="c1"><rect x="20" y="10" width="50" height="50"/></clipPath>
-  <clipPath id="c2"><rect x="80" y="10" width="50" height="50"/></clipPath>
-  <clipPath id="c3"><rect x="20" y="73" width="50" height="50"/></clipPath>
-  <clipPath id="c4"><rect x="80" y="73" width="50" height="50"/></clipPath>
-  <clipPath id="c5"><rect x="20" y="136" width="50" height="50"/></clipPath>
-  <clipPath id="c6"><rect x="80" y="136" width="50" height="50"/></clipPath>
-  <clipPath id="c7"><rect x="20" y="199" width="50" height="50"/></clipPath>
-  <clipPath id="c8"><rect x="80" y="199" width="50" height="50"/></clipPath>
-  <clipPath id="c9"><rect x="20" y="262" width="100" height="50"/></clipPath>
-</defs>
-
-<!-- Labels -->
-<text x="8" y="39" class="ttl" transform="rotate(-90,8,39)">خطية</text>
-<text x="8" y="105" class="ttl" transform="rotate(-90,8,105)">قوية</text>
-<text x="8" y="168" class="ttl" transform="rotate(-90,8,168)">جذرية</text>
-<text x="8" y="232" class="ttl" transform="rotate(-90,8,232)">كسرية</text>
-<text x="8" y="295" class="ttl" transform="rotate(-90,8,295)">مطلقة</text>
-
-<!-- ── Row 1: Linear ── -->
-<!-- f(x)=b -->
-<g clip-path="url(#c1)">
-  <line x1="20" y1="35" x2="70" y2="35" class="ax"/>
-  <line x1="45" y1="10" x2="45" y2="60" class="ax"/>
-  <line x1="20" y1="27" x2="70" y2="27" stroke="#1fad84" stroke-width="1.8"/>
-</g>
-<text x="45" y="65" text-anchor="middle" class="lbl">f(x)=b</text>
-<!-- f(x)=mx+b -->
-<g clip-path="url(#c2)">
-  <line x1="80" y1="35" x2="130" y2="35" class="ax"/>
-  <line x1="105" y1="10" x2="105" y2="60" class="ax"/>
-  <line x1="80" y1="58" x2="130" y2="14" stroke="#1fad84" stroke-width="1.8"/>
-</g>
-<text x="105" y="65" text-anchor="middle" class="lbl">f(x)=mx+b</text>
-
-<!-- ── Row 2: Power ── -->
-<!-- f(x)=x² -->
-<g clip-path="url(#c3)">
-  <line x1="20" y1="98" x2="70" y2="98" class="ax"/>
-  <line x1="45" y1="73" x2="45" y2="123" class="ax"/>
-  <path d="M22,120 Q45,72 68,120" fill="none" stroke="#7b6fd4" stroke-width="1.8"/>
-</g>
-<text x="45" y="128" text-anchor="middle" class="lbl">f(x)=x²</text>
-<!-- f(x)=x³ -->
-<g clip-path="url(#c4)">
-  <line x1="80" y1="98" x2="130" y2="98" class="ax"/>
-  <line x1="105" y1="73" x2="105" y2="123" class="ax"/>
-  <path d="M82,120 Q95,100 105,98 Q115,96 128,76" fill="none" stroke="#7b6fd4" stroke-width="1.8"/>
-</g>
-<text x="105" y="128" text-anchor="middle" class="lbl">f(x)=x³</text>
-
-<!-- ── Row 3: Root ── -->
-<!-- f(x)=√x -->
-<g clip-path="url(#c5)">
-  <line x1="20" y1="161" x2="70" y2="161" class="ax"/>
-  <line x1="33" y1="136" x2="33" y2="186" class="ax"/>
-  <path d="M33,161 Q45,140 68,130" fill="none" stroke="#c94c4c" stroke-width="1.8"/>
-</g>
-<text x="45" y="191" text-anchor="middle" class="lbl">f(x)=√x</text>
-<!-- f(x)=∛x -->
-<g clip-path="url(#c6)">
-  <line x1="80" y1="161" x2="130" y2="161" class="ax"/>
-  <line x1="105" y1="136" x2="105" y2="186" class="ax"/>
-  <path d="M82,178 Q95,165 105,161 Q115,157 128,148" fill="none" stroke="#c94c4c" stroke-width="1.8"/>
-</g>
-<text x="105" y="191" text-anchor="middle" class="lbl">f(x)=∛x</text>
-
-<!-- ── Row 4: Reciprocal ── -->
-<!-- f(x)=1/x -->
-<g clip-path="url(#c7)">
-  <line x1="20" y1="224" x2="70" y2="224" class="ax"/>
-  <line x1="45" y1="199" x2="45" y2="249" class="ax"/>
-  <path d="M22,206 Q35,210 41,220" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-  <path d="M49,228 Q55,238 68,242" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-  <path d="M22,242 Q35,238 41,228" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-  <path d="M49,220 Q55,210 68,206" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-</g>
-<text x="45" y="254" text-anchor="middle" class="lbl">f(x)=1/x</text>
-<!-- f(x)=1/x² -->
-<g clip-path="url(#c8)">
-  <line x1="80" y1="224" x2="130" y2="224" class="ax"/>
-  <line x1="105" y1="199" x2="105" y2="249" class="ax"/>
-  <path d="M82,246 Q92,236 100,216 Q103,208 105,204" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-  <path d="M128,246 Q118,236 110,216 Q107,208 105,204" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-</g>
-<text x="105" y="254" text-anchor="middle" class="lbl">f(x)=1/x²</text>
-
-<!-- ── Row 5: Absolute Value ── -->
-<g clip-path="url(#c9)">
-  <line x1="20" y1="287" x2="120" y2="287" class="ax"/>
-  <line x1="70" y1="262" x2="70" y2="312" class="ax"/>
-  <polyline points="22,309 70,268 118,309" fill="none" stroke="#1fad84" stroke-width="1.8" stroke-linejoin="round"/>
-</g>
-<text x="70" y="317" text-anchor="middle" class="lbl">f(x)=|x|</text>
-</svg>`,
-
-'Function\nDefinition': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
-  <style>.fn{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px}</style>
-  <rect x="15" y="30" width="80" height="120" rx="40" fill="none" stroke="#1fad84" stroke-width="1.5" opacity=".6"/>
-  <rect x="165" y="30" width="80" height="120" rx="40" fill="none" stroke="#7b6fd4" stroke-width="1.5" opacity=".6"/>
-  <text x="55" y="20" text-anchor="middle" class="fn" fill="#1fad84">المجال</text>
-  <text x="205" y="20" text-anchor="middle" class="fn" fill="#7b6fd4">المدى</text>
-  ${[[55,60,205,75],[55,90,205,105],[55,120,205,135]].map(([x1,y1,x2,y2],i)=>`
-    <circle cx="${x1}" cy="${y1}" r="5" fill="#1fad84" opacity=".7"/>
-    <circle cx="${x2}" cy="${y2}" r="5" fill="#7b6fd4" opacity=".7"/>
-    <path d="M${x1+6},${y1} Q130,${(y1+y2)/2} ${x2-6},${y2}" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity=".7" marker-end="url(#arr)"/>
-  `).join('')}
-  <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M1,1 L8,5 L1,9" fill="none" stroke="#c9a84c" stroke-width="1.5"/></marker></defs>
-  <text x="130" y="175" text-anchor="middle" class="fn" fill="#c9a84c">f: المجال → المدى</text>
-</svg>`,
-
-'Operations &\nComposition': ()=>`<svg viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
-<style>.hd{font-size:8.5px;font-family:monospace;fill:#c9a84c;font-weight:600}.eq{font-size:9px;font-family:monospace;fill:#eeeaf2}.lb{font-size:8px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#8a8799}</style>
-<rect x="8" y="8" width="244" height="120" rx="8" fill="rgba(31,173,132,.07)" stroke="#1fad84" stroke-width=".8"/>
-<text x="16" y="22" class="hd" fill="#1fad84">DEFINITION 1.2.7 — العمليات الأساسية</text>
-<line x1="8" y1="27" x2="252" y2="27" stroke="#1fad84" stroke-width=".5" opacity=".4"/>
-<text x="130" y="44" text-anchor="middle" class="eq">(f + g)(x) = f(x) + g(x)</text>
-<text x="130" y="60" text-anchor="middle" class="eq">(f − g)(x) = f(x) − g(x)</text>
-<text x="130" y="76" text-anchor="middle" class="eq">(f · g)(x) = f(x) · g(x)</text>
-<text x="130" y="92" text-anchor="middle" class="eq">(f/g)(x) = f(x) / g(x)</text>
-<text x="130" y="106" text-anchor="middle" class="lb">شرط: g(x) ≠ 0 في القسمة</text>
-<text x="130" y="122" text-anchor="middle" class="eq">(f∘g)(x) = f(g(x))</text>
-<rect x="8" y="136" width="244" height="102" rx="8" fill="rgba(123,111,212,.07)" stroke="#7b6fd4" stroke-width=".8"/>
-<text x="16" y="150" class="hd" fill="#7b6fd4">THEOREM 1.2.1 — مجالات العمليات</text>
-<line x1="8" y1="155" x2="252" y2="155" stroke="#7b6fd4" stroke-width=".5" opacity=".4"/>
-<text x="55" y="172" text-anchor="end" class="eq" fill="#8a8799">D f+g =</text><text x="60" y="172" class="eq" fill="#1fad84">Df ∩ Dg</text>
-<text x="55" y="188" text-anchor="end" class="eq" fill="#8a8799">D f−g =</text><text x="60" y="188" class="eq" fill="#1fad84">Df ∩ Dg</text>
-<text x="55" y="204" text-anchor="end" class="eq" fill="#8a8799">D f·g =</text><text x="60" y="204" class="eq" fill="#1fad84">Df ∩ Dg</text>
-<text x="55" y="220" text-anchor="end" class="eq" fill="#8a8799">D f/g =</text><text x="60" y="220" class="eq" fill="#c94c4c">Df ∩ Dg  , g(x)≠0</text>
-<ellipse cx="88" cy="252" rx="26" ry="13" fill="rgba(31,173,132,.15)" stroke="#1fad84" stroke-width="1"/>
-<ellipse cx="108" cy="252" rx="26" ry="13" fill="rgba(123,111,212,.15)" stroke="#7b6fd4" stroke-width="1"/>
-<text x="75" y="256" class="lb" fill="#1fad84">Df</text>
-<text x="121" y="256" class="lb" fill="#7b6fd4">Dg</text>
-<text x="98" y="256" class="lb" fill="#c9a84c" text-anchor="middle">∩</text>
-<text x="165" y="256" class="lb">= مجال العملية</text>
-</svg>`,
-
-'One-to-One\nFunction': ()=>`<svg viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:323px">
-<style>.hd{font-size:8.5px;font-family:monospace;font-weight:600}.eq{font-size:9px;font-family:monospace;fill:#eeeaf2}.lb{font-size:8px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#8a8799}</style>
-<rect x="8" y="8" width="244" height="72" rx="8" fill="rgba(31,173,132,.07)" stroke="#1fad84" stroke-width=".8"/>
-<text x="16" y="22" class="hd" fill="#1fad84">DEFINITION 1.3.1 — دالة واحد لواحد</text>
-<line x1="8" y1="27" x2="252" y2="27" stroke="#1fad84" stroke-width=".5" opacity=".4"/>
-<text x="130" y="44" text-anchor="middle" class="eq">x₁ ≠ x₂  ⟹  f(x₁) ≠ f(x₂)</text>
-<text x="130" y="60" text-anchor="middle" class="eq">f(x₁) = f(x₂)  ⟹  x₁ = x₂</text>
-<text x="130" y="74" text-anchor="middle" class="lb">كل عنصر في المدى مرتبط بعنصر واحد فقط في المجال</text>
-<!-- HLT label -->
-<rect x="8" y="88" width="244" height="28" rx="6" fill="rgba(201,168,76,.08)" stroke="#c9a84c" stroke-width=".8"/>
-<text x="130" y="106" text-anchor="middle" class="eq" fill="#c9a84c">اختبار الخط الأفقي (HLT)</text>
-<!-- Graph: f(x)=x³ one-to-one -->
-<line x1="20" y1="205" x2="240" y2="205" stroke="#3e3c52" stroke-width=".8"/>
-<line x1="130" y1="125" x2="130" y2="265" stroke="#3e3c52" stroke-width=".8"/>
-<path d="M30,262 Q80,240 110,210 Q125,195 130,185 Q135,175 150,155 Q175,125 225,118" fill="none" stroke="#1fad84" stroke-width="2"/>
-<!-- HLT line -->
-<line x1="20" y1="175" x2="240" y2="175" stroke="#c9a84c" stroke-width="1" stroke-dasharray="5 4"/>
-<circle cx="153" cy="175" r="3.5" fill="#c9a84c"/>
-<text x="130" y="272" text-anchor="middle" class="lb" fill="#1fad84">f(x)=x³ — تقطع الأفقي مرة واحدة فقط ✓</text>
-</svg>`,
-
-'Inverse\nFunction f⁻¹': ()=>`<svg viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:346px">
-<style>.hd{font-size:8.5px;font-family:monospace;font-weight:600}.eq{font-size:9px;font-family:monospace;fill:#eeeaf2}.lb{font-size:8px;font-family:'IBM Plex Sans Arabic',sans-serif;fill:#8a8799}</style>
-<rect x="8" y="8" width="244" height="64" rx="8" fill="rgba(201,133,76,.07)" stroke="#c9854c" stroke-width=".8"/>
-<text x="16" y="22" class="hd" fill="#c9854c">DEFINITION 1.3.2 — الدالة العكسية</text>
-<line x1="8" y1="27" x2="252" y2="27" stroke="#c9854c" stroke-width=".5" opacity=".4"/>
-<text x="130" y="42" text-anchor="middle" class="eq">y = f(x)  ⟺  x = f⁻¹(y)</text>
-<text x="130" y="56" text-anchor="middle" class="lb">مجال f⁻¹ = مدى f  ،  مدى f⁻¹ = مجال f</text>
-<text x="130" y="68" text-anchor="middle" class="lb">شرط: يجب أن تكون f دالة واحد لواحد</text>
-<rect x="8" y="78" width="244" height="52" rx="8" fill="rgba(123,111,212,.07)" stroke="#7b6fd4" stroke-width=".8"/>
-<text x="16" y="92" class="hd" fill="#7b6fd4">THEOREM 1.3.1 — خصائص الإلغاء</text>
-<line x1="8" y1="97" x2="252" y2="97" stroke="#7b6fd4" stroke-width=".5" opacity=".4"/>
-<text x="130" y="114" text-anchor="middle" class="eq">f⁻¹(f(x)) = x   للـ x في مجال f</text>
-<text x="130" y="128" text-anchor="middle" class="eq">f(f⁻¹(x)) = x   للـ x في مجال f⁻¹</text>
-<!-- Graph: f and f⁻¹ symmetry -->
-<line x1="20" y1="250" x2="240" y2="250" stroke="#3e3c52" stroke-width=".8"/>
-<line x1="20" y1="250" x2="20" y2="145" stroke="#3e3c52" stroke-width=".8"/>
-<line x1="20" y1="250" x2="220" y2="150" stroke="#3e3c52" stroke-width=".6" stroke-dasharray="4 4" opacity=".35"/>
-<text x="222" y="150" font-size="8" fill="#3e3c52" font-family="monospace">y=x</text>
-<path d="M30,248 Q80,230 120,195 Q155,165 210,148" fill="none" stroke="#1fad84" stroke-width="2"/>
-<path d="M30,160 Q55,195 90,225 Q120,245 210,248" fill="none" stroke="#c94c4c" stroke-width="2" stroke-dasharray="5 3"/>
-<text x="212" y="147" font-size="8" fill="#1fad84" font-family="monospace">f</text>
-<text x="212" y="250" font-size="8" fill="#c94c4c" font-family="monospace">f⁻¹</text>
-<text x="130" y="292" text-anchor="middle" class="lb">تماثل f و f⁻¹ حول خط y = x</text>
-</svg>`,
-
-'Angles &\nMeasurements': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:254px">
-  <style>.lbl{font-size:9px;font-family:monospace;fill:#8a8799}</style>
-  <circle cx="130" cy="110" r="80" fill="none" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="50" y1="110" x2="210" y2="110" stroke="#3e3c52" stroke-width=".8"/>
-  <line x1="130" y1="30" x2="130" y2="190" stroke="#3e3c52" stroke-width=".8"/>
-  <line x1="130" y1="110" x2="197" y2="53" stroke="#1fad84" stroke-width="2"/>
-  <path d="M158,110 A28,28 0 0,0 148,83" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-  <text x="165" y="100" class="lbl" fill="#c9a84c">θ</text>
-  <line x1="197" y1="53" x2="197" y2="110" stroke="#c94c4c" stroke-width="1.5" stroke-dasharray="4 3"/>
-  <line x1="130" y1="110" x2="197" y2="110" stroke="#7b6fd4" stroke-width="1.5" stroke-dasharray="4 3"/>
-  <text x="200" y="85" class="lbl" fill="#c94c4c">sin θ</text>
-  <text x="158" y="122" class="lbl" fill="#7b6fd4">cos θ</text>
-  <circle cx="197" cy="53" r="3" fill="#1fad84"/>
-  <text x="130" y="210" text-anchor="middle" font-size="9" fill="#8a8799" font-family="'IBM Plex Sans Arabic',sans-serif">دائرة الوحدة — r = 1</text>
-  <text x="215" y="114" class="lbl">0 / 2π</text>
-  <text x="118" y="26" class="lbl">π/2</text>
-  <text x="42" y="114" class="lbl">π</text>
-  <text x="118" y="198" class="lbl">3π/2</text>
-</svg>`,
-
-'6 Trig Functions\n& Signs': ()=>`<svg viewBox="0 0 520 420" xmlns="http://www.w3.org/2000/svg" style="width:520px;height:420px">
-<style>.ql{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px}.sm{font-size:9.5px;font-family:monospace}.fn{font-size:9px;font-family:monospace;fill:#eeeaf2}.fd{font-size:8.5px;font-family:monospace;fill:#8a8799}</style>
-<!-- ASTC quadrants -->
-<line x1="20" y1="135" x2="500" y2="135" stroke="#3e3c52" stroke-width="1.2"/>
-<line x1="260" y1="10" x2="260" y2="255" stroke="#3e3c52" stroke-width="1.2"/>
-<rect x="22" y="12" width="236" height="121" rx="6" fill="rgba(123,111,212,.07)" stroke="#7b6fd4" stroke-width="1"/>
-<text x="135" y="30" text-anchor="middle" class="ql" fill="#7b6fd4" font-weight="600">Quadrant II — sin only</text>
-<text x="100" y="52" text-anchor="middle" class="sm" fill="#7b6fd4">sin θ +  ,  csc θ +</text>
-<text x="100" y="70" text-anchor="middle" class="sm" fill="#555">cos θ −  ,  sec θ −</text>
-<text x="100" y="88" text-anchor="middle" class="sm" fill="#555">tan θ −  ,  cot θ −</text>
-<text x="225" y="112" text-anchor="middle" font-size="30" fill="#c9a84c" font-family="monospace" font-weight="700" opacity=".5">S</text>
-<rect x="262" y="12" width="236" height="121" rx="6" fill="rgba(31,173,132,.07)" stroke="#1fad84" stroke-width="1"/>
-<text x="385" y="30" text-anchor="middle" class="ql" fill="#1fad84" font-weight="600">Quadrant I — All positive</text>
-<text x="350" y="52" text-anchor="middle" class="sm" fill="#1fad84">sin θ +  ,  csc θ +</text>
-<text x="350" y="70" text-anchor="middle" class="sm" fill="#1fad84">cos θ +  ,  sec θ +</text>
-<text x="350" y="88" text-anchor="middle" class="sm" fill="#1fad84">tan θ +  ,  cot θ +</text>
-<text x="475" y="112" text-anchor="middle" font-size="30" fill="#c9a84c" font-family="monospace" font-weight="700" opacity=".5">A</text>
-<rect x="22" y="137" width="236" height="116" rx="6" fill="rgba(201,133,76,.07)" stroke="#c9854c" stroke-width="1"/>
-<text x="135" y="155" text-anchor="middle" class="ql" fill="#c9854c" font-weight="600">Quadrant III — tan only</text>
-<text x="100" y="176" text-anchor="middle" class="sm" fill="#555">sin θ −  ,  csc θ −</text>
-<text x="100" y="194" text-anchor="middle" class="sm" fill="#555">cos θ −  ,  sec θ −</text>
-<text x="100" y="212" text-anchor="middle" class="sm" fill="#c9854c">tan θ +  ,  cot θ +</text>
-<text x="225" y="240" text-anchor="middle" font-size="30" fill="#c9a84c" font-family="monospace" font-weight="700" opacity=".5">T</text>
-<rect x="262" y="137" width="236" height="116" rx="6" fill="rgba(201,76,76,.07)" stroke="#c94c4c" stroke-width="1"/>
-<text x="385" y="155" text-anchor="middle" class="ql" fill="#c94c4c" font-weight="600">Quadrant IV — cos only</text>
-<text x="350" y="176" text-anchor="middle" class="sm" fill="#555">sin θ −  ,  csc θ −</text>
-<text x="350" y="194" text-anchor="middle" class="sm" fill="#c94c4c">cos θ +  ,  sec θ +</text>
-<text x="350" y="212" text-anchor="middle" class="sm" fill="#555">tan θ −  ,  cot θ −</text>
-<text x="475" y="240" text-anchor="middle" font-size="30" fill="#c9a84c" font-family="monospace" font-weight="700" opacity=".5">C</text>
-<text x="260" y="268" text-anchor="middle" class="ql" fill="#c9a84c">ASTC Rule — All / Sin / Tan / Cos</text>
-
-<!-- Divider -->
-<line x1="20" y1="278" x2="500" y2="278" stroke="#3e3c52" stroke-width=".8" opacity=".6"/>
-<text x="260" y="293" text-anchor="middle" font-size="10" font-family="monospace" fill="#c9a84c">Definitions (Right Triangle)</text>
-
-<!-- 6 fractions — 3 per row -->
-${[
-  ['sin','opp','hyp','#1fad84', 55],
-  ['cos','adj','hyp','#7b6fd4',195],
-  ['tan','opp','adj','#c9854c',335],
-  ['csc','hyp','opp','#1fad84', 55],
-  ['sec','hyp','adj','#7b6fd4',195],
-  ['cot','adj','opp','#c9854c',335],
-].map(([fn,n,d,col,x],i)=>{
-  const row = i < 3 ? 0 : 1;
-  const cy = 320 + row * 60;
-  return `
-  <text x="${x}" y="${cy-8}" text-anchor="middle" class="fn" fill="${col}" font-weight="600">${fn} θ =</text>
-  <text x="${x+38}" y="${cy-14}" text-anchor="middle" class="fn" fill="#eeeaf2">${n}</text>
-  <line x1="${x+18}" y1="${cy-8}" x2="${x+58}" y2="${cy-8}" stroke="${col}" stroke-width="1.2"/>
-  <text x="${x+38}" y="${cy+2}" text-anchor="middle" class="fn" fill="#8a8799">${d}</text>`;
-}).join('')}
-</svg>`,
-
-'Identities &\nInverses': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
-  <style>.eq{font-family:monospace;font-size:11px;fill:#eeeaf2}.lbl{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:9px;fill:#8a8799}</style>
-  <rect x="15" y="15" width="230" height="36" rx="8" fill="rgba(31,173,132,.12)" stroke="#1fad84" stroke-width=".8"/>
-  <text x="130" y="38" text-anchor="middle" class="eq">sin²θ + cos²θ = 1</text>
-  <rect x="15" y="60" width="230" height="36" rx="8" fill="rgba(123,111,212,.12)" stroke="#7b6fd4" stroke-width=".8"/>
-  <text x="130" y="83" text-anchor="middle" class="eq">1 + tan²θ = sec²θ</text>
-  <rect x="15" y="105" width="230" height="36" rx="8" fill="rgba(201,133,76,.12)" stroke="#c9854c" stroke-width=".8"/>
-  <text x="130" y="128" text-anchor="middle" class="eq">cot²θ + 1 = csc²θ</text>
-  <text x="15" y="162" class="lbl">المدى:</text>
-  <text x="60" y="162" font-family="monospace" font-size="9.5" fill="#1fad84">sin⁻¹: [−π/2, π/2]</text>
-  <text x="15" y="178" font-family="monospace" font-size="9.5" fill="#7b6fd4">cos⁻¹: [0, π]</text>
-  <text x="15" y="194" font-family="monospace" font-size="9.5" fill="#c9854c">tan⁻¹: (−π/2, π/2)</text>
-</svg>`,
-
-'Limit\nDefinition': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
-  <line x1="15" y1="160" x2="245" y2="160" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="15" y1="160" x2="15" y2="20" stroke="#3e3c52" stroke-width="1"/>
-  <path d="M25,155 Q80,130 120,80 Q135,60 140,55" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <path d="M150,55 Q155,60 170,80 Q200,120 235,148" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <circle cx="145" cy="55" r="5" fill="#06070b" stroke="#c9a84c" stroke-width="1.5"/>
-  <circle cx="145" cy="55" r="2.5" fill="none" stroke="#c9a84c" stroke-width="1"/>
-  <line x1="145" y1="55" x2="145" y2="160" stroke="#c9a84c" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
-  <line x1="15" y1="55" x2="145" y2="55" stroke="#c9a84c" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
-  <text x="140" y="172" font-size="9" font-family="monospace" fill="#c9a84c" text-anchor="middle">a</text>
-  <text x="6" y="58" font-size="9" font-family="monospace" fill="#c9a84c" text-anchor="middle">L</text>
-  <text x="130" y="192" text-anchor="middle" font-size="9" fill="#8a8799" font-family="'IBM Plex Sans Arabic',sans-serif">النهاية L موجودة رغم عدم تعريف f(a)</text>
-</svg>`,
-
-'One-Sided\nLimits': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
-  <line x1="15" y1="160" x2="245" y2="160" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="15" y1="160" x2="15" y2="20" stroke="#3e3c52" stroke-width="1"/>
-  <path d="M20,148 Q60,120 100,80 Q120,60 135,52" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <path d="M145,95 Q160,105 200,130 Q220,142 240,150" fill="none" stroke="#c94c4c" stroke-width="2"/>
-  <circle cx="140" cy="52" r="4" fill="none" stroke="#1fad84" stroke-width="1.5"/>
-  <circle cx="140" cy="95" r="4" fill="none" stroke="#c94c4c" stroke-width="1.5"/>
-  <line x1="140" y1="20" x2="140" y2="160" stroke="#c9a84c" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
-  <text x="138" y="170" font-size="9" font-family="monospace" fill="#c9a84c" text-anchor="middle">a</text>
-  <text x="108" y="50" font-size="9" fill="#1fad84" font-family="monospace">lim⁻ = L₁</text>
-  <text x="148" y="92" font-size="9" fill="#c94c4c" font-family="monospace">lim⁺ = L₂</text>
-  <text x="130" y="192" text-anchor="middle" font-size="9" fill="#c94c4c" font-family="'IBM Plex Sans Arabic',sans-serif">L₁ ≠ L₂ ← النهاية غير موجودة</text>
-</svg>`,
-
-'Existence\nCondition': ()=>`<svg viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:208px">
-  <line x1="20" y1="140" x2="240" y2="140" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="20" y1="140" x2="20" y2="20" stroke="#3e3c52" stroke-width="1"/>
-  <path d="M25,135 Q70,110 105,75 Q120,58 128,50" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <path d="M132,50 Q140,58 155,75 Q190,110 235,133" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <circle cx="130" cy="50" r="4.5" fill="#06070b" stroke="#1fad84" stroke-width="1.8"/>
-  <line x1="130" y1="20" x2="130" y2="140" stroke="#c9a84c" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
-  <line x1="20" y1="50" x2="130" y2="50" stroke="#c9a84c" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
-  <text x="125" y="152" font-size="9" font-family="monospace" fill="#c9a84c">a</text>
-  <text x="8" y="53" font-size="9" font-family="monospace" fill="#c9a84c">L</text>
-  <text x="130" y="172" text-anchor="middle" font-size="9" fill="#1fad84" font-family="'IBM Plex Sans Arabic',sans-serif">lim x→a⁺ = lim x→a⁻ = L ✓</text>
-</svg>`,
-
-'Simplification\nMethods': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
-  <style>.bx{font-family:monospace;font-size:10px}</style>
-  <rect x="70" y="10" width="120" height="30" rx="8" fill="rgba(201,168,76,.15)" stroke="#c9a84c" stroke-width="1"/>
-  <text x="130" y="30" text-anchor="middle" class="bx" fill="#c9a84c">0/0 عدم تعيين</text>
-  <line x1="90" y1="40" x2="60" y2="75" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="130" y1="40" x2="130" y2="75" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="170" y1="40" x2="200" y2="75" stroke="#3e3c52" stroke-width="1"/>
-  <rect x="15" y="75" width="85" height="30" rx="7" fill="rgba(31,173,132,.12)" stroke="#1fad84" stroke-width="1"/>
-  <text x="57" y="95" text-anchor="middle" class="bx" fill="#1fad84">تحليل</text>
-  <rect x="83" y="75" width="94" height="30" rx="7" fill="rgba(123,111,212,.12)" stroke="#7b6fd4" stroke-width="1"/>
-  <text x="130" y="95" text-anchor="middle" class="bx" fill="#7b6fd4">المرافق</text>
-  <rect x="160" y="75" width="90" height="30" rx="7" fill="rgba(201,133,76,.12)" stroke="#c9854c" stroke-width="1"/>
-  <text x="205" y="95" text-anchor="middle" class="bx" fill="#c9854c">توحيد</text>
-  <text x="57" y="120" text-anchor="middle" font-size="9" fill="#1fad84" font-family="monospace">(x²-1)/(x-1)</text>
-  <text x="57" y="132" text-anchor="middle" font-size="8.5" fill="#1fad84" font-family="monospace">=(x+1)(x-1)/(x-1)</text>
-  <text x="57" y="144" text-anchor="middle" font-size="8.5" fill="#1fad84" font-family="monospace">= x+1</text>
-  <text x="130" y="120" text-anchor="middle" font-size="9" fill="#7b6fd4" font-family="monospace">(√x-1)/(x-1)</text>
-  <text x="130" y="132" text-anchor="middle" font-size="8.5" fill="#7b6fd4" font-family="monospace">× (√x+1)/(√x+1)</text>
-  <text x="205" y="120" text-anchor="middle" font-size="9" fill="#c9854c" font-family="monospace">1/x + 1/y</text>
-  <text x="205" y="132" text-anchor="middle" font-size="8.5" fill="#c9854c" font-family="monospace">= (x+y)/xy</text>
-</svg>`,
-
-'Limits at\nInfinity': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
-  <line x1="15" y1="140" x2="245" y2="140" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="15" y1="140" x2="15" y2="20" stroke="#3e3c52" stroke-width="1"/>
-  <path d="M20,135 Q60,100 100,72 Q140,50 180,42 Q210,38 240,37" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <line x1="15" y1="37" x2="245" y2="37" stroke="#c9a84c" stroke-width="1.2" stroke-dasharray="6 4"/>
-  <text x="248" y="40" font-size="9" fill="#c9a84c" font-family="monospace">y=L</text>
-  <text x="248" y="143" font-size="9" fill="#3e3c52" font-family="monospace">x</text>
-  <text x="17" y="15" font-size="9" fill="#3e3c52" font-family="monospace">y</text>
-  <text x="130" y="175" text-anchor="middle" font-size="9" fill="#c9a84c" font-family="'IBM Plex Sans Arabic',sans-serif">خط تقارب أفقي: y = L</text>
-  <text x="200" y="60" font-size="9" fill="#1fad84" font-family="monospace">x→+∞</text>
-</svg>`,
-
-'Infinite\nLimits': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
-  <line x1="15" y1="140" x2="245" y2="140" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="15" y1="140" x2="15" y2="10" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="130" y1="10" x2="130" y2="145" stroke="#c94c4c" stroke-width="1.5" stroke-dasharray="6 4"/>
-  <path d="M20,137 Q60,130 95,110 Q110,98 118,80 Q124,55 127,22" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <path d="M133,22 Q136,55 142,80 Q150,98 165,110 Q200,130 240,137" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <text x="135" y="155" font-size="9" fill="#c94c4c" font-family="monospace">x = a</text>
-  <text x="130" y="178" text-anchor="middle" font-size="9" fill="#c94c4c" font-family="'IBM Plex Sans Arabic',sans-serif">خط تقارب رأسي: x = a</text>
-</svg>`,
-
-'Asymptotes': ()=>`<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:231px">
-  <line x1="15" y1="150" x2="245" y2="150" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="15" y1="150" x2="15" y2="15" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="130" y1="15" x2="130" y2="155" stroke="#c94c4c" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <line x1="15" y1="55" x2="245" y2="55" stroke="#7b6fd4" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <path d="M20,148 Q60,140 95,115 Q110,100 118,80 Q124,62 127,28" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <path d="M133,28 Q136,62 142,80 Q150,100 165,115 Q200,140 240,148" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <text x="135" y="165" font-size="9" fill="#c94c4c" font-family="monospace">رأسي: x=a</text>
-  <text x="170" y="50" font-size="9" fill="#7b6fd4" font-family="monospace">أفقي: y=L</text>
-  <text x="130" y="192" text-anchor="middle" font-size="9" fill="#8a8799" font-family="'IBM Plex Sans Arabic',sans-serif">الدالة 1/(x-a) + L</text>
-</svg>`,
-
-'Continuity\nConditions': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
-  <style>.cnd{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:10px}</style>
-  ${[['① f(a) is defined','#1fad84',20],['Limit exists','#7b6fd4',72],['③ Limit = f(a)','#c9a84c',124]].map(([txt,col,y])=>
-    `<rect x="20" y="${y}" width="220" height="34" rx="8" fill="rgba(255,255,255,.03)" stroke="${col}" stroke-width="1"/>
-     <circle cx="38" cy="${y+17}" r="8" fill="${col}" opacity=".2" stroke="${col}" stroke-width="1"/>
-     <text x="38" y="${y+21}" text-anchor="middle" font-size="9" fill="${col}" font-family="monospace">✓</text>
-     <text x="56" y="${y+20}" class="cnd" fill="#eeeaf2">${txt}</text>`
-  ).join('')}
-  <text x="130" y="178" text-anchor="middle" font-size="9" fill="#1fad84" font-family="'IBM Plex Sans Arabic',sans-serif">يجب توفر الشروط الثلاثة معاً</text>
-</svg>`,
-
-'Types of\nDiscontinuity': ()=>`<svg viewBox="0 0 260 195" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:225px">
-  <style>.tl{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:8.5px}</style>
-  <text x="43" y="12" text-anchor="middle" class="tl" fill="#1fad84">نقطي (قابل للإزالة)</text>
-  <line x1="10" y1="65" x2="76" y2="65" stroke="#3e3c52" stroke-width=".8"/>
-  <line x1="10" y1="65" x2="10" y2="15" stroke="#3e3c52" stroke-width=".8"/>
-  <path d="M12,62 Q30,45 43,35 Q52,27 72,20" fill="none" stroke="#1fad84" stroke-width="1.8"/>
-  <circle cx="43" cy="35" r="3.5" fill="#06070b" stroke="#1fad84" stroke-width="1.5"/>
-  <circle cx="43" cy="48" r="3" fill="#1fad84"/>
-
-  <text x="130" y="12" text-anchor="middle" class="tl" fill="#c94c4c">قفزي (Jump)</text>
-  <line x1="97" y1="65" x2="163" y2="65" stroke="#3e3c52" stroke-width=".8"/>
-  <line x1="97" y1="65" x2="97" y2="15" stroke="#3e3c52" stroke-width=".8"/>
-  <path d="M99,58 Q110,50 125,44" fill="none" stroke="#c94c4c" stroke-width="1.8"/>
-  <path d="M135,28 Q150,22 161,18" fill="none" stroke="#c94c4c" stroke-width="1.8"/>
-  <circle cx="130" cy="44" r="3" fill="none" stroke="#c94c4c" stroke-width="1.5"/>
-  <circle cx="130" cy="28" r="3" fill="none" stroke="#c94c4c" stroke-width="1.5"/>
-  <line x1="130" y1="15" x2="130" y2="66" stroke="#c94c4c" stroke-width=".8" stroke-dasharray="3 3" opacity=".4"/>
-
-  <text x="217" y="12" text-anchor="middle" class="tl" fill="#7b6fd4">لانهائي (Infinite)</text>
-  <line x1="184" y1="65" x2="250" y2="65" stroke="#3e3c52" stroke-width=".8"/>
-  <line x1="184" y1="65" x2="184" y2="15" stroke="#3e3c52" stroke-width=".8"/>
-  <line x1="217" y1="15" x2="217" y2="66" stroke="#c94c4c" stroke-width="1" stroke-dasharray="4 3"/>
-  <path d="M186,62 Q195,55 205,45 Q210,37 213,18" fill="none" stroke="#7b6fd4" stroke-width="1.8"/>
-  <path d="M221,18 Q224,37 229,45 Q239,55 248,62" fill="none" stroke="#7b6fd4" stroke-width="1.8"/>
-
-  <line x1="5" y1="72" x2="255" y2="72" stroke="#3e3c52" stroke-width=".5" opacity=".4"/>
-
-  <text x="43" y="90" text-anchor="middle" font-size="8" fill="#1fad84" font-family="monospace">lim موجودة</text>
-  <text x="43" y="102" text-anchor="middle" font-size="8" fill="#1fad84" font-family="monospace">لكن ≠ f(a)</text>
-  <text x="130" y="90" text-anchor="middle" font-size="8" fill="#c94c4c" font-family="monospace">lim⁺ ≠ lim⁻</text>
-  <text x="217" y="90" text-anchor="middle" font-size="8" fill="#7b6fd4" font-family="monospace">lim = ±∞</text>
-
-  <text x="130" y="108" text-anchor="middle" class="tl" fill="#8a8799">الانقطاع النقطي يمكن إزالته — الآخران لا</text>
-</svg>`,
-
-
-'Natural\nNumbers ℕ': ()=>DIAGRAMS['Number\nSets'](),
-'Whole\nNumbers W': ()=>DIAGRAMS['Number\nSets'](),
-'Integers\nℤ': ()=>DIAGRAMS['Number\nSets'](),
-'Rational\nNumbers ℚ': ()=>DIAGRAMS['Number\nSets'](),
-'Real\nNumbers ℝ': ()=>DIAGRAMS['Number\nSets'](),
-'Open &\nClosed Intervals': ()=>DIAGRAMS['Intervals &\nInequalities'](),
-'Inequalities\n& Sign Rule': ()=>DIAGRAMS['Intervals &\nInequalities'](),
-'Absolute\nValue |x|': ()=>DIAGRAMS['Absolute\nValue'](),
-'Linear\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
-'Power\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
-'Root\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
-'Rational\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
-'Piecewise\nFunctions': ()=>DIAGRAMS['Types of\nFunctions'](),
-'Operations\non Functions': ()=>DIAGRAMS['Operations &\nComposition'](),
-'Composition\nf∘g': ()=>DIAGRAMS['Operations &\nComposition'](),
-'One-to-One\nTest': ()=>DIAGRAMS['One-to-One\nFunction'](),
-'Finding\nf⁻¹(x)': ()=>DIAGRAMS['Inverse\nFunction f⁻¹'](),
-'Domain &\nRange of f⁻¹': ()=>DIAGRAMS['Inverse\nFunction f⁻¹'](),
-'Cancellation\nLaws': ()=>DIAGRAMS['Inverse\nFunction f⁻¹'](),
-'Graph\nSymmetry': ()=>DIAGRAMS['Inverse\nFunction f⁻¹'](),
-'Radians &\nDegrees': ()=>DIAGRAMS['Angles &\nMeasurements'](),
-'Arc Length\ns = rθ': ()=>DIAGRAMS['Angles &\nMeasurements'](),
-'Reference\nAngle θ\'': ()=>DIAGRAMS['Angles &\nMeasurements'](),
-'sin, cos,\ntan': ()=>`<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" style="width:520px;height:310px">
-<style>.gl{font-family:monospace;font-size:9px}.ax{stroke:#2a2a3a;stroke-width:.8}</style>
-<!-- Title -->
-<text x="260" y="14" text-anchor="middle" font-size="10" fill="#c9a84c" font-family="monospace">Graphs of sin(x), cos(x), tan(x)</text>
-
-<!-- sin(x) -->
-<text x="8" y="56" class="gl" fill="#1fad84" font-weight="600">sin(x)</text>
-<line x1="18" y1="72" x2="510" y2="72" class="ax"/>
-<line x1="18" y1="42" x2="18" y2="100" class="ax"/>
-<path d="M18,72 C55,42 91,42 128,72 C165,102 201,102 238,72 C275,42 311,42 348,72 C385,102 421,102 458,72 C476,58 494,48 510,44" fill="none" stroke="#1fad84" stroke-width="1.8"/>
-<text x="130" y="88" class="gl" fill="#1fad84">period 2π</text>
-<text x="22" y="46" class="gl" fill="#1fad84">1</text>
-<text x="22" y="101" class="gl" fill="#1fad84">-1</text>
-
-<!-- cos(x) -->
-<text x="8" y="126" class="gl" fill="#7b6fd4" font-weight="600">cos(x)</text>
-<line x1="18" y1="142" x2="510" y2="142" class="ax"/>
-<line x1="18" y1="112" x2="18" y2="170" class="ax"/>
-<path d="M18,112 C36,112 54,122 72,142 C108,172 144,172 180,142 C216,112 252,112 288,142 C324,172 360,172 396,142 C432,112 468,112 510,118" fill="none" stroke="#7b6fd4" stroke-width="1.8"/>
-<text x="130" y="158" class="gl" fill="#7b6fd4">shifted π/2 from sin</text>
-<text x="22" y="116" class="gl" fill="#7b6fd4">1</text>
-<text x="22" y="171" class="gl" fill="#7b6fd4">-1</text>
-
-<!-- tan(x) -->
-<text x="8" y="196" class="gl" fill="#c9854c" font-weight="600">tan(x)</text>
-<line x1="18" y1="240" x2="510" y2="240" class="ax"/>
-<line x1="18" y1="200" x2="18" y2="300" class="ax"/>
-<!-- tan branches -->
-<path d="M18,285 Q55,270 90,240 Q110,220 118,210" fill="none" stroke="#c9854c" stroke-width="1.8"/>
-<line x1="128" y1="200" x2="128" y2="300" stroke="#c94c4c" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
-<path d="M138,300 Q150,270 180,240 Q210,210 248,205" fill="none" stroke="#c9854c" stroke-width="1.8"/>
-<line x1="258" y1="200" x2="258" y2="300" stroke="#c94c4c" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
-<path d="M268,300 Q280,270 310,240 Q340,210 378,205" fill="none" stroke="#c9854c" stroke-width="1.8"/>
-<line x1="388" y1="200" x2="388" y2="300" stroke="#c94c4c" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
-<path d="M398,300 Q412,270 440,240 Q470,215 510,210" fill="none" stroke="#c9854c" stroke-width="1.8"/>
-<text x="120" y="307" class="gl" fill="#c94c4c" text-anchor="middle">x=π/2</text>
-<text x="250" y="307" class="gl" fill="#c94c4c" text-anchor="middle">x=3π/2</text>
-<text x="200" y="215" class="gl" fill="#c9854c">vertical asymptotes</text>
-</svg>`,
-
-'csc, sec,\ncot': ()=>`<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" style="width:520px;height:310px">
-<style>.gl{font-family:monospace;font-size:9px}.ax{stroke:#2a2a3a;stroke-width:.8}</style>
-<text x="260" y="14" text-anchor="middle" font-size="10" fill="#c9a84c" font-family="monospace">Graphs of csc(x), sec(x), cot(x)</text>
-
-<!-- csc(x) = 1/sin -->
-<text x="8" y="34" class="gl" fill="#1fad84" font-weight="600">csc(x) = 1/sin(x)</text>
-<line x1="18" y1="68" x2="510" y2="68" class="ax"/>
-<line x1="18" y1="30" x2="18" y2="105" class="ax"/>
-<line x1="18" y1="30" x2="18" y2="105" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="128" y1="30" x2="128" y2="105" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="238" y1="30" x2="238" y2="105" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="348" y1="30" x2="348" y2="105" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<path d="M22,38 Q40,50 55,68 Q70,86 88,98" fill="none" stroke="#1fad84" stroke-width="1.6"/>
-<path d="M140,98 Q158,86 183,68 Q208,50 226,38" fill="none" stroke="#1fad84" stroke-width="1.6"/>
-<path d="M252,38 Q270,50 295,68 Q320,86 338,98" fill="none" stroke="#1fad84" stroke-width="1.6"/>
-<path d="M360,98 Q378,86 403,68 Q428,50 446,38" fill="none" stroke="#1fad84" stroke-width="1.6"/>
-<text x="270" y="56" class="gl" fill="#1fad84">≥1 or ≤-1</text>
-
-<!-- sec(x) = 1/cos -->
-<text x="8" y="120" class="gl" fill="#7b6fd4" font-weight="600">sec(x) = 1/cos(x)</text>
-<line x1="18" y1="155" x2="510" y2="155" class="ax"/>
-<line x1="73" y1="115" x2="73" y2="190" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="183" y1="115" x2="183" y2="190" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="293" y1="115" x2="293" y2="190" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="403" y1="115" x2="403" y2="190" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<path d="M18,125 Q36,130 55,155 Q68,180 72,188" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
-<path d="M75,188 Q78,180 92,155 Q112,130 130,125 Q152,123 183,125" fill="none" stroke="#7b6fd4" stroke-width="1.6" opacity=".3"/>
-<path d="M75,122 Q90,130 110,155 Q125,175 135,185" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
-<path d="M230,122 Q248,130 268,155 Q283,175 292,185" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
-<path d="M295,185 Q305,170 325,155 Q350,135 380,125 Q395,122 403,122" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
-<path d="M340,122 Q358,130 378,155 Q393,175 402,185" fill="none" stroke="#7b6fd4" stroke-width="1.6"/>
-<text x="450" y="145" class="gl" fill="#7b6fd4">≥1 or ≤-1</text>
-
-<!-- cot(x) = cos/sin -->
-<text x="8" y="206" class="gl" fill="#c9854c" font-weight="600">cot(x) = cos(x)/sin(x)</text>
-<line x1="18" y1="250" x2="510" y2="250" class="ax"/>
-<line x1="18" y1="210" x2="18" y2="295" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="128" y1="210" x2="128" y2="295" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="238" y1="210" x2="238" y2="295" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<line x1="348" y1="210" x2="348" y2="295" stroke="#c94c4c" stroke-width=".7" stroke-dasharray="3 3" opacity=".5"/>
-<path d="M22,215 Q55,230 90,250 Q110,265 118,290" fill="none" stroke="#c9854c" stroke-width="1.8"/>
-<path d="M138,215 Q168,230 198,250 Q218,265 228,290" fill="none" stroke="#c9854c" stroke-width="1.8"/>
-<path d="M248,215 Q278,230 308,250 Q328,265 338,290" fill="none" stroke="#c9854c" stroke-width="1.8"/>
-<path d="M358,215 Q388,230 418,250 Q438,265 448,290" fill="none" stroke="#c9854c" stroke-width="1.8"/>
-<text x="160" y="240" class="gl" fill="#c9854c">decreasing on each period</text>
-<text x="260" y="305" text-anchor="middle" class="gl" fill="#8a8799">asymptotes at x = nπ for all three</text>
-</svg>`,
-'ASTC\nSigns': ()=>DIAGRAMS['6 Trig Functions\n& Signs'](),
-'ASTC\nSigns': ()=>DIAGRAMS['6 Trig Functions\n& Signs'](),
-'Pythagorean\nIdentities': ()=>DIAGRAMS['Identities &\nInverses'](),
-'Double Angle\nFormulas': ()=>DIAGRAMS['Identities &\nInverses'](),
-'Inverse Trig\nFunctions': ()=>DIAGRAMS['Identities &\nInverses'](),
-'sin⁻¹(x)': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:260px;height:220px">
-<style>.gl{font-size:9px;font-family:monospace}</style>
-<line x1="20" y1="110" x2="240" y2="110" stroke="#2a2a3a" stroke-width=".8"/>
-<line x1="130" y1="15" x2="130" y2="205" stroke="#2a2a3a" stroke-width=".8"/>
-<!-- Horizontal asymptote hints -->
-<line x1="20" y1="40" x2="240" y2="40" stroke="#1fad84" stroke-width=".8" stroke-dasharray="4 4" opacity=".4"/>
-<line x1="20" y1="180" x2="240" y2="180" stroke="#1fad84" stroke-width=".8" stroke-dasharray="4 4" opacity=".4"/>
-<!-- sin⁻¹ curve: domain [-1,1], range [-π/2,π/2] -->
-<path d="M60,180 Q80,160 100,140 Q115,125 130,110 Q145,95 160,80 Q180,60 200,40" fill="none" stroke="#1fad84" stroke-width="2"/>
-<circle cx="60" cy="180" r="3" fill="#1fad84"/>
-<circle cx="200" cy="40" r="3" fill="#1fad84"/>
-<text x="42" y="176" class="gl" fill="#1fad84">(-1,-π/2)</text>
-<text x="202" y="38" class="gl" fill="#1fad84">(1,π/2)</text>
-<text x="135" y="44" class="gl" fill="#1fad84">π/2</text>
-<text x="135" y="184" class="gl" fill="#1fad84">-π/2</text>
-<text x="130" y="210" text-anchor="middle" class="gl" fill="#8a8799">Domain: [−1,1]  Range: [−π/2, π/2]</text>
-</svg>`,
-'cos⁻¹(x)': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:260px;height:220px">
-<style>.gl{font-size:9px;font-family:monospace}</style>
-<line x1="20" y1="110" x2="240" y2="110" stroke="#2a2a3a" stroke-width=".8"/>
-<line x1="130" y1="15" x2="130" y2="205" stroke="#2a2a3a" stroke-width=".8"/>
-<line x1="20" y1="25" x2="240" y2="25" stroke="#7b6fd4" stroke-width=".8" stroke-dasharray="4 4" opacity=".4"/>
-<!-- cos⁻¹ curve: domain [-1,1], range [0,π] — strictly decreasing -->
-<path d="M60,25 Q80,45 100,70 Q115,90 130,110 Q145,130 160,155 Q180,175 200,195" fill="none" stroke="#7b6fd4" stroke-width="2"/>
-<circle cx="60" cy="25" r="3" fill="#7b6fd4"/>
-<circle cx="200" cy="195" r="3" fill="#7b6fd4"/>
-<text x="42" y="22" class="gl" fill="#7b6fd4">(-1, π)</text>
-<text x="202" y="198" class="gl" fill="#7b6fd4">(1, 0)</text>
-<text x="135" y="28" class="gl" fill="#7b6fd4">π</text>
-<text x="130" y="210" text-anchor="middle" class="gl" fill="#8a8799">Domain: [−1,1]  Range: [0, π]  (decreasing)</text>
-</svg>`,
-'tan⁻¹(x)': ()=>`<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" style="width:260px;height:220px">
-<style>.gl{font-size:9px;font-family:monospace}</style>
-<line x1="20" y1="110" x2="240" y2="110" stroke="#2a2a3a" stroke-width=".8"/>
-<line x1="130" y1="15" x2="130" y2="205" stroke="#2a2a3a" stroke-width=".8"/>
-<line x1="20" y1="40" x2="240" y2="40" stroke="#c9854c" stroke-width=".8" stroke-dasharray="5 4" opacity=".5"/>
-<line x1="20" y1="180" x2="240" y2="180" stroke="#c9854c" stroke-width=".8" stroke-dasharray="5 4" opacity=".5"/>
-<!-- tan⁻¹ curve: domain ℝ, range (-π/2, π/2) — S-shaped -->
-<path d="M20,175 Q40,172 60,165 Q90,152 110,135 Q120,124 130,110 Q140,96 150,85 Q170,68 200,55 Q220,48 240,45" fill="none" stroke="#c9854c" stroke-width="2"/>
-<text x="135" y="44" class="gl" fill="#c9854c">y = π/2 (asymptote)</text>
-<text x="135" y="184" class="gl" fill="#c9854c">y = −π/2 (asymptote)</text>
-<circle cx="130" cy="110" r="3" fill="#c9854c"/>
-<text x="134" y="108" class="gl" fill="#c9854c">(0,0)</text>
-<text x="130" y="210" text-anchor="middle" class="gl" fill="#8a8799">Domain: ℝ  Range: (−π/2, π/2)  horizontal asymptotes</text>
-</svg>`,
-'Intuitive\nDefinition': ()=>DIAGRAMS['Limit\nDefinition'](),
-'ε-δ Formal\nDefinition': ()=>DIAGRAMS['Limit\nDefinition'](),
-'Right-Hand\nLimit x→a⁺': ()=>DIAGRAMS['One-Sided\nLimits'](),
-'Left-Hand\nLimit x→a⁻': ()=>DIAGRAMS['One-Sided\nLimits'](),
-'Existence\nCondition': ()=>DIAGRAMS['Existence\nCondition'](),
-'Basic Limit\nLaws': ()=>DIAGRAMS['Direct\nSubstitution'](),
-'Direct\nSubstitution': ()=>DIAGRAMS['Direct\nSubstitution'](),
-'Factorization\nMethod': ()=>DIAGRAMS['Simplification\nMethods'](),
-'Rationalization\nMethod': ()=>DIAGRAMS['Simplification\nMethods'](),
-'Squeeze\nTheorem': ()=>DIAGRAMS['Squeeze\nTheorem'](),
-'Limit\nat +∞': ()=>DIAGRAMS['Limits at\nInfinity'](),
-'Limit\nat −∞': ()=>DIAGRAMS['Limits at\nInfinity'](),
-'Horizontal\nAsymptote': ()=>DIAGRAMS['Asymptotes'](),
-'Vertical\nAsymptote': ()=>DIAGRAMS['Asymptotes'](),
-'Infinite\nLimits': ()=>DIAGRAMS['Infinite\nLimits'](),
-'3 Conditions\nfor Continuity': ()=>DIAGRAMS['Continuity\nConditions'](),
-'Removable\nDiscontinuity': ()=>DIAGRAMS['Types of\nDiscontinuity'](),
-'Jump\nDiscontinuity': ()=>DIAGRAMS['Types of\nDiscontinuity'](),
-'Infinite\nDiscontinuity': ()=>DIAGRAMS['Types of\nDiscontinuity'](),
-'Continuity\non Interval': ()=>DIAGRAMS['Continuity\nConditions'](),
-'IVT\nTheorem': ()=>DIAGRAMS['IVT\nIntermediate Value'](),
-
-'IVT\nIntermediate Value': ()=>`<svg viewBox="0 0 260 195" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:225px">
-  <line x1="20" y1="155" x2="240" y2="155" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="20" y1="155" x2="20" y2="20" stroke="#3e3c52" stroke-width="1"/>
-  <path d="M40,140 Q80,120 120,75 Q150,45 200,30" fill="none" stroke="#1fad84" stroke-width="2"/>
-  <line x1="40" y1="155" x2="40" y2="140" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="200" y1="155" x2="200" y2="30" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="20" y1="140" x2="40" y2="140" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="20" y1="30" x2="200" y2="30" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="20" y1="75" x2="240" y2="75" stroke="#c94c4c" stroke-width="1" stroke-dasharray="5 4"/>
-  <circle cx="118" cy="75" r="4" fill="#c94c4c"/>
-  <line x1="118" y1="75" x2="118" y2="155" stroke="#c94c4c" stroke-width="1" stroke-dasharray="3 3"/>
-  <text x="35" y="167" font-size="9" fill="#c9a84c" font-family="monospace">a</text>
-  <text x="196" y="167" font-size="9" fill="#c9a84c" font-family="monospace">b</text>
-  <text x="114" y="167" font-size="9" fill="#c94c4c" font-family="monospace">c</text>
-  <text x="5" y="143" font-size="8" fill="#c9a84c" font-family="monospace">f(a)</text>
-  <text x="5" y="33" font-size="8" fill="#c9a84c" font-family="monospace">f(b)</text>
-  <text x="8" y="78" font-size="8" fill="#c94c4c" font-family="monospace">k</text>
-  <text x="130" y="185" text-anchor="middle" font-size="9" fill="#c94c4c" font-family="'IBM Plex Sans Arabic',sans-serif">∃ c ∈ (a,b) : f(c) = k</text>
-</svg>`,
-
-'Squeeze\nTheorem': ()=>`<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg" style="width:300px;height:220px">
-  <line x1="15" y1="150" x2="245" y2="150" stroke="#3e3c52" stroke-width="1"/>
-  <line x1="15" y1="150" x2="15" y2="20" stroke="#3e3c52" stroke-width="1"/>
-  <path d="M25,145 Q80,100 130,58 Q180,20 235,15" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <path d="M25,145 Q80,115 130,80 Q180,48 235,38" fill="none" stroke="#1fad84" stroke-width="2.5"/>
-  <path d="M25,145 Q80,130 130,100 Q180,72 235,58" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="238" y="14" font-size="9" fill="#c9a84c" font-family="monospace">h(x)</text>
-  <text x="238" y="37" font-size="9" fill="#1fad84" font-family="monospace">f(x)</text>
-  <text x="238" y="57" font-size="9" fill="#c9a84c" font-family="monospace">g(x)</text>
-  <circle cx="130" cy="80" r="4" fill="#1fad84"/>
-  <line x1="130" y1="20" x2="130" y2="150" stroke="#3e3c52" stroke-width=".8" stroke-dasharray="3 3"/>
-  <line x1="15" y1="80" x2="130" y2="80" stroke="#3e3c52" stroke-width=".8" stroke-dasharray="3 3"/>
-  <text x="130" y="175" text-anchor="middle" font-size="9" fill="#1fad84" font-family="'IBM Plex Sans Arabic',sans-serif">g(x) ≤ f(x) ≤ h(x) ⟹ lim f = L</text>
-</svg>`,
-
-};
-
-// ═══════════════════════════════════════════════════════
-// DETAIL PANEL
-// ═══════════════════════════════════════════════════════
-function openDp(title,desc,tags,col,meta){
-  document.getElementById('dp-l').style.background=col;
-  document.documentElement.style.setProperty('--dp-col',col);
-  document.getElementById('dp-meta').textContent=meta||'';
-  document.getElementById('dp-t').textContent=title.replace(/\n/g,' ');
-  document.getElementById('dp-d').textContent=desc;
-  const ul=document.getElementById('dp-pts');
-  ul.innerHTML='';
-  (tags||[]).forEach(t=>{
-    const li=document.createElement('li');
-    li.textContent=t;
-    ul.appendChild(li);
-  });
-  // Diagram
-  const diag=document.getElementById('dp-diagram');
-  const key=Object.keys(DIAGRAMS).find(k=>k===title);
-  if(key){
-    diag.innerHTML=DIAGRAMS[key]();
-    document.getElementById('dp-right').style.display='flex';
-  } else {
-    diag.innerHTML=`<div id="dp-no-diagram">لا توجد رسمة<br>لهذا المفهوم</div>`;
-    document.getElementById('dp-right').style.display='flex';
-  }
-  document.getElementById('dp').classList.add('open');
-}
-function closeDp(){document.getElementById('dp').classList.remove('open')}
-cw.addEventListener('click',e=>{if(!e.target.closest('.ng'))closeDp()});
-
-// ═══════════════════════════════════════════════════════
-// EXPORT
-// ═══════════════════════════════════════════════════════
-function exportS(){
-  const s=document.getElementById('svg');
-  const b=new Blob([new XMLSerializer().serializeToString(s)],{type:'image/svg+xml'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='math101.svg';a.click();
-}
-
-// ═══════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════
-buildMap();
-setTimeout(resetV,80);
-window.addEventListener('resize',()=>{setupBg();resetV()});
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur+1); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(cur-1); }
+  if (e.key === 'Home')       { e.preventDefault(); goTo(0); }
+  if (e.key === 'End')        { e.preventDefault(); goTo(TOTAL-1); }
+});
+
+let tStart = 0;
+document.addEventListener('touchstart', e => { tStart = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend',   e => {
+  const dx = tStart - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 50) goTo(cur + (dx > 0 ? 1 : -1));
+}, {passive:true});
+
+updateUI();
+animIn(0);
 </script>
 </body>
 </html>
