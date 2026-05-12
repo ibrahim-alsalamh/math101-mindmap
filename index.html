@@ -5,688 +5,924 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Math 101 — King Saud University</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;600&family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#06070b;
-  --gold:#c9a84c;
-  --text:#eeeaf2;
-  --text2:#8a8799;
-  --text3:#3e3c52;
-  --border:rgba(255,255,255,0.07);
-  --c1:#1fad84;
-  --c2:#7b6fd4;
-  --red:#c94c4c;
-  --ora:#c9854c;
+  --bg:#f8f7f2;
+  --surface:#ffffff;
+  --gold:#b8922d;
+  --text:#1c1b28;
+  --text2:#58556e;
+  --text3:#a0a0b8;
+  --c1:#1aaa7e;
+  --c2:#6b5ecf;
+  --border:rgba(0,0,0,0.09);
+  --shadow:0 2px 24px rgba(0,0,0,0.10);
 }
-html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
-#bgc{position:fixed;inset:0;pointer-events:none;z-index:0}
-#vig{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 0%,rgba(6,7,11,.55) 100%)}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
 
-/* ── DECK ── */
-#deck{position:fixed;inset:0;z-index:10;overflow:hidden}
-
-/* ── SLIDES ── */
+/* ── slides ── */
+#deck{position:fixed;inset:0;width:100%;height:100%}
 .slide{
   position:absolute;inset:0;
   display:flex;flex-direction:column;
-  padding:52px 80px 68px;
-  overflow:hidden;
-  will-change:transform,opacity;
-  transform:translateX(100%);
-  opacity:0;
-  pointer-events:none;
-}
-.slide.active{
+  padding:48px 72px 40px;
   transform:translateX(0);
   opacity:1;
-  pointer-events:all;
-  transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .45s ease;
+  will-change:transform,opacity;
+  transition:transform .55s cubic-bezier(.77,0,.18,1),opacity .55s cubic-bezier(.77,0,.18,1);
 }
+.slide.off-right{transform:translateX(105%);opacity:0;pointer-events:none}
+.slide.off-left {transform:translateX(-105%);opacity:0;pointer-events:none}
 
-/* ── PROGRESS BAR ── */
-#prog{position:fixed;top:0;left:0;height:2.5px;background:var(--gold);z-index:200;transition:width .4s ease;box-shadow:0 0 8px rgba(201,168,76,.5)}
+/* ── header ── */
+.hd{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;flex-shrink:0}
+.hd-left{display:flex;flex-direction:column;gap:4px}
+.slide-tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.hd-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.4vw,46px);font-weight:600;color:var(--text);line-height:1.1}
+.hd-sub{font-size:13px;color:var(--text2);letter-spacing:.04em}
 
-/* ── SLIDE DOTS ── */
-#dots{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:9px;z-index:200}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:background .3s,transform .3s,box-shadow .3s}
-.dot.on{background:var(--gold);transform:scale(1.5);box-shadow:0 0 6px rgba(201,168,76,.6)}
+/* ── progress bar ── */
+#prog{position:fixed;top:0;left:0;height:3px;background:var(--gold);transition:width .5s ease;z-index:100}
 
-/* ── COUNTER ── */
-#ctr{position:fixed;bottom:22px;right:28px;font-size:12px;color:var(--text3);z-index:200;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+/* ── dot nav ── */
+#dots{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--text3);transition:background .3s,transform .3s;cursor:pointer}
+.dot.act{background:var(--gold);transform:scale(1.4)}
 
-/* ── HINT ── */
-#hint{position:fixed;bottom:22px;left:28px;font-size:11px;color:var(--text3);z-index:200}
+/* ── arrow hints ── */
+#arrowL,#arrowR{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.7);border:1px solid var(--border);border-radius:50%;
+  cursor:pointer;z-index:100;color:var(--text2);font-size:20px;
+  transition:background .2s,color .2s;backdrop-filter:blur(4px)}
+#arrowL:hover,#arrowR:hover{background:var(--surface);color:var(--text)}
+#arrowL{left:18px}
+#arrowR{right:18px}
 
-/* ════════════════════════════
-   ANIMATION ITEMS
-   ════════════════════════════ */
-.ai{opacity:0;transform:translateY(20px)}
-.ai.in{opacity:1;transform:translateY(0);transition:opacity .48s ease,transform .48s cubic-bezier(.34,1.08,.64,1)}
+/* ── animate-in ── */
+.ai{opacity:0;transform:translateY(18px);transition:opacity .45s ease,transform .45s ease}
+.ai.in{opacity:1;transform:none}
 
-/* ════════════════════════════
-   SLIDE 1 — TITLE
-   ════════════════════════════ */
-#s1{align-items:center;justify-content:center;text-align:center;gap:0}
-.t-ring{width:90px;height:90px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
-  font-family:'Cormorant Garamond',serif;font-size:42px;font-style:italic;color:var(--gold);margin:0 auto 38px}
-.t-main{font-size:96px;font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--text);margin-bottom:12px}
-.t-main em{color:var(--gold);font-style:normal}
-.t-ksu{font-size:15px;color:var(--text2);letter-spacing:.2em;text-transform:uppercase;margin-bottom:56px}
-.t-pills{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
-.pill{padding:15px 32px;border-radius:50px;font-size:16px;font-weight:600;border:1.5px solid;cursor:default}
-.pill.c1{color:var(--c1);border-color:var(--c1);background:rgba(31,173,132,.07)}
-.pill.c2{color:var(--c2);border-color:var(--c2);background:rgba(123,111,212,.07)}
+/* ── TITLE SLIDE ── */
+#s0{background:var(--surface);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 80px}
+#s0 canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#s0 .t0-wrap{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:20px}
+#s0 .ksu-badge{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600;background:rgba(184,146,45,0.1);padding:6px 18px;border-radius:20px;border:1px solid rgba(184,146,45,0.2)}
+#s0 .t0-title{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,7vw,90px);font-weight:600;line-height:1;color:var(--text)}
+#s0 .t0-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(22px,3.5vw,44px);color:var(--gold)}
+#s0 .t0-sub{font-size:15px;color:var(--text2);max-width:500px;line-height:1.6}
+#s0 .t0-divider{width:60px;height:2px;background:var(--gold);border-radius:1px}
+#s0 .t0-hint{font-size:12px;color:var(--text3);letter-spacing:.08em}
+#s0 .chapters-row{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+#s0 .ch-pill{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 24px;display:flex;flex-direction:column;gap:4px;min-width:200px}
+#s0 .ch-pill .ch-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+#s0 .ch-pill .ch-name{font-size:15px;font-weight:600;color:var(--text)}
 
-/* ════════════════════════════
-   OVERVIEW SLIDES
-   ════════════════════════════ */
-.ov-top{margin-bottom:28px;flex-shrink:0}
-.ov-ch{font-size:54px;font-weight:700;line-height:1;margin-bottom:8px}
-.ov-sub{font-size:14px;color:var(--text2);letter-spacing:.14em;text-transform:uppercase}
-.ov-body{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;flex:1;min-height:0}
-.ov-cards{display:flex;flex-direction:column;gap:13px;justify-content:center}
-.sc{background:rgba(255,255,255,.025);border:.5px solid var(--border);border-radius:14px;padding:18px 22px;border-left:3px solid var(--cc,var(--gold))}
-.sc-num{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cc,var(--gold));margin-bottom:5px}
-.sc-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:7px}
-.sc-topics{font-size:13px;color:var(--text2);line-height:1.7}
-.ov-map{display:flex;align-items:center;justify-content:center;min-height:0}
-.ov-map svg{width:100%;height:100%;max-height:450px}
+/* ── OVERVIEW SLIDE ── */
+.ov-slide{background:var(--surface)}
+.ov-svg-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.ov-svg-wrap svg{max-width:100%;max-height:100%;overflow:visible}
 
-/* ════════════════════════════
-   DETAIL SLIDES
-   ════════════════════════════ */
-.d-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;flex-shrink:0;border-bottom:.5px solid var(--border);padding-bottom:18px}
-.d-title{font-size:40px;font-weight:700;letter-spacing:-.015em}
-.d-ch{font-size:12px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:44px;flex:1;min-height:0;overflow:hidden}
-.col{display:flex;flex-direction:column;gap:13px;overflow:hidden}
+/* ── DETAIL SLIDE ── */
+.dt-slide{background:var(--surface)}
+.dt-body{flex:1;min-height:0;display:flex;align-items:stretch}
+.dt-svg-wrap{flex:1;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center}
+.dt-svg-wrap svg{width:100%;height:100%;overflow:visible}
 
-/* Section label */
-.sec-lbl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  padding:7px 16px;border-radius:20px;display:inline-block;margin-bottom:4px;flex-shrink:0;width:fit-content}
-.sec-lbl.c1{color:var(--c1);background:rgba(31,173,132,.1);border:.5px solid rgba(31,173,132,.3)}
-.sec-lbl.c2{color:var(--c2);background:rgba(123,111,212,.1);border:.5px solid rgba(123,111,212,.3)}
+/* ── canvas bg ── */
+canvas.bg-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.35}
 
-/* Concept card */
-.ccard{background:rgba(255,255,255,.022);border:.5px solid var(--border);border-radius:13px;padding:17px 22px;flex-shrink:0}
-.ccard-title{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
-.eq-stack{display:flex;flex-direction:column;gap:9px}
-
-/* Equation box */
-.eq{
-  border:1.5px solid var(--ec,var(--gold));
-  border-radius:9px;
-  padding:13px 22px;
-  background:rgba(255,255,255,.025);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:19px;
-  color:var(--text);
-  text-align:center;
-}
-.eq.sm{font-size:14.5px;padding:9px 16px}
-.eq.lg{font-size:24px;padding:16px 26px}
-.eq-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.eq-row .eq{font-size:14px;padding:9px 12px}
-
-/* Bullet list */
-.blist{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:4px}
-.blist li{font-size:15px;color:var(--text2);display:flex;align-items:flex-start;gap:10px;line-height:1.55}
-.blist li::before{content:'›';color:var(--gold);flex-shrink:0;font-size:17px;line-height:1.3}
-.blist li strong{color:var(--text)}
-
-.note{font-size:13px;color:var(--text2);line-height:1.65;margin-top:8px}
 </style>
 </head>
 <body>
-<canvas id="bgc"></canvas>
-<div id="vig"></div>
+<div id="prog"></div>
+<div id="arrowL" onclick="goTo(cur-1)">&#8592;</div>
+<div id="arrowR" onclick="goTo(cur+1)">&#8594;</div>
+<div id="dots"></div>
 
 <div id="deck">
 
-<!-- ══════════════════════════════════════════════════
-     SLIDE 1 — TITLE
-     ══════════════════════════════════════════════════ -->
-<div class="slide active" id="s1">
-  <div class="t-ring ai">∑</div>
-  <div class="t-main ai">Math <em>101</em></div>
-  <div class="t-ksu ai">King Saud University</div>
-  <div class="t-pills ai">
-    <span class="pill c1">Chapter 1 — Numbers &amp; Functions</span>
-    <span class="pill c2">Chapter 2 — Limits &amp; Continuity</span>
+<!-- ─────────────────────────────── SLIDE 0: Title ─────────────────────────────── -->
+<div class="slide" id="s0">
+<canvas id="bgCanvas"></canvas>
+<div class="t0-wrap">
+  <div class="ksu-badge ai">King Saud University · Math 101</div>
+  <div class="t0-title ai">Mathematics<br><em style="color:var(--gold)">Mind Map</em></div>
+  <div class="t0-divider ai"></div>
+  <div class="t0-sub ai">A structured visual overview of the course covering<br>Real Numbers, Functions, Limits &amp; Continuity, and Derivatives</div>
+  <div class="chapters-row">
+    <div class="ch-pill ai">
+      <span class="ch-label">Chapter 1</span>
+      <span class="ch-name">Real Numbers &amp; Functions</span>
+    </div>
+    <div class="ch-pill ai">
+      <span class="ch-label">Chapter 2</span>
+      <span class="ch-name">Limits, Continuity &amp; Derivatives</span>
+    </div>
   </div>
+  <div class="t0-hint ai">← → or Space to navigate</div>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     SLIDE 2 — CHAPTER 1 OVERVIEW
-     ══════════════════════════════════════════════════ -->
-<div class="slide" id="s2">
-  <div class="ov-top ai">
-    <div class="ov-ch" style="color:var(--c1)">Chapter 1</div>
-    <div class="ov-sub">Numbers &amp; Functions — Sections 1.1 – 1.4</div>
+<!-- ─────────────────────────────── SLIDE 1: Chapter 1 Overview ─────────────────────────────── -->
+<div class="slide ov-slide off-right" id="s1">
+<div class="hd">
+  <div class="hd-left">
+    <span class="slide-tag ai">Overview</span>
+    <span class="hd-title ai">Chapter 1 — Real Numbers &amp; Functions</span>
   </div>
-  <div class="ov-body">
-    <div class="ov-cards">
-      <div class="sc ai" style="--cc:var(--c1)">
-        <div class="sc-num">Section 1.1</div>
-        <div class="sc-title">Sets of Numbers &amp; Inequalities</div>
-        <div class="sc-topics">ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ &nbsp;·&nbsp; Intervals &nbsp;·&nbsp; Absolute Value &nbsp;·&nbsp; Sign Rule</div>
-      </div>
-      <div class="sc ai" style="--cc:var(--c1)">
-        <div class="sc-num">Section 1.2</div>
-        <div class="sc-title">Functions</div>
-        <div class="sc-topics">Domain &amp; Range &nbsp;·&nbsp; VLT &nbsp;·&nbsp; Linear / Power / Root / Rational &nbsp;·&nbsp; Composition f∘g</div>
-      </div>
-      <div class="sc ai" style="--cc:var(--gold)">
-        <div class="sc-num">Section 1.3</div>
-        <div class="sc-title">Inverse Functions</div>
-        <div class="sc-topics">One-to-One &nbsp;·&nbsp; Horizontal Line Test &nbsp;·&nbsp; Finding f⁻¹ &nbsp;·&nbsp; Cancellation Laws</div>
-      </div>
-      <div class="sc ai" style="--cc:var(--gold)">
-        <div class="sc-num">Section 1.4</div>
-        <div class="sc-title">Trigonometric Functions &amp; Inverses</div>
-        <div class="sc-topics">Radians &nbsp;·&nbsp; 6 Trig Functions &nbsp;·&nbsp; ASTC Rule &nbsp;·&nbsp; Identities &nbsp;·&nbsp; sin⁻¹ cos⁻¹ tan⁻¹</div>
-      </div>
-    </div>
-    <div class="ov-map ai">
-      <svg viewBox="0 0 440 460" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="glow1"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <circle cx="220" cy="230" r="82" fill="none" stroke="#1fad84" stroke-width="1" opacity=".07"/>
-        <circle cx="220" cy="230" r="70" fill="none" stroke="#1fad84" stroke-width=".7" opacity=".11"/>
-        <line x1="176" y1="186" x2="110" y2="120" stroke="#1fad84" stroke-width="1.6" opacity=".3"/>
-        <line x1="176" y1="274" x2="110" y2="340" stroke="#1fad84" stroke-width="1.6" opacity=".3"/>
-        <line x1="264" y1="274" x2="330" y2="340" stroke="#c9a84c" stroke-width="1.6" opacity=".3"/>
-        <line x1="264" y1="186" x2="330" y2="120" stroke="#c9a84c" stroke-width="1.6" opacity=".3"/>
-        <circle cx="220" cy="230" r="62" fill="#1fad84" fill-opacity=".09" stroke="#1fad84" stroke-width="2" filter="url(#glow1)"/>
-        <text x="220" y="223" text-anchor="middle" fill="#eeeaf2" font-size="15" font-weight="700" font-family="IBM Plex Sans,sans-serif">Chapter 1</text>
-        <text x="220" y="241" text-anchor="middle" fill="#1fad84" font-size="11" font-family="IBM Plex Sans,sans-serif">Numbers &amp;</text>
-        <text x="220" y="255" text-anchor="middle" fill="#1fad84" font-size="11" font-family="IBM Plex Sans,sans-serif">Functions</text>
-        <!-- 1.1 upper-left -->
-        <circle cx="86" cy="96" r="40" fill="#1fad84" fill-opacity=".09" stroke="#1fad84" stroke-width="1.6"/>
-        <text x="86" y="92" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">1.1</text>
-        <text x="86" y="107" text-anchor="middle" fill="#1fad84" font-size="10" font-family="IBM Plex Sans,sans-serif">Numbers</text>
-        <text x="86" y="148" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ</text>
-        <text x="86" y="162" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Intervals · |x|</text>
-        <!-- 1.2 lower-left -->
-        <circle cx="86" cy="364" r="40" fill="#1fad84" fill-opacity=".09" stroke="#1fad84" stroke-width="1.6"/>
-        <text x="86" y="360" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">1.2</text>
-        <text x="86" y="375" text-anchor="middle" fill="#1fad84" font-size="10" font-family="IBM Plex Sans,sans-serif">Functions</text>
-        <text x="86" y="316" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Domain · Range</text>
-        <text x="86" y="330" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Types · f∘g</text>
-        <!-- 1.3 lower-right -->
-        <circle cx="354" cy="364" r="40" fill="#c9a84c" fill-opacity=".09" stroke="#c9a84c" stroke-width="1.6"/>
-        <text x="354" y="360" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">1.3</text>
-        <text x="354" y="375" text-anchor="middle" fill="#c9a84c" font-size="10" font-family="IBM Plex Sans,sans-serif">Inverses</text>
-        <text x="354" y="316" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">1-to-1 · HLT</text>
-        <text x="354" y="330" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">f⁻¹ · Cancel</text>
-        <!-- 1.4 upper-right -->
-        <circle cx="354" cy="96" r="40" fill="#c9a84c" fill-opacity=".09" stroke="#c9a84c" stroke-width="1.6"/>
-        <text x="354" y="92" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">1.4</text>
-        <text x="354" y="107" text-anchor="middle" fill="#c9a84c" font-size="10" font-family="IBM Plex Sans,sans-serif">Trig</text>
-        <text x="354" y="148" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">sin cos tan</text>
-        <text x="354" y="162" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">sin⁻¹ cos⁻¹ tan⁻¹</text>
-      </svg>
-    </div>
-  </div>
+  <span class="hd-sub ai">4 Sections</span>
+</div>
+<div class="ov-svg-wrap ai">
+<svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+  <defs>
+    <marker id="ah1" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#b8922d"/></marker>
+  </defs>
+  <!-- root -->
+  <ellipse cx="450" cy="200" rx="85" ry="42" fill="#1aaa7e" fill-opacity=".13" stroke="#1aaa7e" stroke-width="2"/>
+  <text x="450" y="196" text-anchor="middle" font-family="IBM Plex Sans" font-size="14" font-weight="700" fill="#1c1b28">Chapter 1</text>
+  <text x="450" y="213" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Real Numbers &amp; Functions</text>
+
+  <!-- branches to sections -->
+  <!-- 1.1 top-left -->
+  <path d="M 375 178 Q 230 110 175 105" fill="none" stroke="#b8922d" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#ah1)"/>
+  <!-- 1.2 bottom-left -->
+  <path d="M 380 215 Q 250 270 195 285" fill="none" stroke="#b8922d" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#ah1)"/>
+  <!-- 1.3 top-right -->
+  <path d="M 525 178 Q 670 110 725 105" fill="none" stroke="#b8922d" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#ah1)"/>
+  <!-- 1.4 bottom-right -->
+  <path d="M 522 215 Q 650 270 705 285" fill="none" stroke="#b8922d" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#ah1)"/>
+
+  <!-- Section 1.1 -->
+  <rect x="55" y="70" width="230" height="72" rx="12" fill="#1aaa7e" fill-opacity=".1" stroke="#1aaa7e" stroke-width="1.8"/>
+  <text x="170" y="98" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">1.1 · Number Sets</text>
+  <text x="170" y="116" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#58556e">ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ</text>
+  <text x="170" y="132" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#a0a0b8">Intervals · Absolute Value</text>
+
+  <!-- Section 1.2 -->
+  <rect x="55" y="250" width="230" height="72" rx="12" fill="#1aaa7e" fill-opacity=".1" stroke="#1aaa7e" stroke-width="1.8"/>
+  <text x="170" y="278" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">1.2 · Algebraic Expressions</text>
+  <text x="170" y="296" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#58556e">aⁿ · (a±b)² · (a±b)³</text>
+  <text x="170" y="312" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#a0a0b8">Factoring · Rational Expressions</text>
+
+  <!-- Section 1.3 -->
+  <rect x="615" y="70" width="230" height="72" rx="12" fill="#6b5ecf" fill-opacity=".1" stroke="#6b5ecf" stroke-width="1.8"/>
+  <text x="730" y="98" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">1.3 · Functions</text>
+  <text x="730" y="116" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#58556e">f: A→B · f∘g · f⁻¹</text>
+  <text x="730" y="132" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#a0a0b8">Domain · Range · Composition</text>
+
+  <!-- Section 1.4 -->
+  <rect x="615" y="250" width="230" height="72" rx="12" fill="#6b5ecf" fill-opacity=".1" stroke="#6b5ecf" stroke-width="1.8"/>
+  <text x="730" y="278" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">1.4 · Trig Functions</text>
+  <text x="730" y="296" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#58556e">sin²θ+cos²θ=1</text>
+  <text x="730" y="312" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#a0a0b8">6 Functions · Identities · Inverse</text>
+</svg>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     SLIDE 3 — SECTIONS 1.1 & 1.2
-     ══════════════════════════════════════════════════ -->
-<div class="slide" id="s3">
-  <div class="d-head ai">
-    <div class="d-title">Numbers, Inequalities &amp; Functions</div>
-    <div class="d-ch">Chapter 1 &nbsp;·&nbsp; Sections 1.1 – 1.2</div>
+<!-- ─────────────────────────────── SLIDE 2: 1.1 + 1.2 Detail ─────────────────────────────── -->
+<div class="slide dt-slide off-right" id="s2">
+<div class="hd">
+  <div class="hd-left">
+    <span class="slide-tag ai">Chapter 1 · Detail</span>
+    <span class="hd-title ai">Sections 1.1 &amp; 1.2</span>
   </div>
-  <div class="two-col">
-    <div class="col">
-      <span class="sec-lbl c1 ai">1.1 — Sets of Numbers &amp; Inequalities</span>
-      <div class="ccard ai">
-        <div class="ccard-title">Number Sets Chain</div>
-        <div class="eq lg" style="--ec:var(--c1)">ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ</div>
-        <ul class="blist" style="margin-top:12px">
-          <li><strong>ℕ</strong> = {1, 2, 3, …} — Natural (counting, no zero)</li>
-          <li><strong>ℤ</strong> = {…, −2, −1, 0, 1, 2, …} — Integers</li>
-          <li><strong>ℚ</strong> = {p/q | q≠0} — Rational (terminating/repeating decimals)</li>
-          <li><strong>ℝ</strong> — All reals, including irrational numbers (π, √2, e)</li>
-        </ul>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Intervals</div>
-        <div class="eq-row">
-          <div class="eq" style="--ec:var(--c1)">(a, b) : a &lt; x &lt; b</div>
-          <div class="eq" style="--ec:var(--c2)">[a, b] : a ≤ x ≤ b</div>
-        </div>
-        <div class="eq sm" style="--ec:var(--gold);margin-top:9px">Sign Rule — multiply/divide by negative → flip the inequality</div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Absolute Value</div>
-        <div class="eq-stack">
-          <div class="eq" style="--ec:var(--c1)">|a| = a if a ≥ 0, &nbsp;−a if a &lt; 0</div>
-          <div class="eq" style="--ec:var(--gold)">Triangle Inequality: &nbsp;|a+b| ≤ |a| + |b|</div>
-          <div class="eq sm" style="--ec:var(--text3)">|x − a| &lt; r &nbsp;⟹&nbsp; a − r &lt; x &lt; a + r</div>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <span class="sec-lbl c1 ai">1.2 — Functions</span>
-      <div class="ccard ai">
-        <div class="ccard-title">Definition &amp; Tests</div>
-        <div class="eq" style="--ec:var(--c1)">f : Domain → Range</div>
-        <ul class="blist" style="margin-top:11px">
-          <li><strong>Domain</strong> — all valid inputs (x-values)</li>
-          <li><strong>Range</strong> — all possible outputs (y-values)</li>
-          <li><strong>VLT</strong> — every vertical line crosses the graph at most once</li>
-        </ul>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Types of Functions</div>
-        <div class="eq-stack">
-          <div class="eq sm" style="--ec:var(--c1)">Linear: &nbsp;f(x) = mx + b</div>
-          <div class="eq sm" style="--ec:var(--c2)">Power: &nbsp;f(x) = xⁿ</div>
-          <div class="eq sm" style="--ec:var(--gold)">Root: &nbsp;f(x) = ⁿ√x &nbsp;(√x domain: [0, ∞))</div>
-          <div class="eq sm" style="--ec:var(--ora)">Rational: &nbsp;f(x) = p(x)/q(x), &nbsp;q(x) ≠ 0</div>
-        </div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Operations &amp; Composition</div>
-        <div class="eq-stack">
-          <div class="eq sm" style="--ec:var(--c1)">(f ± g)(x) = f(x) ± g(x), &nbsp;D = Df ∩ Dg</div>
-          <div class="eq sm" style="--ec:var(--c2)">(f / g)(x) = f(x) / g(x), &nbsp;g(x) ≠ 0</div>
-          <div class="eq" style="--ec:var(--gold)">(f ∘ g)(x) = f(g(x))</div>
-        </div>
-        <div class="note">Order matters: f∘g ≠ g∘f in general</div>
-      </div>
-    </div>
-  </div>
+  <span class="hd-sub ai">Number Sets &amp; Algebraic Expressions</span>
+</div>
+<div class="dt-body ai">
+<svg viewBox="0 0 960 390" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+  <defs>
+    <marker id="arr2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1aaa7e"/></marker>
+    <marker id="arr2b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#6b5ecf"/></marker>
+  </defs>
+
+  <!-- ══ LEFT: 1.1 Number Sets ══ -->
+  <!-- root node -->
+  <ellipse cx="228" cy="42" rx="88" ry="28" fill="#1aaa7e" fill-opacity=".15" stroke="#1aaa7e" stroke-width="2"/>
+  <text x="228" y="38" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">1.1</text>
+  <text x="228" y="54" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Number Sets &amp; Intervals</text>
+
+  <!-- branch lines from root -->
+  <line x1="140" y1="62" x2="90" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr2)"/>
+  <line x1="228" y1="70" x2="228" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr2)"/>
+  <line x1="316" y1="62" x2="366" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr2)"/>
+
+  <!-- Topic: Number Sets -->
+  <rect x="30" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".12" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="95" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Number Sets</text>
+
+  <!-- Topic: Intervals -->
+  <rect x="163" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".12" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="228" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Intervals</text>
+
+  <!-- Topic: Absolute Value -->
+  <rect x="301" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".12" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="366" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Absolute Value</text>
+
+  <!-- Sub-leaves: Number Sets -->
+  <line x1="68" y1="154" x2="40" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="95" y1="154" x2="95" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="122" y1="154" x2="150" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="10" y="197" width="62" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="41" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">ℕ⊂W⊂ℤ</text>
+  <rect x="70" y="197" width="50" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="95" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">ℚ⊂ℝ</text>
+  <rect x="128" y="197" width="46" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="151" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">ℚ,ℝ\ℚ</text>
+
+  <!-- Sub-leaves: Intervals -->
+  <line x1="196" y1="154" x2="185" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="228" y1="154" x2="228" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="260" y1="154" x2="271" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="154" y="197" width="64" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="186" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">(a,b)</text>
+  <rect x="205" y="197" width="46" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="228" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">[a,b]</text>
+  <rect x="259" y="197" width="46" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="282" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">(a,∞)</text>
+
+  <!-- Sub-leaves: Absolute Value -->
+  <line x1="340" y1="154" x2="325" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="366" y1="154" x2="366" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="393" y1="154" x2="408" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="298" y="197" width="58" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="327" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">|x|≥0</text>
+  <rect x="344" y="197" width="46" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="367" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">|ab|=|a||b|</text>
+  <rect x="388" y="197" width="54" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="415" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">|a+b|≤…</text>
+
+  <!-- ── extra info row 1.1 ── -->
+  <rect x="10" y="238" width="434" height="60" rx="10" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".3" stroke-width="1"/>
+  <text x="227" y="258" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#1aaa7e">Key Properties</text>
+  <text x="64" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">ℕ={1,2,3…}</text>
+  <text x="158" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">ℤ={…-1,0,1…}</text>
+  <text x="260" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">ℚ=p/q (q≠0)</text>
+  <text x="365" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">ℝ=ℚ∪(ℝ\ℚ)</text>
+  <text x="80" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Open (a,b): a&lt;x&lt;b</text>
+  <text x="252" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Closed [a,b]: a≤x≤b</text>
+  <text x="388" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Half-open (a,b]</text>
+
+  <!-- ── divider ── -->
+  <line x1="480" y1="10" x2="480" y2="380" stroke="#e0ddd8" stroke-width="1.5" stroke-dasharray="6,4"/>
+
+  <!-- ══ RIGHT: 1.2 Algebraic Expressions ══ -->
+  <!-- root node -->
+  <ellipse cx="728" cy="42" rx="100" ry="28" fill="#6b5ecf" fill-opacity=".13" stroke="#6b5ecf" stroke-width="2"/>
+  <text x="728" y="38" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">1.2</text>
+  <text x="728" y="54" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Algebraic Expressions</text>
+
+  <!-- branch lines from root -->
+  <line x1="638" y1="62" x2="590" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr2b)"/>
+  <line x1="728" y1="70" x2="728" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr2b)"/>
+  <line x1="818" y1="62" x2="866" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr2b)"/>
+
+  <!-- Topic: Exponents -->
+  <rect x="520" y="118" width="140" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="590" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Exponents &amp; Roots</text>
+
+  <!-- Topic: Identities -->
+  <rect x="663" y="118" width="130" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="728" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Identities</text>
+
+  <!-- Topic: Factoring -->
+  <rect x="800" y="118" width="140" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="870" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Factoring</text>
+
+  <!-- Sub-leaves: Exponents -->
+  <line x1="556" y1="154" x2="536" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="590" y1="154" x2="590" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="624" y1="154" x2="644" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="505" y="197" width="64" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="537" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">aⁿ·aᵐ=aⁿ⁺ᵐ</text>
+  <rect x="568" y="197" width="46" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="591" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">a⁻ⁿ=1/aⁿ</text>
+  <rect x="624" y="197" width="42" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="645" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">ⁿ√a</text>
+
+  <!-- Sub-leaves: Identities -->
+  <line x1="700" y1="154" x2="688" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="728" y1="154" x2="728" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="756" y1="154" x2="768" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="658" y="197" width="64" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="690" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">(a+b)²</text>
+  <rect x="706" y="197" width="46" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="729" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">(a-b)²</text>
+  <rect x="753" y="197" width="36" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="771" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">a²-b²</text>
+
+  <!-- Sub-leaves: Factoring -->
+  <line x1="836" y1="154" x2="826" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="870" y1="154" x2="870" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="904" y1="154" x2="914" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="794" y="197" width="64" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="826" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">a²-b²</text>
+  <rect x="847" y="197" width="50" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="872" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">ax²+bx</text>
+  <rect x="897" y="197" width="54" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="924" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">a³±b³</text>
+
+  <!-- ── extra info row 1.2 ── -->
+  <rect x="496" y="238" width="454" height="60" rx="10" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".3" stroke-width="1"/>
+  <text x="723" y="258" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#6b5ecf">Key Formulas</text>
+  <text x="560" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">(a±b)²=a²±2ab+b²</text>
+  <text x="728" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">(a+b)³=a³+3a²b+3ab²+b³</text>
+  <text x="896" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">a²-b²=(a+b)(a-b)</text>
+  <text x="560" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">a³-b³=(a-b)(a²+ab+b²)</text>
+  <text x="750" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">a³+b³=(a+b)(a²-ab+b²)</text>
+</svg>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     SLIDE 4 — SECTIONS 1.3 & 1.4
-     ══════════════════════════════════════════════════ -->
-<div class="slide" id="s4">
-  <div class="d-head ai">
-    <div class="d-title">Inverse Functions &amp; Trigonometry</div>
-    <div class="d-ch">Chapter 1 &nbsp;·&nbsp; Sections 1.3 – 1.4</div>
+<!-- ─────────────────────────────── SLIDE 3: 1.3 + 1.4 Detail ─────────────────────────────── -->
+<div class="slide dt-slide off-right" id="s3">
+<div class="hd">
+  <div class="hd-left">
+    <span class="slide-tag ai">Chapter 1 · Detail</span>
+    <span class="hd-title ai">Sections 1.3 &amp; 1.4</span>
   </div>
-  <div class="two-col">
-    <div class="col">
-      <span class="sec-lbl c1 ai">1.3 — Inverse Functions</span>
-      <div class="ccard ai">
-        <div class="ccard-title">One-to-One Condition</div>
-        <div class="eq" style="--ec:var(--c1)">f(x₁) = f(x₂) &nbsp;⟹&nbsp; x₁ = x₂</div>
-        <div class="note"><strong style="color:var(--gold)">Horizontal Line Test (HLT):</strong> every horizontal line intersects the graph at most once → one-to-one</div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Finding f⁻¹(x) — 3 Steps</div>
-        <ul class="blist">
-          <li>Write y = f(x)</li>
-          <li>Swap x and y</li>
-          <li>Solve for y — that is f⁻¹(x)</li>
-        </ul>
-        <div class="eq-stack" style="margin-top:11px">
-          <div class="eq sm" style="--ec:var(--gold)">Domain(f⁻¹) = Range(f)</div>
-          <div class="eq sm" style="--ec:var(--gold)">Range(f⁻¹) = Domain(f)</div>
-        </div>
-        <div class="note">Graph of f⁻¹ is the reflection of f across y = x</div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Cancellation Laws</div>
-        <div class="eq-stack">
-          <div class="eq" style="--ec:var(--c2)">f⁻¹(f(x)) = x &nbsp;for x in domain of f</div>
-          <div class="eq" style="--ec:var(--c2)">f(f⁻¹(x)) = x &nbsp;for x in domain of f⁻¹</div>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <span class="sec-lbl c1 ai">1.4 — Trig Functions &amp; Inverses</span>
-      <div class="ccard ai">
-        <div class="ccard-title">Angles &amp; ASTC Rule</div>
-        <div class="eq-row">
-          <div class="eq" style="--ec:var(--gold)">180° = π rad</div>
-          <div class="eq" style="--ec:var(--gold)">s = rθ</div>
-        </div>
-        <div class="note" style="margin-top:10px">
-          <strong style="color:var(--text)">ASTC</strong> — which trig functions are positive per quadrant:<br>
-          Q1: <strong style="color:var(--c1)">All</strong> &nbsp;·&nbsp; Q2: <strong style="color:var(--c2)">Sin</strong> &nbsp;·&nbsp; Q3: <strong style="color:var(--ora)">Tan</strong> &nbsp;·&nbsp; Q4: <strong style="color:var(--red)">Cos</strong>
-        </div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Pythagorean Identities</div>
-        <div class="eq-stack">
-          <div class="eq" style="--ec:var(--c1)">sin²θ + cos²θ = 1</div>
-          <div class="eq" style="--ec:var(--c2)">1 + tan²θ = sec²θ</div>
-          <div class="eq" style="--ec:var(--ora)">cot²θ + 1 = csc²θ</div>
-        </div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Inverse Trig — Domains &amp; Ranges</div>
-        <div class="eq-stack">
-          <div class="eq sm" style="--ec:var(--c1)">sin⁻¹(x) : [−1, 1] → [−π/2, π/2]</div>
-          <div class="eq sm" style="--ec:var(--c2)">cos⁻¹(x) : [−1, 1] → [0, π] &nbsp;(decreasing)</div>
-          <div class="eq sm" style="--ec:var(--ora)">tan⁻¹(x) : ℝ → (−π/2, π/2)</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <span class="hd-sub ai">Functions &amp; Trigonometry</span>
+</div>
+<div class="dt-body ai">
+<svg viewBox="0 0 960 390" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+  <defs>
+    <marker id="arr3a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1aaa7e"/></marker>
+    <marker id="arr3b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#6b5ecf"/></marker>
+  </defs>
+
+  <!-- ══ LEFT: 1.3 Functions ══ -->
+  <ellipse cx="225" cy="42" rx="95" ry="28" fill="#1aaa7e" fill-opacity=".14" stroke="#1aaa7e" stroke-width="2"/>
+  <text x="225" y="38" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">1.3</text>
+  <text x="225" y="54" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Functions</text>
+
+  <line x1="140" y1="62" x2="88" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr3a)"/>
+  <line x1="225" y1="70" x2="225" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr3a)"/>
+  <line x1="310" y1="62" x2="362" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr3a)"/>
+
+  <rect x="28" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="93" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Definition</text>
+
+  <rect x="160" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="225" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Operations</text>
+
+  <rect x="297" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="362" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Inverse f⁻¹</text>
+
+  <!-- Sub-leaves: Definition -->
+  <line x1="65" y1="154" x2="52" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="93" y1="154" x2="93" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="121" y1="154" x2="134" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="18" y="197" width="58" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="47" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">f:A→B</text>
+  <rect x="68" y="197" width="52" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="94" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">Dom(f)</text>
+  <rect x="114" y="197" width="54" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="141" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">Rng(f)</text>
+
+  <!-- Sub-leaves: Operations -->
+  <line x1="192" y1="154" x2="180" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="225" y1="154" x2="225" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="258" y1="154" x2="270" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="148" y="197" width="60" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="178" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">f±g,fg</text>
+  <rect x="202" y="197" width="48" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="226" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">f/g</text>
+  <rect x="248" y="197" width="48" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="272" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">f∘g</text>
+
+  <!-- Sub-leaves: Inverse -->
+  <line x1="332" y1="154" x2="320" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="362" y1="154" x2="362" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="392" y1="154" x2="404" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="290" y="197" width="62" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="321" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">1-to-1</text>
+  <rect x="340" y="197" width="46" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="363" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">f⁻¹∘f=I</text>
+  <rect x="385" y="197" width="66" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="418" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">swap(x,y)</text>
+
+  <rect x="10" y="238" width="450" height="60" rx="10" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".3" stroke-width="1"/>
+  <text x="235" y="258" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#1aaa7e">Function Concepts</text>
+  <text x="90" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Dom(f/g): g(x)≠0</text>
+  <text x="255" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Dom(f∘g): x∈Dom(g), g(x)∈Dom(f)</text>
+  <text x="410" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">√f: f(x)≥0</text>
+  <text x="120" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Even: f(-x)=f(x)</text>
+  <text x="300" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Odd: f(-x)=-f(x)</text>
+
+  <!-- ── divider ── -->
+  <line x1="480" y1="10" x2="480" y2="380" stroke="#e0ddd8" stroke-width="1.5" stroke-dasharray="6,4"/>
+
+  <!-- ══ RIGHT: 1.4 Trig ══ -->
+  <ellipse cx="722" cy="42" rx="105" ry="28" fill="#6b5ecf" fill-opacity=".12" stroke="#6b5ecf" stroke-width="2"/>
+  <text x="722" y="38" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">1.4</text>
+  <text x="722" y="54" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Trigonometric Functions</text>
+
+  <line x1="630" y1="62" x2="582" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr3b)"/>
+  <line x1="722" y1="70" x2="722" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr3b)"/>
+  <line x1="814" y1="62" x2="862" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr3b)"/>
+
+  <rect x="508" y="118" width="150" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="583" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">6 Functions</text>
+
+  <rect x="655" y="118" width="134" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="722" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Identities</text>
+
+  <rect x="798" y="118" width="148" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="872" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Inverse Trig</text>
+
+  <!-- Sub-leaves: 6 Functions -->
+  <line x1="550" y1="154" x2="534" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="583" y1="154" x2="583" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="616" y1="154" x2="632" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="503" y="197" width="62" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="534" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">sin,cos</text>
+  <rect x="560" y="197" width="48" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="584" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">tan,cot</text>
+  <rect x="613" y="197" width="44" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="635" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">sec,csc</text>
+
+  <!-- Sub-leaves: Identities -->
+  <line x1="692" y1="154" x2="680" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="722" y1="154" x2="722" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="752" y1="154" x2="764" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="649" y="197" width="64" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="681" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6b5ecf">sin²+cos²=1</text>
+  <rect x="710" y="197" width="26" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="723" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6b5ecf">±</text>
+  <rect x="741" y="197" width="48" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="765" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6b5ecf">2α,α/2</text>
+
+  <!-- Sub-leaves: Inverse -->
+  <line x1="840" y1="154" x2="828" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="872" y1="154" x2="872" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="904" y1="154" x2="916" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="796" y="197" width="64" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="828" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">arcsin</text>
+  <rect x="850" y="197" width="46" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="873" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">arccos</text>
+  <rect x="898" y="197" width="46" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="921" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">arctan</text>
+
+  <rect x="490" y="238" width="460" height="60" rx="10" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".3" stroke-width="1"/>
+  <text x="720" y="258" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#6b5ecf">Key Identities</text>
+  <text x="570" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">sin²θ+cos²θ=1</text>
+  <text x="720" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">tan²θ+1=sec²θ</text>
+  <text x="880" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">1+cot²θ=csc²θ</text>
+  <text x="570" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">sin(2θ)=2sinθcosθ</text>
+  <text x="730" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">cos(2θ)=cos²θ-sin²θ</text>
+</svg>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     SLIDE 5 — CHAPTER 2 OVERVIEW
-     ══════════════════════════════════════════════════ -->
-<div class="slide" id="s5">
-  <div class="ov-top ai">
-    <div class="ov-ch" style="color:var(--c2)">Chapter 2</div>
-    <div class="ov-sub">Limits &amp; Continuity — Sections 2.1 – 2.4</div>
+<!-- ─────────────────────────────── SLIDE 4: Chapter 2 Overview ─────────────────────────────── -->
+<div class="slide ov-slide off-right" id="s4">
+<div class="hd">
+  <div class="hd-left">
+    <span class="slide-tag ai">Overview</span>
+    <span class="hd-title ai">Chapter 2 — Limits, Continuity &amp; Derivatives</span>
   </div>
-  <div class="ov-body">
-    <div class="ov-cards">
-      <div class="sc ai" style="--cc:var(--c2)">
-        <div class="sc-num">Section 2.1</div>
-        <div class="sc-title">Definition of the Limit</div>
-        <div class="sc-topics">Intuitive &amp; ε-δ Definition &nbsp;·&nbsp; One-Sided Limits &nbsp;·&nbsp; Existence Condition</div>
-      </div>
-      <div class="sc ai" style="--cc:var(--c2)">
-        <div class="sc-num">Section 2.2</div>
-        <div class="sc-title">Limit Laws</div>
-        <div class="sc-topics">Sum · Product · Quotient &nbsp;·&nbsp; Direct Substitution &nbsp;·&nbsp; 0/0 Methods &nbsp;·&nbsp; Squeeze Theorem</div>
-      </div>
-      <div class="sc ai" style="--cc:var(--gold)">
-        <div class="sc-num">Section 2.3</div>
-        <div class="sc-title">Limits Involving Infinity</div>
-        <div class="sc-topics">x → ±∞ &nbsp;·&nbsp; Infinite Limits &nbsp;·&nbsp; Horizontal &amp; Vertical Asymptotes</div>
-      </div>
-      <div class="sc ai" style="--cc:var(--gold)">
-        <div class="sc-num">Section 2.4</div>
-        <div class="sc-title">Continuity of Functions</div>
-        <div class="sc-topics">3 Conditions &nbsp;·&nbsp; Removable / Jump / Infinite Discontinuity &nbsp;·&nbsp; IVT</div>
-      </div>
-    </div>
-    <div class="ov-map ai">
-      <svg viewBox="0 0 440 460" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="glow2"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <circle cx="220" cy="230" r="82" fill="none" stroke="#7b6fd4" stroke-width="1" opacity=".07"/>
-        <circle cx="220" cy="230" r="70" fill="none" stroke="#7b6fd4" stroke-width=".7" opacity=".11"/>
-        <line x1="176" y1="186" x2="110" y2="120" stroke="#7b6fd4" stroke-width="1.6" opacity=".3"/>
-        <line x1="176" y1="274" x2="110" y2="340" stroke="#7b6fd4" stroke-width="1.6" opacity=".3"/>
-        <line x1="264" y1="274" x2="330" y2="340" stroke="#c9a84c" stroke-width="1.6" opacity=".3"/>
-        <line x1="264" y1="186" x2="330" y2="120" stroke="#c9a84c" stroke-width="1.6" opacity=".3"/>
-        <circle cx="220" cy="230" r="62" fill="#7b6fd4" fill-opacity=".09" stroke="#7b6fd4" stroke-width="2" filter="url(#glow2)"/>
-        <text x="220" y="223" text-anchor="middle" fill="#eeeaf2" font-size="15" font-weight="700" font-family="IBM Plex Sans,sans-serif">Chapter 2</text>
-        <text x="220" y="241" text-anchor="middle" fill="#7b6fd4" font-size="11" font-family="IBM Plex Sans,sans-serif">Limits &amp;</text>
-        <text x="220" y="255" text-anchor="middle" fill="#7b6fd4" font-size="11" font-family="IBM Plex Sans,sans-serif">Continuity</text>
-        <!-- 2.1 upper-left -->
-        <circle cx="86" cy="96" r="40" fill="#7b6fd4" fill-opacity=".09" stroke="#7b6fd4" stroke-width="1.6"/>
-        <text x="86" y="92" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">2.1</text>
-        <text x="86" y="107" text-anchor="middle" fill="#7b6fd4" font-size="10" font-family="IBM Plex Sans,sans-serif">Limits</text>
-        <text x="86" y="148" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">ε-δ Definition</text>
-        <text x="86" y="162" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">One-Sided</text>
-        <!-- 2.2 lower-left -->
-        <circle cx="86" cy="364" r="40" fill="#7b6fd4" fill-opacity=".09" stroke="#7b6fd4" stroke-width="1.6"/>
-        <text x="86" y="360" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">2.2</text>
-        <text x="86" y="375" text-anchor="middle" fill="#7b6fd4" font-size="10" font-family="IBM Plex Sans,sans-serif">Laws</text>
-        <text x="86" y="316" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Direct Sub.</text>
-        <text x="86" y="330" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">0/0 Methods</text>
-        <!-- 2.3 lower-right -->
-        <circle cx="354" cy="364" r="40" fill="#c9a84c" fill-opacity=".09" stroke="#c9a84c" stroke-width="1.6"/>
-        <text x="354" y="360" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">2.3</text>
-        <text x="354" y="375" text-anchor="middle" fill="#c9a84c" font-size="10" font-family="IBM Plex Sans,sans-serif">Infinity</text>
-        <text x="354" y="316" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">x → ±∞</text>
-        <text x="354" y="330" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">Asymptotes</text>
-        <!-- 2.4 upper-right -->
-        <circle cx="354" cy="96" r="40" fill="#c9a84c" fill-opacity=".09" stroke="#c9a84c" stroke-width="1.6"/>
-        <text x="354" y="92" text-anchor="middle" fill="#eeeaf2" font-size="13" font-weight="700" font-family="IBM Plex Sans,sans-serif">2.4</text>
-        <text x="354" y="107" text-anchor="middle" fill="#c9a84c" font-size="10" font-family="IBM Plex Sans,sans-serif">Continuity</text>
-        <text x="354" y="148" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">3 Conditions</text>
-        <text x="354" y="162" text-anchor="middle" fill="#3e3c52" font-size="9.5" font-family="IBM Plex Sans,sans-serif">IVT</text>
-      </svg>
-    </div>
-  </div>
+  <span class="hd-sub ai">4 Sections</span>
+</div>
+<div class="ov-svg-wrap ai">
+<svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+  <defs>
+    <marker id="ah4" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#b8922d"/></marker>
+  </defs>
+  <ellipse cx="450" cy="200" rx="85" ry="42" fill="#6b5ecf" fill-opacity=".13" stroke="#6b5ecf" stroke-width="2"/>
+  <text x="450" y="196" text-anchor="middle" font-family="IBM Plex Sans" font-size="14" font-weight="700" fill="#1c1b28">Chapter 2</text>
+  <text x="450" y="213" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Limits, Continuity &amp; Derivatives</text>
+
+  <path d="M 375 178 Q 230 110 175 105" fill="none" stroke="#b8922d" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#ah4)"/>
+  <path d="M 380 215 Q 250 270 195 285" fill="none" stroke="#b8922d" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#ah4)"/>
+  <path d="M 525 178 Q 670 110 725 105" fill="none" stroke="#b8922d" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#ah4)"/>
+  <path d="M 522 215 Q 650 270 705 285" fill="none" stroke="#b8922d" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#ah4)"/>
+
+  <rect x="55" y="70" width="230" height="72" rx="12" fill="#1aaa7e" fill-opacity=".1" stroke="#1aaa7e" stroke-width="1.8"/>
+  <text x="170" y="98" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">2.1 · Limits</text>
+  <text x="170" y="116" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#58556e">lim f(x) = L</text>
+  <text x="170" y="132" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#a0a0b8">Definition · Laws · One-sided</text>
+
+  <rect x="55" y="250" width="230" height="72" rx="12" fill="#1aaa7e" fill-opacity=".1" stroke="#1aaa7e" stroke-width="1.8"/>
+  <text x="170" y="278" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">2.2 · Limit Techniques</text>
+  <text x="170" y="296" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#58556e">L'Hôpital · Squeeze</text>
+  <text x="170" y="312" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#a0a0b8">Substitution · Factoring · ∞</text>
+
+  <rect x="615" y="70" width="230" height="72" rx="12" fill="#6b5ecf" fill-opacity=".1" stroke="#6b5ecf" stroke-width="1.8"/>
+  <text x="730" y="98" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">2.3 · Continuity</text>
+  <text x="730" y="116" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#58556e">lim f(x) = f(a)</text>
+  <text x="730" y="132" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#a0a0b8">3 Conditions · IVT · Types</text>
+
+  <rect x="615" y="250" width="230" height="72" rx="12" fill="#6b5ecf" fill-opacity=".1" stroke="#6b5ecf" stroke-width="1.8"/>
+  <text x="730" y="278" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">2.4 · Derivatives</text>
+  <text x="730" y="296" text-anchor="middle" font-family="IBM Plex Mono" font-size="10.5" fill="#58556e">f'(x) = lim Δf/Δx</text>
+  <text x="730" y="312" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#a0a0b8">Rules · Chain · Implicit</text>
+</svg>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     SLIDE 6 — SECTIONS 2.1 & 2.2
-     ══════════════════════════════════════════════════ -->
-<div class="slide" id="s6">
-  <div class="d-head ai">
-    <div class="d-title">Limits — Definition &amp; Laws</div>
-    <div class="d-ch">Chapter 2 &nbsp;·&nbsp; Sections 2.1 – 2.2</div>
+<!-- ─────────────────────────────── SLIDE 5: 2.1 + 2.2 Detail ─────────────────────────────── -->
+<div class="slide dt-slide off-right" id="s5">
+<div class="hd">
+  <div class="hd-left">
+    <span class="slide-tag ai">Chapter 2 · Detail</span>
+    <span class="hd-title ai">Sections 2.1 &amp; 2.2</span>
   </div>
-  <div class="two-col">
-    <div class="col">
-      <span class="sec-lbl c2 ai">2.1 — Definition of the Limit</span>
-      <div class="ccard ai">
-        <div class="ccard-title">Core Concept</div>
-        <div class="eq lg" style="--ec:var(--c2)">lim x→a f(x) = L</div>
-        <div class="note">f(x) gets arbitrarily close to L as x approaches a — without x actually equaling a</div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Formal ε-δ Definition</div>
-        <div class="eq sm" style="--ec:var(--gold)">∀ε &gt; 0 &nbsp;∃δ &gt; 0 : &nbsp;0 &lt; |x−a| &lt; δ &nbsp;⟹&nbsp; |f(x)−L| &lt; ε</div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">One-Sided Limits &amp; Existence</div>
-        <div class="eq-stack">
-          <div class="eq sm" style="--ec:var(--c1)">lim x→a⁺ — approach from the right (x &gt; a)</div>
-          <div class="eq sm" style="--ec:var(--red)">lim x→a⁻ — approach from the left (x &lt; a)</div>
-          <div class="eq" style="--ec:var(--gold)">Limit exists &nbsp;⟺&nbsp; lim a⁺ = lim a⁻ = L</div>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <span class="sec-lbl c2 ai">2.2 — Limit Laws</span>
-      <div class="ccard ai">
-        <div class="ccard-title">Basic Laws</div>
-        <div class="eq-stack">
-          <div class="eq sm" style="--ec:var(--c2)">lim(f ± g) = lim f ± lim g</div>
-          <div class="eq sm" style="--ec:var(--c2)">lim(f · g) = lim f · lim g</div>
-          <div class="eq sm" style="--ec:var(--c2)">lim(f / g) = lim f / lim g &nbsp;(lim g ≠ 0)</div>
-        </div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Handling 0/0 Indeterminate Forms</div>
-        <div class="eq-stack">
-          <div class="eq sm" style="--ec:var(--c1)">Factoring — cancel the common zero factor</div>
-          <div class="eq sm" style="--ec:var(--gold)">Rationalize — multiply by conjugate</div>
-          <div class="eq sm" style="--ec:var(--ora)">LCD — combine fractions, then simplify</div>
-        </div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Squeeze Theorem</div>
-        <div class="eq sm" style="--ec:var(--c2)">g(x) ≤ f(x) ≤ h(x) &nbsp;and&nbsp; lim g = lim h = L &nbsp;⟹&nbsp; lim f = L</div>
-        <div class="eq" style="--ec:var(--gold);margin-top:9px">lim x→0 &nbsp;sin(x) / x &nbsp;= 1</div>
-      </div>
-    </div>
-  </div>
+  <span class="hd-sub ai">Limits &amp; Limit Techniques</span>
+</div>
+<div class="dt-body ai">
+<svg viewBox="0 0 960 390" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+  <defs>
+    <marker id="arr5a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1aaa7e"/></marker>
+    <marker id="arr5b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#6b5ecf"/></marker>
+  </defs>
+
+  <!-- ══ LEFT: 2.1 Limits ══ -->
+  <ellipse cx="225" cy="42" rx="90" ry="28" fill="#1aaa7e" fill-opacity=".14" stroke="#1aaa7e" stroke-width="2"/>
+  <text x="225" y="38" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">2.1</text>
+  <text x="225" y="54" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Limits</text>
+
+  <line x1="140" y1="62" x2="90" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr5a)"/>
+  <line x1="225" y1="70" x2="225" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr5a)"/>
+  <line x1="310" y1="62" x2="360" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr5a)"/>
+
+  <rect x="26" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="91" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Definition</text>
+
+  <rect x="160" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="225" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Limit Laws</text>
+
+  <rect x="296" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="361" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">One-sided</text>
+
+  <!-- Sub-leaves -->
+  <line x1="64" y1="154" x2="50" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="91" y1="154" x2="91" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="118" y1="154" x2="132" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="18" y="197" width="66" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="51" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">lim f(x)=L</text>
+  <rect x="69" y="197" width="46" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="92" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">ε-δ def</text>
+  <rect x="118" y="197" width="50" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="143" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">unique L</text>
+
+  <line x1="193" y1="154" x2="181" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="225" y1="154" x2="225" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="257" y1="154" x2="269" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="148" y="197" width="60" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="178" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">sum,prod</text>
+  <rect x="206" y="197" width="40" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="226" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">quot</text>
+  <rect x="248" y="197" width="46" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="271" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">power</text>
+
+  <line x1="331" y1="154" x2="319" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="361" y1="154" x2="361" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="391" y1="154" x2="403" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="287" y="197" width="64" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="319" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">lim x→a⁺</text>
+  <rect x="341" y="197" width="42" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="362" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">lim x→a⁻</text>
+  <rect x="386" y="197" width="68" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="420" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">lim x→±∞</text>
+
+  <rect x="10" y="238" width="450" height="60" rx="10" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".3" stroke-width="1"/>
+  <text x="235" y="258" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#1aaa7e">Core Limit Results</text>
+  <text x="90" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">lim(x→a) c = c</text>
+  <text x="255" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">lim(x→a) x = a</text>
+  <text x="400" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">lim xⁿ = aⁿ</text>
+  <text x="130" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">lim exists iff L⁺=L⁻</text>
+  <text x="355" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">lim sinx/x = 1 (x→0)</text>
+
+  <!-- ── divider ── -->
+  <line x1="480" y1="10" x2="480" y2="380" stroke="#e0ddd8" stroke-width="1.5" stroke-dasharray="6,4"/>
+
+  <!-- ══ RIGHT: 2.2 Limit Techniques ══ -->
+  <ellipse cx="728" cy="42" rx="110" ry="28" fill="#6b5ecf" fill-opacity=".12" stroke="#6b5ecf" stroke-width="2"/>
+  <text x="728" y="38" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">2.2</text>
+  <text x="728" y="54" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Limit Techniques</text>
+
+  <line x1="634" y1="62" x2="586" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr5b)"/>
+  <line x1="728" y1="70" x2="728" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr5b)"/>
+  <line x1="822" y1="62" x2="870" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr5b)"/>
+
+  <rect x="508" y="118" width="158" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="587" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Substitution</text>
+
+  <rect x="660" y="118" width="136" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="728" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Indeterminate</text>
+
+  <rect x="798" y="118" width="148" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="872" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Special Cases</text>
+
+  <!-- Sub-leaves -->
+  <line x1="555" y1="154" x2="540" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="587" y1="154" x2="587" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="619" y1="154" x2="634" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="506" y="197" width="68" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="540" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">direct sub</text>
+  <rect x="570" y="197" width="36" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="588" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">cont.</text>
+  <rect x="614" y="197" width="44" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="636" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">factor</text>
+
+  <line x1="700" y1="154" x2="690" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="728" y1="154" x2="728" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="756" y1="154" x2="766" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="656" y="197" width="68" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="690" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">0/0 form</text>
+  <rect x="718" y="197" width="22" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="729" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">∞/∞</text>
+  <rect x="742" y="197" width="56" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="770" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6b5ecf">L'Hôpital</text>
+
+  <line x1="840" y1="154" x2="828" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="872" y1="154" x2="872" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="904" y1="154" x2="916" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="796" y="197" width="66" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="829" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">squeeze thm</text>
+  <rect x="850" y="197" width="46" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="873" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6b5ecf">lim→∞</text>
+  <rect x="900" y="197" width="52" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="926" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">horiz.asy</text>
+
+  <rect x="490" y="238" width="460" height="60" rx="10" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".3" stroke-width="1"/>
+  <text x="720" y="258" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#6b5ecf">Indeterminate Forms &amp; Rules</text>
+  <text x="565" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">0/0 → factor/rationalize</text>
+  <text x="730" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">∞/∞ → L'Hôpital: f'/g'</text>
+  <text x="890" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">0·∞ → rewrite</text>
+  <text x="610" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">lim(x→∞) 1/xⁿ = 0</text>
+  <text x="820" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">lim(x→0) sinx/x = 1</text>
+</svg>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     SLIDE 7 — SECTIONS 2.3 & 2.4
-     ══════════════════════════════════════════════════ -->
-<div class="slide" id="s7">
-  <div class="d-head ai">
-    <div class="d-title">Limits at Infinity &amp; Continuity</div>
-    <div class="d-ch">Chapter 2 &nbsp;·&nbsp; Sections 2.3 – 2.4</div>
+<!-- ─────────────────────────────── SLIDE 6: 2.3 + 2.4 Detail ─────────────────────────────── -->
+<div class="slide dt-slide off-right" id="s6">
+<div class="hd">
+  <div class="hd-left">
+    <span class="slide-tag ai">Chapter 2 · Detail</span>
+    <span class="hd-title ai">Sections 2.3 &amp; 2.4</span>
   </div>
-  <div class="two-col">
-    <div class="col">
-      <span class="sec-lbl c2 ai">2.3 — Limits Involving Infinity</span>
-      <div class="ccard ai">
-        <div class="ccard-title">Limits at ±∞</div>
-        <div class="eq-row">
-          <div class="eq" style="--ec:var(--c2)">lim x→+∞ 1/x = 0</div>
-          <div class="eq" style="--ec:var(--c2)">lim x→−∞ eˣ = 0</div>
-        </div>
-        <div class="note" style="margin-top:10px">
-          Rational functions — highest-degree term dominates:<br>
-          deg top &gt; bot → ±∞ &nbsp;|&nbsp; deg top &lt; bot → 0 &nbsp;|&nbsp; equal → ratio of leading coefficients
-        </div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Asymptotes</div>
-        <div class="eq-stack">
-          <div class="eq" style="--ec:var(--c2)">Horizontal: &nbsp;lim x→±∞ f(x) = L &nbsp;⟹&nbsp; y = L</div>
-          <div class="eq" style="--ec:var(--red)">Vertical: &nbsp;lim x→a f(x) = ±∞ &nbsp;⟹&nbsp; x = a</div>
-        </div>
-        <div class="note">Vertical asymptotes occur at zeros of denominator — simplify first</div>
-      </div>
-    </div>
-    <div class="col">
-      <span class="sec-lbl c2 ai">2.4 — Continuity of Functions</span>
-      <div class="ccard ai">
-        <div class="ccard-title">3 Conditions for Continuity at x = a</div>
-        <div class="eq-stack">
-          <div class="eq sm" style="--ec:var(--c1)">① &nbsp;f(a) is defined</div>
-          <div class="eq sm" style="--ec:var(--c1)">② &nbsp;lim x→a f(x) exists</div>
-          <div class="eq" style="--ec:var(--c1)">③ &nbsp;lim x→a f(x) = f(a)</div>
-        </div>
-        <div class="note">All three conditions must hold simultaneously</div>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Types of Discontinuity</div>
-        <ul class="blist">
-          <li><strong style="color:var(--c1)">Removable</strong> — limit exists but ≠ f(a), or f(a) undefined</li>
-          <li><strong style="color:var(--red)">Jump</strong> — lim a⁺ ≠ lim a⁻ (common in piecewise functions)</li>
-          <li><strong style="color:var(--c2)">Infinite</strong> — limit equals ±∞ (at vertical asymptotes)</li>
-        </ul>
-      </div>
-      <div class="ccard ai">
-        <div class="ccard-title">Intermediate Value Theorem (IVT)</div>
-        <div class="eq sm" style="--ec:var(--gold)">f continuous on [a,b], &nbsp;f(a) ≤ k ≤ f(b) &nbsp;⟹&nbsp; ∃c ∈ (a,b) : f(c) = k</div>
-        <div class="note">If f changes sign on [a,b] → guaranteed root exists in (a,b)</div>
-      </div>
-    </div>
-  </div>
+  <span class="hd-sub ai">Continuity &amp; Derivatives</span>
+</div>
+<div class="dt-body ai">
+<svg viewBox="0 0 960 390" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+  <defs>
+    <marker id="arr6a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#1aaa7e"/></marker>
+    <marker id="arr6b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#6b5ecf"/></marker>
+  </defs>
+
+  <!-- ══ LEFT: 2.3 Continuity ══ -->
+  <ellipse cx="225" cy="42" rx="90" ry="28" fill="#1aaa7e" fill-opacity=".14" stroke="#1aaa7e" stroke-width="2"/>
+  <text x="225" y="38" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">2.3</text>
+  <text x="225" y="54" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Continuity</text>
+
+  <line x1="140" y1="62" x2="90" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr6a)"/>
+  <line x1="225" y1="70" x2="225" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr6a)"/>
+  <line x1="310" y1="62" x2="360" y2="115" stroke="#1aaa7e" stroke-width="1.6" marker-end="url(#arr6a)"/>
+
+  <rect x="26" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="91" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">3 Conditions</text>
+
+  <rect x="160" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="225" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Discontinuity</text>
+
+  <rect x="296" y="118" width="130" height="36" rx="8" fill="#1aaa7e" fill-opacity=".11" stroke="#1aaa7e" stroke-width="1.5"/>
+  <text x="361" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">IVT</text>
+
+  <!-- Sub-leaves: 3 Conditions -->
+  <line x1="64" y1="154" x2="50" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="91" y1="154" x2="91" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="118" y1="154" x2="132" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="14" y="197" width="72" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="50" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">f(a) exists</text>
+  <rect x="68" y="197" width="48" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="92" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">lim exists</text>
+  <rect x="118" y="197" width="30" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="133" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">equal</text>
+
+  <!-- Sub-leaves: Discontinuity -->
+  <line x1="193" y1="154" x2="181" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="225" y1="154" x2="225" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="257" y1="154" x2="269" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="146" y="197" width="64" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="178" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">removable</text>
+  <rect x="208" y="197" width="36" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="226" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">jump</text>
+  <rect x="248" y="197" width="50" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="273" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#1aaa7e">infinite</text>
+
+  <!-- Sub-leaves: IVT -->
+  <line x1="332" y1="154" x2="320" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="361" y1="154" x2="361" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="390" y1="154" x2="402" y2="195" stroke="#1aaa7e" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="288" y="197" width="64" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="320" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">cont on [a,b]</text>
+  <rect x="341" y="197" width="42" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="362" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">∃c: f(c)=k</text>
+  <rect x="385" y="197" width="62" height="22" rx="6" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".5" stroke-width="1"/>
+  <text x="416" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#1aaa7e">root theorem</text>
+
+  <rect x="10" y="238" width="450" height="60" rx="10" fill="#f0faf6" stroke="#1aaa7e" stroke-opacity=".3" stroke-width="1"/>
+  <text x="235" y="258" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#1aaa7e">Continuity Conditions</text>
+  <text x="100" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">① f(a) is defined</text>
+  <text x="255" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">② lim(x→a) f(x) exists</text>
+  <text x="400" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">③ lim = f(a)</text>
+  <text x="145" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Polynomials: continuous everywhere</text>
+  <text x="365" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">Rational: cont where defined</text>
+
+  <!-- ── divider ── -->
+  <line x1="480" y1="10" x2="480" y2="380" stroke="#e0ddd8" stroke-width="1.5" stroke-dasharray="6,4"/>
+
+  <!-- ══ RIGHT: 2.4 Derivatives ══ -->
+  <ellipse cx="726" cy="42" rx="105" ry="28" fill="#6b5ecf" fill-opacity=".12" stroke="#6b5ecf" stroke-width="2"/>
+  <text x="726" y="38" text-anchor="middle" font-family="IBM Plex Sans" font-size="13" font-weight="700" fill="#1c1b28">2.4</text>
+  <text x="726" y="54" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#58556e">Derivatives</text>
+
+  <line x1="632" y1="62" x2="584" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr6b)"/>
+  <line x1="726" y1="70" x2="726" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr6b)"/>
+  <line x1="820" y1="62" x2="868" y2="115" stroke="#6b5ecf" stroke-width="1.6" marker-end="url(#arr6b)"/>
+
+  <rect x="508" y="118" width="152" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="584" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Definition</text>
+
+  <rect x="658" y="118" width="136" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="726" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Diff. Rules</text>
+
+  <rect x="796" y="118" width="148" height="36" rx="8" fill="#6b5ecf" fill-opacity=".10" stroke="#6b5ecf" stroke-width="1.5"/>
+  <text x="870" y="141" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" font-weight="600" fill="#1c1b28">Chain &amp; Implicit</text>
+
+  <!-- Sub-leaves: Definition -->
+  <line x1="553" y1="154" x2="540" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="584" y1="154" x2="584" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="615" y1="154" x2="628" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="504" y="197" width="72" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="540" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#6b5ecf">lim Δy/Δx</text>
+  <rect x="566" y="197" width="38" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="585" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">f'(x)</text>
+  <rect x="608" y="197" width="46" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="631" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">dy/dx</text>
+
+  <!-- Sub-leaves: Diff Rules -->
+  <line x1="695" y1="154" x2="682" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="726" y1="154" x2="726" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="757" y1="154" x2="770" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="648" y="197" width="68" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="682" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">power xⁿ</text>
+  <rect x="710" y="197" width="34" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="727" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">prod</text>
+  <rect x="748" y="197" width="50" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="773" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">quotient</text>
+
+  <!-- Sub-leaves: Chain & Implicit -->
+  <line x1="840" y1="154" x2="828" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="870" y1="154" x2="870" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <line x1="900" y1="154" x2="912" y2="195" stroke="#6b5ecf" stroke-width="1.2" stroke-opacity=".6"/>
+  <rect x="794" y="197" width="68" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="828" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">chain rule</text>
+  <rect x="850" y="197" width="42" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="871" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">implicit</text>
+  <rect x="895" y="197" width="54" height="22" rx="6" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".5" stroke-width="1"/>
+  <text x="922" y="212" text-anchor="middle" font-family="IBM Plex Mono" font-size="9.5" fill="#6b5ecf">higher ord</text>
+
+  <rect x="490" y="238" width="460" height="60" rx="10" fill="#f4f2fd" stroke="#6b5ecf" stroke-opacity=".3" stroke-width="1"/>
+  <text x="720" y="258" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#6b5ecf">Differentiation Rules</text>
+  <text x="570" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">(xⁿ)' = nxⁿ⁻¹</text>
+  <text x="720" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">(fg)' = f'g + fg'</text>
+  <text x="886" y="276" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">(f/g)' = (f'g−fg')/g²</text>
+  <text x="575" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">(f∘g)' = f'(g)·g'</text>
+  <text x="750" y="292" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#1c1b28">diff implicitly: dy/dx</text>
+</svg>
+</div>
 </div>
 
-</div><!-- #deck -->
-
-<div id="prog"></div>
-<div id="dots">
-  <div class="dot on"></div><div class="dot"></div><div class="dot"></div>
-  <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-</div>
-<div id="ctr">1 / 7</div>
-<div id="hint">← → Space</div>
+</div><!-- /deck -->
 
 <script>
-// ── BACKGROUND ──────────────────────────────────────────
-const bgC = document.getElementById('bgc');
-const bgX = bgC.getContext('2d');
-const SYMS = ['π','∑','∫','∞','∂','Δ','∇','√','α','β','θ','λ','lim','sin','cos','f⁻¹','ℝ','|x|','dx','xⁿ','∀','∃','≤','≥','±','ε','δ','φ'];
-const FL = [];
-function mf(sy) {
-  return { sym: SYMS[Math.floor(Math.random()*SYMS.length)], x: Math.random()*innerWidth,
-    y: sy!==undefined?sy:Math.random()*innerHeight, size: Math.random()*54+14,
-    speed: Math.random()*.25+.07, opacity: Math.random()*.035+.013,
-    drift: (Math.random()-.5)*.17, rot: (Math.random()-.5)*.003, angle: (Math.random()-.5)*.35 };
-}
-for(let i=0;i<30;i++) FL.push(mf());
-let dc=null;
-function buildDots() {
-  dc=document.createElement('canvas'); dc.width=bgC.width; dc.height=bgC.height;
-  const c=dc.getContext('2d'); c.fillStyle='rgba(255,255,255,0.025)';
-  for(let x=0;x<dc.width;x+=28) for(let y=0;y<dc.height;y+=28){c.beginPath();c.arc(x,y,1,0,Math.PI*2);c.fill();}
-}
-function drawBg() {
-  const W=bgC.width,H=bgC.height; if(!W||!H){requestAnimationFrame(drawBg);return;}
-  bgX.clearRect(0,0,W,H);
-  if(dc&&dc.width>0) bgX.drawImage(dc,0,0);
-  FL.forEach(s=>{
-    s.y+=s.speed; s.x+=s.drift; s.angle+=s.rot;
-    if(s.y>H+s.size*2) Object.assign(s,mf(-s.size*2-Math.random()*80));
-    bgX.save(); bgX.translate(s.x,s.y); bgX.rotate(s.angle);
-    bgX.font=`300 italic ${s.size}px "Cormorant Garamond",serif`;
-    bgX.fillStyle=`rgba(201,168,76,${s.opacity})`; bgX.fillText(s.sym,0,0); bgX.restore();
-  });
-  requestAnimationFrame(drawBg);
-}
-function setupBg(){ bgC.width=innerWidth; bgC.height=innerHeight; buildDots(); }
-window.addEventListener('resize',setupBg); setupBg(); drawBg();
-
-// ── SLIDES ───────────────────────────────────────────────
-const slides = Array.from(document.querySelectorAll('.slide'));
-const TOTAL  = slides.length;
-let cur = 0, busy = false;
-
-const progEl = document.getElementById('prog');
-const ctrEl  = document.getElementById('ctr');
-const dotEls = Array.from(document.querySelectorAll('.dot'));
-
-function updateUI() {
-  ctrEl.textContent = `${cur+1} / ${TOTAL}`;
-  progEl.style.width = `${((cur+1)/TOTAL)*100}%`;
-  dotEls.forEach((d,i) => d.classList.toggle('on', i===cur));
-}
-
-function animIn(idx) {
-  const items = slides[idx].querySelectorAll('.ai');
-  items.forEach((el,i) => {
-    el.classList.remove('in');
-    void el.offsetWidth;
-    setTimeout(() => el.classList.add('in'), i*75 + 100);
-  });
-}
+const TOTAL = 7;
+let cur = 0;
 
 function goTo(next) {
-  if (busy) return;
-  next = Math.max(0, Math.min(TOTAL-1, next));
-  if (next === cur) return;
-  busy = true;
+  if (next < 0 || next >= TOTAL) return;
+  const prev = cur;
+  cur = next;
 
-  const dir = next > cur ? 1 : -1;
-  const out = slides[cur];
-  const inn = slides[next];
+  const slides = document.querySelectorAll('.slide');
+  const from = slides[prev];
+  const to = slides[next];
 
-  inn.style.transition = 'none';
-  inn.style.transform  = `translateX(${dir > 0 ? 100 : -100}%)`;
-  inn.style.opacity    = '0';
-  inn.style.pointerEvents = 'none';
-  inn.classList.remove('active');
+  // Position target off-screen instantly (no transition)
+  to.style.transition = 'none';
+  to.classList.remove('off-left', 'off-right');
+  to.classList.add(next > prev ? 'off-right' : 'off-left');
 
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    const T = 'transform .52s cubic-bezier(.4,0,.2,1), opacity .44s ease';
-    out.style.transition    = T;
-    out.style.transform     = `translateX(${dir > 0 ? -7 : 7}%)`;
-    out.style.opacity       = '0';
-    out.style.pointerEvents = 'none';
-    out.classList.remove('active');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      // Re-enable transitions
+      from.style.transition = '';
+      to.style.transition = '';
 
-    inn.style.transition    = T;
-    inn.style.transform     = 'translateX(0)';
-    inn.style.opacity       = '1';
-    inn.style.pointerEvents = 'all';
-    inn.classList.add('active');
+      // Slide "from" out
+      from.classList.add(next > prev ? 'off-left' : 'off-right');
 
-    cur = next;
-    updateUI();
-    animIn(cur);
+      // Slide "to" in
+      to.classList.remove('off-left', 'off-right');
 
-    setTimeout(() => { out.style.cssText = ''; busy = false; }, 570);
-  }));
+      // Stagger .ai items
+      const items = to.querySelectorAll('.ai');
+      items.forEach(el => el.classList.remove('in'));
+      items.forEach((el, i) => {
+        setTimeout(() => el.classList.add('in'), 60 + i * 55);
+      });
+
+      updateUI();
+    });
+  });
 }
 
+function updateUI() {
+  document.getElementById('prog').style.width = ((cur / (TOTAL - 1)) * 100) + '%';
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('act', i === cur));
+}
+
+// Build dots
+const dotWrap = document.getElementById('dots');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' act' : '');
+  d.onclick = () => goTo(i);
+  dotWrap.appendChild(d);
+}
+
+// Keyboard & touch
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur+1); }
-  if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(cur-1); }
-  if (e.key === 'Home')       { e.preventDefault(); goTo(0); }
-  if (e.key === 'End')        { e.preventDefault(); goTo(TOTAL-1); }
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(cur - 1); }
 });
 
-let tStart = 0;
-document.addEventListener('touchstart', e => { tStart = e.touches[0].clientX; }, {passive:true});
-document.addEventListener('touchend',   e => {
-  const dx = tStart - e.changedTouches[0].clientX;
-  if (Math.abs(dx) > 50) goTo(cur + (dx > 0 ? 1 : -1));
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) goTo(dx < 0 ? cur + 1 : cur - 1);
 }, {passive:true});
 
-updateUI();
-animIn(0);
+// Init title slide entrance
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    const items = document.querySelectorAll('#s0 .ai');
+    items.forEach((el, i) => setTimeout(() => el.classList.add('in'), 200 + i * 80));
+    updateUI();
+  });
+});
+
+// Floating math background canvas
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  const symbols = ['∑','∫','∂','∞','π','√','Δ','∇','α','β','θ','λ','ℝ','ℤ','ℕ','ℚ','≈','≤','≥','⊂','⊃','∈','∉','lim','d/dx','f(x)','f⁻¹','∘'];
+  const particles = [];
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for (let i = 0; i < 40; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      sym: symbols[Math.floor(Math.random() * symbols.length)],
+      size: 12 + Math.random() * 20,
+      speed: 0.15 + Math.random() * 0.35,
+      alpha: 0.04 + Math.random() * 0.07,
+      drift: (Math.random() - 0.5) * 0.3
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const p of particles) {
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.font = `${p.size}px IBM Plex Mono, monospace`;
+      ctx.fillStyle = '#b8922d';
+      ctx.fillText(p.sym, p.x, p.y);
+      ctx.restore();
+      p.y -= p.speed;
+      p.x += p.drift;
+      if (p.y < -30) { p.y = canvas.height + 30; p.x = Math.random() * canvas.width; }
+      if (p.x < -40) p.x = canvas.width + 40;
+      if (p.x > canvas.width + 40) p.x = -40;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 </script>
 </body>
 </html>
