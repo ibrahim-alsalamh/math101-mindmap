@@ -562,14 +562,7 @@ const isTop =ch=>ch.cy<RY;   // true for TL / TR chapters
 
 function buildRoot(){
   const g=grp('root');
-  // root → each chapter connector
-  for(const ch of CHAPTERS){
-    const top=isTop(ch);
-    curve(g, RX, top?RY-50:RY+50,
-             ch.cx, top?ch.cy+40:ch.cy-40,
-             GOLD, 0.55, 2.2);
-  }
-  // root ellipse
+  // root ellipse only — connectors live in each chapter group
   g.appendChild(mk('ellipse',{cx:RX,cy:RY,rx:158,ry:50,
     fill:'#fff',stroke:GOLD,'stroke-width':2.4,filter:'url(#sh)'}));
   txt(g,'Math 101',{x:RX,y:RY-9,'text-anchor':'middle',
@@ -583,6 +576,10 @@ function buildChapters(){
     const g=grp(ch.id);
     const{s:c,l:cl}=ch.col;
     const top=isTop(ch);
+    // root → chapter connector (reveals with the chapter)
+    curve(g, RX, top?RY-50:RY+50,
+             ch.cx, top?ch.cy+40:ch.cy-40,
+             GOLD, 0.55, 2.2);
     // chapter ellipse
     g.appendChild(mk('ellipse',{cx:ch.cx,cy:ch.cy,rx:130,ry:41,
       fill:cl,stroke:c,'stroke-width':2.2,filter:'url(#sh)'}));
