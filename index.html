@@ -3,359 +3,851 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Math 101 — KSU Mind Map</title>
+<title>Math 101 — Mind Map</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Mono:wght@500&family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;font-family:'IBM Plex Sans',sans-serif;background:#f5f3ed}
 
-/* background canvas behind everything */
-#bgc{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+/* ── LAYER STACK ──────────────────────────────────────────── */
+/* z0 */ #bgc{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+/* z1 */ #bg-tint{position:fixed;inset:0;z-index:1;pointer-events:none;
+            opacity:0;background:transparent;
+            transition:background-color 1.1s ease, opacity 1.1s ease}
+/* z2 */ #vig{position:fixed;inset:0;z-index:2;pointer-events:none;
+            background:radial-gradient(ellipse 80% 80% at 50% 50%,
+              transparent 55%, rgba(200,192,170,.18) 100%)}
+/* z3 */ #svg{position:fixed;inset:0;width:100%;height:100%;z-index:3}
 
-/* subtle vignette */
-#vig{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:radial-gradient(ellipse 80% 80% at 50% 50%, transparent 55%, rgba(200,192,170,.18) 100%)}
-
-#svg{position:fixed;inset:0;width:100%;height:100%;z-index:2}
-#map{transform-origin:0 0;transition:transform 1.1s cubic-bezier(.77,0,.18,1);will-change:transform}
-
-/* group fade */
+/* ── MAP TRANSFORM ────────────────────────────────────────── */
+#map{transform-origin:0 0;will-change:transform;
+     transition:transform 1.1s cubic-bezier(.77,0,.18,1)}
 .mg{transition:opacity 0.65s ease}
 
-/* top overlay */
-#ov{position:fixed;top:0;left:0;right:0;padding:36px 64px 0;pointer-events:none;z-index:10;transition:opacity .5s}
-.ov-tag{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#b8922d;font-weight:600;margin-bottom:5px}
-.ov-title{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2.8vw,38px);font-weight:600;color:#1c1b28;line-height:1.1}
+/* ── TOP OVERLAY (chapter label) ─────────────────────────── */
+#ov{position:fixed;top:0;left:0;right:0;padding:32px 60px 0;
+    pointer-events:none;z-index:10;transition:opacity .5s}
+.ov-tag{font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+        color:#b8922d;font-weight:600;margin-bottom:5px}
+.ov-title{font-family:'Cormorant Garamond',serif;
+          font-size:clamp(18px,2.6vw,36px);font-weight:600;
+          color:#1c1b28;line-height:1.1}
 
-/* title panel */
-#tp{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:10;
-  opacity:0;transition:opacity .7s;background:rgba(245,243,237,.93);border:1px solid rgba(184,146,45,.25);
-  border-radius:18px;padding:22px 40px;backdrop-filter:blur(8px);white-space:nowrap}
+/* ── TITLE PANEL (slide 0) ───────────────────────────────── */
+#tp{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+    text-align:center;pointer-events:none;z-index:10;
+    opacity:0;transition:opacity .7s;
+    background:rgba(245,243,237,.93);border:1px solid rgba(184,146,45,.25);
+    border-radius:18px;padding:22px 44px;backdrop-filter:blur(8px);
+    white-space:nowrap}
 #tp.vis{opacity:1}
-.tp-ksu{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#b8922d;font-weight:600;margin-bottom:8px}
-.tp-h{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3.8vw,48px);font-weight:600;color:#1c1b28;line-height:1}
+.tp-ksu{font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+        color:#b8922d;font-weight:600;margin-bottom:8px}
+.tp-h{font-family:'Cormorant Garamond',serif;
+      font-size:clamp(22px,3.6vw,46px);font-weight:600;
+      color:#1c1b28;line-height:1}
 .tp-sub{font-size:13px;color:#68657d;margin-top:7px}
 
-/* hint */
-#hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);font-size:12px;color:#a0a0b8;letter-spacing:.06em;pointer-events:none;z-index:10;transition:opacity .4s}
+/* ── HINT ────────────────────────────────────────────────── */
+#hint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+      font-size:12px;color:#a0a0b8;letter-spacing:.06em;
+      pointer-events:none;z-index:10;transition:opacity .4s}
 
-/* progress */
-#prog{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#b8922d,#d4a84b);transition:width .6s;z-index:20;border-radius:0 2px 2px 0}
+/* ── PROGRESS BAR ────────────────────────────────────────── */
+#prog{position:fixed;top:0;left:0;height:3px;
+      background:linear-gradient(90deg,#b8922d,#d4a84b);
+      transition:width .6s ease,background .8s ease;
+      z-index:20;border-radius:0 2px 2px 0}
 
-/* dots */
+/* ── DOT INDICATORS ──────────────────────────────────────── */
 #dots{position:fixed;bottom:24px;right:36px;display:flex;gap:7px;z-index:20}
-.dot{width:7px;height:7px;border-radius:50%;background:#c8c5d8;cursor:pointer;transition:background .3s,transform .3s}
+.dot{width:7px;height:7px;border-radius:50%;background:#c8c5d8;
+     cursor:pointer;transition:background .3s,transform .3s}
 .dot.act{background:#b8922d;transform:scale(1.45)}
 
-/* arrows */
-#aL,#aR{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.1);border-radius:50%;cursor:pointer;z-index:20;color:#58556e;
-  font-size:18px;backdrop-filter:blur(6px);transition:background .2s,color .2s;user-select:none;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+/* ── NAV ARROWS ──────────────────────────────────────────── */
+#aL,#aR{position:fixed;top:50%;transform:translateY(-50%);
+        width:44px;height:44px;display:flex;align-items:center;
+        justify-content:center;background:rgba(255,255,255,.88);
+        border:1px solid rgba(0,0,0,.1);border-radius:50%;
+        cursor:pointer;z-index:20;color:#58556e;font-size:18px;
+        backdrop-filter:blur(6px);user-select:none;
+        transition:background .2s,color .2s;
+        box-shadow:0 2px 12px rgba(0,0,0,.08)}
 #aL:hover,#aR:hover{background:#fff;color:#1c1b28}
-#aL{left:16px}#aR{right:16px}
+#aL{left:16px}
+#aR{right:16px}
 
-/* counter */
-#counter{position:fixed;bottom:28px;left:36px;font-size:12px;color:#a0a0b8;letter-spacing:.05em;z-index:10;pointer-events:none}
+/* ── SLIDE COUNTER ───────────────────────────────────────── */
+#counter{position:fixed;bottom:28px;left:36px;font-size:12px;
+         color:#a0a0b8;letter-spacing:.05em;z-index:10;pointer-events:none}
 </style>
 </head>
 <body>
 
 <!-- background layers -->
 <canvas id="bgc"></canvas>
+<div id="bg-tint"></div>
 <div id="vig"></div>
 
-<!-- controls -->
+<!-- progress + controls -->
 <div id="prog"></div>
 <div id="aL" onclick="goTo(cur-1)">&#8592;</div>
 <div id="aR" onclick="goTo(cur+1)">&#8594;</div>
 <div id="dots"></div>
 <div id="counter"></div>
-<div id="ov"><div class="ov-tag" id="ov-tag"></div><div class="ov-title" id="ov-title"></div></div>
-<div id="tp">
-  <div class="tp-ksu">King Saud University · Math 101</div>
-  <div class="tp-h">Mathematics <em style="color:#b8922d">Mind Map</em></div>
-  <div class="tp-sub">Real Numbers · Functions · Limits · Derivatives</div>
-</div>
-<div id="hint">← → or Space to navigate</div>
 
+<!-- top overlay -->
+<div id="ov">
+  <div class="ov-tag" id="ov-tag"></div>
+  <div class="ov-title" id="ov-title"></div>
+</div>
+
+<!-- title panel (slide 0 only) -->
+<div id="tp">
+  <div class="tp-ksu">King Saud University &middot; Math 101</div>
+  <div class="tp-h">Mathematics <em style="color:#b8922d">Mind Map</em></div>
+  <div class="tp-sub">Functions &middot; Limits &middot; Differentiation &middot; Applications</div>
+</div>
+
+<div id="hint">&#8592; &#8594; or Space to navigate</div>
+
+<!-- main SVG -->
 <svg id="svg" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <filter id="sh"  x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="5"  flood-color="#00000014"/></filter>
-    <filter id="sh2" x="-6%"  y="-6%"  width="112%" height="112%"><feDropShadow dx="0" dy="1" stdDeviation="3"  flood-color="#0000000d"/></filter>
+    <!-- medium drop shadow -->
+    <filter id="sh" x="-12%" y="-12%" width="124%" height="124%">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#00000016"/>
+    </filter>
+    <!-- light drop shadow -->
+    <filter id="sh2" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="1" stdDeviation="3" flood-color="#0000000d"/>
+    </filter>
+    <!-- pill glow (fraction pills) -->
+    <filter id="sh3" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0000000a"/>
+    </filter>
   </defs>
   <g id="map"></g>
 </svg>
 
 <script>
-// ── PALETTE ───────────────────────────────────────────────────────────────────
-const GOLD='#b8922d',INK='#1c1b28',GRAY='#58556e';
-const C1='#1aaa7e',C1L='#e4f8f1';
-const C2='#6b5ecf',C2L='#ece9fb';
+// ── PALETTE ───────────────────────────────────────────────────
+const GOLD='#b8922d', INK='#1c1b28', GRAY='#58556e';
+const COL={
+  c1:{ s:'#1aaa7e', l:'#e4f8f1', tint:'rgba(26,170,126,0.04)'  },
+  c2:{ s:'#2e9e5b', l:'#e5f6ec', tint:'rgba(46,158,91,0.04)'   },
+  c3:{ s:'#d4733a', l:'#fdf0e8', tint:'rgba(212,115,58,0.04)'  },
+  c4:{ s:'#6b5ecf', l:'#ece9fb', tint:'rgba(107,94,207,0.04)'  },
+};
 
-// ── LAYOUT CONSTANTS ─────────────────────────────────────────────────────────
-// Increased canvas, wider section gaps, more vertical breathing room
-const RY=88,  CY=285, SY=488, TY=690, P1Y=758, P2Y=792, T_OFF=126;
-// ↑ root y, chapter y, section y, topic y, pill1 y, pill2 y, topic horizontal offset
+// ── LAYOUT ────────────────────────────────────────────────────
+// Root center
+const RX=1800, RY=1300;
+// Chapter Y (top row fans up, bottom row fans down)
+const CH_Y_TOP=850,  CH_Y_BOT=1750;
+// Section Y
+const SEC_Y_TOP=470, SEC_Y_BOT=2130;
+// Topic Y
+const TOP_Y_TOP=265, TOP_Y_BOT=2335;
+// Pill-1 center Y
+const P1_Y_TOP=158,  P1_Y_BOT=2442;
+// Pill-2 center Y
+const P2_Y_TOP=86,   P2_Y_BOT=2514;
+// Topic x-spread from section center
+const T_OFF=112;
+// Section x arrays (left side / right side)
+const SEC_X_L=[200,530,860,1190];
+const SEC_X_R=[2410,2740,3070,3400];
+// Pill dimensions
+const PW=116, PHT=22, PHF=44;  // width, text-height, fraction-height
 
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const CHAPTERS=[
-  { id:'c1', x:830,  y:CY, c:C1, cl:C1L, label:'Chapter 1', sub:'Real Numbers & Functions',
-    sections:[
-      { id:'1.1', x:190,  label:'1.1', sub:'Number Sets & Intervals',
-        topics:[
-          { label:'Number Sets',    p1:'ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ',  p2:'ℚ ∪ (ℝ\\ℚ) = ℝ'      },
-          { label:'Intervals',      p1:'(a,b): a < x < b',     p2:'[a,b]: a ≤ x ≤ b'    },
-          { label:'Absolute Value', p1:'|x| ≥ 0  always',      p2:'|a+b| ≤ |a|+|b|'    }
-        ]},
-      { id:'1.2', x:630,  label:'1.2', sub:'Algebraic Expressions',
-        topics:[
-          { label:'Exponents',  p1:'aⁿ · aᵐ = aⁿ⁺ᵐ',      p2:'a⁻ⁿ = 1/aⁿ'            },
-          { label:'Identities', p1:'(a±b)² = a²±2ab+b²',   p2:'(a+b)³ = a³+3a²b+...'  },
-          { label:'Factoring',  p1:'a²−b²=(a+b)(a−b)',      p2:'a³±b³=(a±b)(a²∓ab+b²)' }
-        ]},
-      { id:'1.3', x:1070, label:'1.3', sub:'Functions',
-        topics:[
-          { label:'Definition', p1:'f : A → B',             p2:'Dom(f)  &  Rng(f)'      },
-          { label:'Operations', p1:'f±g,  fg,  f/g',        p2:'f∘g(x) = f(g(x))'       },
-          { label:'Inverse f⁻¹',p1:'requires 1-to-1',       p2:'f⁻¹∘f = identity'       }
-        ]},
-      { id:'1.4', x:1510, label:'1.4', sub:'Trig Functions',
-        topics:[
-          { label:'6 Functions', p1:'sin, cos, tan',         p2:'cot, sec, csc'          },
-          { label:'Identities',  p1:'sin²θ + cos²θ = 1',    p2:'double & half angle'    },
-          { label:'Inverse Trig',p1:'arcsin,  arccos',       p2:'arctan: (−π/2, π/2)'   }
-        ]}
-    ]},
-  { id:'c2', x:2590, y:CY, c:C2, cl:C2L, label:'Chapter 2', sub:'Limits, Continuity & Derivatives',
-    sections:[
-      { id:'2.1', x:1910, label:'2.1', sub:'Limits',
-        topics:[
-          { label:'Definition', p1:'lim(x→a) f(x) = L',    p2:'ε-δ  definition'         },
-          { label:'Limit Laws', p1:'sum, product, quot',    p2:'power, root'              },
-          { label:'One-sided',  p1:'x→a⁺  and  x→a⁻',     p2:'exists ⟺ L⁺ = L⁻'      }
-        ]},
-      { id:'2.2', x:2350, label:'2.2', sub:'Limit Techniques',
-        topics:[
-          { label:'Substitution',  p1:'try direct sub first',p2:'factor & cancel'        },
-          { label:'Indeterminate', p1:'0/0  or  ∞/∞',        p2:"L'Hôpital: f'/g'"      },
-          { label:'Squeeze Thm',   p1:'g ≤ f ≤ h ⟹ same lim',p2:'sinx/x → 1 (x→0)'   }
-        ]},
-      { id:'2.3', x:2790, label:'2.3', sub:'Continuity',
-        topics:[
-          { label:'3 Conditions',  p1:'① f(a) defined',     p2:'② lim = f(a)'           },
-          { label:'Discontinuity', p1:'removable, jump',     p2:'infinite type'          },
-          { label:'IVT',           p1:'cont. on [a,b]',      p2:'∃ c : f(c) = k'        }
-        ]},
-      { id:'2.4', x:3230, label:'2.4', sub:'Derivatives',
-        topics:[
-          { label:'Definition',  p1:"f'(x) = lim Δy/Δx",   p2:'dy/dx  notation'        },
-          { label:'Diff. Rules', p1:"(xⁿ)' = nxⁿ⁻¹",       p2:'product, quotient'       },
-          { label:'Chain & Impl',p1:"(f∘g)' = f'(g)·g'",    p2:'implicit diff'          }
-        ]}
-    ]}
-];
+// ── PILL DATA HELPERS ─────────────────────────────────────────
+// Plain text
+const T=v=>v;
+// Single fraction  {n, d, pre, suf}
+const F=(n,d,pre='',suf='')=>({n,d,pre,suf});
+// Two fractions joined by operator  {n1,d1,op,n2,d2}
+const FF=(n1,d1,op,n2,d2)=>({n1,d1,op,n2,d2});
 
-// ── SVG HELPERS ───────────────────────────────────────────────────────────────
+// ── CH1: FUNCTIONS ────────────────────────────────────────────
+const CH1={
+  id:'c1', label:'Chapter 1', sub:'Functions',
+  col:COL.c1, cx:700, cy:CH_Y_TOP, side:'TL',
+  secXs:SEC_X_L, secY:SEC_Y_TOP, topY:TOP_Y_TOP,
+  p1Y:P1_Y_TOP, p2Y:P2_Y_TOP,
+  sections:[
+    { id:'s1a', label:'Number Sets',
+      topics:[
+        { label:'Real Numbers',   p1:'ℝ = ℚ ∪ 𝕀',          p2:'ℕ ⊂ W ⊂ ℤ ⊂ ℚ ⊂ ℝ'      },
+        { label:'Rational ℚ',     p1:F('p','q'),              p2:'p,q ∈ ℤ,  q ≠ 0'         },
+        { label:'ℤ · W · ℕ',      p1:'… −1, 0, 1, 2 …',     p2:'ℕ ⊂ W ⊂ ℤ'              }
+      ]},
+    { id:'s1b', label:'Inequalities',
+      topics:[
+        { label:'Linear',         p1:'ax + b < 0',            p2:'interval solution'         },
+        { label:'Rational',       p1:F('p(x)','q(x)','','≥ 0'), p2:'sign chart'             },
+        { label:'Quadratic',      p1:'ax²+bx+c ≥ 0',         p2:'Δ = b²−4ac'              }
+      ]},
+    { id:'s1c', label:'Functions Explorer',
+      topics:[
+        { label:'Domain & Range', p1:'D(f±g),  D(f·g)',       p2:F('f','g','D(',  ')')      },
+        { label:'One-to-One',     p1:'f(x₁) ≠ f(x₂)',        p2:'H. Line Test'             },
+        { label:'Composition',    p1:'f∘g(x) = f(g(x))',     p2:'f⁻¹∘f = id'              }
+      ]},
+    { id:'s1d', label:'Trig Functions',
+      topics:[
+        { label:'6 Functions',    p1:'sin, cos, tan',          p2:'cot,  sec,  csc'          },
+        { label:'Pythagorean',    p1:'sin²x + cos²x = 1',     p2:'tan²x + 1 = sec²x'       },
+        { label:'Inverse Trig',   p1:'arcsin,  arccos',        p2:F('π','2','arctan ∈ (−',')') }
+      ]}
+  ]
+};
+// ── CH2: LIMITS & CONTINUITY ──────────────────────────────────
+const CH2={
+  id:'c2', label:'Chapter 2', sub:'Limits & Continuity',
+  col:COL.c2, cx:2900, cy:CH_Y_TOP, side:'TR',
+  secXs:SEC_X_R, secY:SEC_Y_TOP, topY:TOP_Y_TOP,
+  p1Y:P1_Y_TOP, p2Y:P2_Y_TOP,
+  sections:[
+    { id:'s2a', label:'Limit Laws',
+      topics:[
+        { label:'Sum / Diff',    p1:'lim[f ± g]',              p2:'lim f ± lim g'           },
+        { label:'Product',       p1:'lim[f · g]',              p2:'lim f · lim g'            },
+        { label:'Quotient',      p1:F('f(x)','g(x)','lim '),   p2:'g(x) ≠ 0'               }
+      ]},
+    { id:'s2b', label:'Limits at Infinity',
+      topics:[
+        { label:'Definition',    p1:'lim(x→∞) f(x)',           p2:'= L  or  ±∞'             },
+        { label:'H. Asymptote',  p1:'y = L',                   p2:'lim(x→±∞) f = L'         },
+        { label:'V. Asymptote',  p1:'x = a',                   p2:'lim(x→a) f = ±∞'         }
+      ]},
+    { id:'s2c', label:'One-Sided & Sandwich',
+      topics:[
+        { label:'Left-hand',     p1:'lim(x→a⁻) f(x)',         p2:'approach from left'       },
+        { label:'Right-hand',    p1:'lim(x→a⁺) f(x)',         p2:'approach from right'      },
+        { label:'Sandwich Thm',  p1:'g ≤ f ≤ h',              p2:'lim g=lim h ⟹ lim f=L'  }
+      ]},
+    { id:'s2d', label:'Continuity',
+      topics:[
+        { label:'① f(c) exists', p1:'f(c) is defined',         p2:'no hole at c'             },
+        { label:'② lim exists',  p1:'lim(x→c) f(x) ∃',        p2:'L⁺ = L⁻'                 },
+        { label:'③ lim = f(c)',  p1:'lim f(x) = f(c)',         p2:'all 3 ⟹ continuous'      }
+      ]}
+  ]
+};
+// ── CH3: DIFFERENTIATION ─────────────────────────────────────
+// bottom-left: fans downward
+const CH3={
+  id:'c3', label:'Chapter 3', sub:'Differentiation',
+  col:COL.c3, cx:700, cy:CH_Y_BOT, side:'BL',
+  secXs:SEC_X_L, secY:SEC_Y_BOT, topY:TOP_Y_BOT,
+  p1Y:P1_Y_BOT, p2Y:P2_Y_BOT,
+  sections:[
+    { id:'s3a', label:'Derivative Defn.',
+      topics:[
+        { label:'Limit Form',
+          p1:F('f(x+h)−f(x)','h','lim '),
+          p2:'as  h → 0'                                                        },
+        { label:'Slope of Tangent',
+          p1:F('Δy','Δx'),
+          p2:'instantaneous rate'                                                },
+        { label:'Notation',
+          p1:"f′(x)  =  y′",
+          p2:F('dy','dx')                                                        }
+      ]},
+    { id:'s3b', label:'Core Rules',
+      topics:[
+        { label:'Power Rule',
+          p1:"(xⁿ)′ = nxⁿ⁻¹",
+          p2:"(c)′ = 0"                                                          },
+        { label:'Product Rule',
+          p1:"(fg)′=f′g+fg′",
+          p2:'both factors diff.'                                                },
+        { label:'Quotient Rule',
+          p1:F("f′g − fg′","g²"),
+          p2:'g(x) ≠ 0'                                                         }
+      ]},
+    { id:'s3c', label:'Trig Derivatives',
+      topics:[
+        { label:'sin & cos',
+          p1:"(sin x)′ = cos x",
+          p2:"(cos x)′ = −sin x"                                                },
+        { label:'tan & cot',
+          p1:"(tan x)′ = sec²x",
+          p2:"(cot x)′ = −csc²x"                                               },
+        { label:'sec & csc',
+          p1:"(sec x)′ = sec·tan",
+          p2:"(csc x)′ = −csc·cot"                                             }
+      ]},
+    { id:'s3d', label:'Chain Rule & Higher',
+      topics:[
+        { label:'Chain Rule',
+          p1:F('dy','dx'),
+          p2:FF('dy','du','·','du','dx')                                         },
+        { label:'2nd Derivative',
+          p1:"f″(x) = (f′)′",
+          p2:F('d²y','dx²')                                                      },
+        { label:'Implicit Diff.',
+          p1:F('dy','dx','find '),
+          p2:F('d','dx','apply ','  to both')                                    }
+      ]}
+  ]
+};
+// ── CH4: APPLICATIONS OF DIFFERENTIATION ─────────────────────
+// bottom-right: fans downward
+const CH4={
+  id:'c4', label:'Chapter 4', sub:'Applications of Diff.',
+  col:COL.c4, cx:2900, cy:CH_Y_BOT, side:'BR',
+  secXs:SEC_X_R, secY:SEC_Y_BOT, topY:TOP_Y_BOT,
+  p1Y:P1_Y_BOT, p2Y:P2_Y_BOT,
+  sections:[
+    { id:'s4a', label:'Extrema (Max & Min)',
+      topics:[
+        { label:'Critical Points',
+          p1:"f′(c) = 0 or undef.",
+          p2:'find all candidates'                                               },
+        { label:'1st Deriv. Test',
+          p1:"f′: + → −: local max",
+          p2:"f′: − → +: local min"                                             },
+        { label:'2nd Deriv. Test',
+          p1:"f″(c) < 0 → max",
+          p2:"f″(c) > 0 → min"                                                  }
+      ]},
+    { id:'s4b', label:'Fundamental Theorems',
+      topics:[
+        { label:'MVT',
+          p1:F('f(b)−f(a)','b−a','f′(c) = '),
+          p2:'∃ c ∈ (a, b)'                                                      },
+        { label:"Rolle's Theorem",
+          p1:'f(a) = f(b)',
+          p2:"∃ c: f′(c) = 0"                                                   },
+        { label:'EVT',
+          p1:'f  cont. on [a, b]',
+          p2:'abs. max & min exist'                                              }
+      ]},
+    { id:'s4c', label:'Function Analysis',
+      topics:[
+        { label:'Incr. / Decr.',
+          p1:"f′(x) > 0  →  ↑",
+          p2:"f′(x) < 0  →  ↓"                                                  },
+        { label:'Concavity',
+          p1:"f″(x) > 0: concave ∪",
+          p2:"f″(x) < 0: concave ∩"                                             },
+        { label:'Inflection Pts.',
+          p1:"f″(c) = 0 or undef.",
+          p2:'concavity changes'                                                 }
+      ]},
+    { id:'s4d', label:'Curve Sketching',
+      topics:[
+        { label:'Domain & Intercepts',
+          p1:'find D(f),  x & y int.',
+          p2:'set f=0, then x=0'                                                 },
+        { label:'Asymptotes',
+          p1:'H: y = L,  V: x = a',
+          p2:F('f(x)','g(x)','lim ')                                             },
+        { label:'Sketch Steps',
+          p1:"domain→intercepts",
+          p2:"asympt.→f′→f″→draw"                                              }
+      ]}
+  ]
+};
+// ── CHAPTERS ARRAY ────────────────────────────────────────────
+const CHAPTERS=[CH1,CH2,CH3,CH4];
+
+// ── SVG INFRASTRUCTURE ───────────────────────────────────────
 const NS='http://www.w3.org/2000/svg';
-function mk(tag,a){const e=document.createElementNS(NS,tag);for(const[k,v] of Object.entries(a))e.setAttribute(k,v);return e}
-function txt(g,s,a){const e=mk('text',a);e.textContent=s;g.appendChild(e)}
-function curve(g,x1,y1,x2,y2,col,op,sw){
-  const my=(y1+y2)/2;
-  g.appendChild(mk('path',{d:`M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`,fill:'none',stroke:col,'stroke-width':sw,'stroke-opacity':op,'stroke-linecap':'round'}));
-}
-
-// ── RENDER ────────────────────────────────────────────────────────────────────
 const mapEl=document.getElementById('map');
 const GROUPS={};
 
+// Create SVG element with attributes
+function mk(tag,a){
+  const e=document.createElementNS(NS,tag);
+  for(const[k,v] of Object.entries(a)) e.setAttribute(k,v);
+  return e;
+}
+
+// Append text node to group
+function txt(g,s,a){
+  const e=mk('text',a);
+  e.textContent=s;
+  g.appendChild(e);
+  return e;
+}
+
+// Cubic bezier (vertical S-curve) between two points
+function curve(g,x1,y1,x2,y2,col,op,sw){
+  const my=(y1+y2)/2;
+  g.appendChild(mk('path',{
+    d:`M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`,
+    fill:'none', stroke:col,
+    'stroke-width':sw, 'stroke-opacity':op, 'stroke-linecap':'round'
+  }));
+}
+
+// Straight connector line
+function seg(g,x1,y1,x2,y2,col,op,sw){
+  g.appendChild(mk('line',{
+    x1,y1,x2,y2, stroke:col,
+    'stroke-width':sw, 'stroke-opacity':op, 'stroke-linecap':'round'
+  }));
+}
+
+// Create a named group and register it for opacity control
 function grp(id){
-  const g=mk('g',{'id':'g-'+id,'class':'mg'});
+  const g=mk('g',{id:'g-'+id,class:'mg'});
   mapEl.appendChild(g);
   GROUPS[id]=g;
   return g;
 }
 
-function build(){
-  const RX=1710; // midpoint of ch1(830) and ch2(2590)
+// Pill type guards
+const isFrac=p=>p&&typeof p==='object'&&'n' in p;
+const isFF  =p=>p&&typeof p==='object'&&'n1' in p;
 
-  // ── root ──
-  const gr=grp('root');
-  curve(gr,RX,RY+44,CHAPTERS[0].x,CY-36,GOLD,.65,2.4);
-  curve(gr,RX,RY+44,CHAPTERS[1].x,CY-36,GOLD,.65,2.4);
-  gr.appendChild(mk('ellipse',{cx:RX,cy:RY,rx:145,ry:46,fill:'#fff',stroke:GOLD,'stroke-width':2.4,filter:'url(#sh)'}));
-  txt(gr,'Math 101',    {x:RX,y:RY-8, 'text-anchor':'middle','font-family':'Cormorant Garamond,serif','font-size':23,'font-weight':600,fill:INK});
-  txt(gr,'King Saud University',{x:RX,y:RY+14,'text-anchor':'middle','font-family':'IBM Plex Sans,sans-serif','font-size':11.5,fill:GRAY});
+// ── FRACTION RENDERER ────────────────────────────────────────
+const MONO="'IBM Plex Mono',monospace";
+const CPX =4.8;   // px per char in IBM Plex Mono at 8px
 
+// Vinculum half-length from char count
+function vinLen(n,d){ return Math.max(n.length,d.length)*2.55+4; }
+
+// Draw stacked fraction group at (cx,cy) in parent g
+function drawFracGroup(g,cx,cy,n,d,col,fs=8){
+  const vl=vinLen(n,d);
+  const fg=mk('g',{transform:`translate(${cx},${cy})`});
+  const tn=mk('text',{y:-5,'text-anchor':'middle','font-family':MONO,'font-size':fs,fill:col});
+  tn.textContent=n; fg.appendChild(tn);
+  fg.appendChild(mk('line',{x1:-vl,x2:vl,y1:0,y2:0,stroke:col,'stroke-width':0.9,'stroke-opacity':0.85}));
+  const td=mk('text',{y:12,'text-anchor':'middle','font-family':MONO,'font-size':fs,fill:col});
+  td.textContent=d; fg.appendChild(td);
+  g.appendChild(fg);
+}
+
+// Draw plain text pill centered at (px,py)
+function drawTxtPill(g,px,py,val,col,colL){
+  const hw=PW/2, hh=PHT/2;
+  g.appendChild(mk('rect',{x:px-hw,y:py-hh,width:PW,height:PHT,rx:7,
+    fill:colL,stroke:col,'stroke-opacity':0.4,'stroke-width':1.1}));
+  const e=mk('text',{x:px,y:py+4,'text-anchor':'middle',
+    'font-family':MONO,'font-size':8.5,fill:col,
+    textLength:106,lengthAdjust:'spacingAndGlyphs'});
+  e.textContent=String(val); g.appendChild(e);
+}
+
+// Draw single-fraction pill  {n,d,pre,suf}  centered at (px,py)
+function drawFPill(g,px,py,pill,col,colL){
+  const hw=PW/2, hh=PHF/2;
+  g.appendChild(mk('rect',{x:px-hw,y:py-hh,width:PW,height:PHF,rx:8,
+    fill:colL,stroke:col,'stroke-opacity':0.45,'stroke-width':1.1,filter:'url(#sh3)'}));
+  const {n,d,pre='',suf=''}=pill;
+  const fs=8;
+  const preW=pre.length*CPX*0.88;
+  const sufW=suf.length*CPX*0.88;
+  const fracW=Math.max(n.length,d.length)*CPX+10;
+  const totalW=preW+fracW+sufW;
+  let sx=px-totalW/2;
+  // prefix
+  if(pre){
+    const tp=mk('text',{x:sx+preW/2,y:py+4,'text-anchor':'middle',
+      'font-family':MONO,'font-size':fs,fill:col});
+    tp.textContent=pre; g.appendChild(tp);
+  }
+  // fraction centered in its slot
+  drawFracGroup(g,sx+preW+fracW/2,py,n,d,col,fs);
+  // suffix
+  if(suf){
+    const ts=mk('text',{x:sx+preW+fracW+sufW/2,y:py+4,'text-anchor':'middle',
+      'font-family':MONO,'font-size':fs,fill:col});
+    ts.textContent=suf; g.appendChild(ts);
+  }
+}
+
+// Draw double-fraction pill  {n1,d1,op,n2,d2}  centered at (px,py)
+function drawFFPill(g,px,py,pill,col,colL){
+  const hw=PW/2, hh=PHF/2;
+  g.appendChild(mk('rect',{x:px-hw,y:py-hh,width:PW,height:PHF,rx:8,
+    fill:colL,stroke:col,'stroke-opacity':0.45,'stroke-width':1.1,filter:'url(#sh3)'}));
+  const {n1,d1,op,n2,d2}=pill;
+  const fs=7.8;
+  const fw1=Math.max(n1.length,d1.length)*CPX*0.9+8;
+  const fw2=Math.max(n2.length,d2.length)*CPX*0.9+8;
+  const opW=op.length*CPX+8;
+  const totalW=fw1+opW+fw2;
+  const sx=px-totalW/2;
+  drawFracGroup(g,sx+fw1/2,       py,n1,d1,col,fs);
+  const top=mk('text',{x:sx+fw1+opW/2,y:py+4,'text-anchor':'middle',
+    'font-family':MONO,'font-size':fs+1,fill:col});
+  top.textContent=op; g.appendChild(top);
+  drawFracGroup(g,sx+fw1+opW+fw2/2,py,n2,d2,col,fs);
+}
+
+// Unified pill dispatcher
+function drawPill(g,px,py,pill,col,colL){
+  if(isFF(pill))        drawFFPill(g,px,py,pill,col,colL);
+  else if(isFrac(pill)) drawFPill (g,px,py,pill,col,colL);
+  else                  drawTxtPill(g,px,py,pill,col,colL);
+}
+
+// ── BUILD: ROOT + CHAPTERS ────────────────────────────────────
+const SERIF ="'Cormorant Garamond',serif";
+const SANS  ="'IBM Plex Sans',sans-serif";
+const isTop =ch=>ch.cy<RY;   // true for TL / TR chapters
+
+function buildRoot(){
+  const g=grp('root');
+  // root → each chapter connector
   for(const ch of CHAPTERS){
-    // ── chapter ──
-    const gc=grp(ch.id);
-    gc.appendChild(mk('ellipse',{cx:ch.x,cy:ch.y,rx:122,ry:38,fill:ch.cl,stroke:ch.c,'stroke-width':2.2,filter:'url(#sh)'}));
-    txt(gc,ch.label,{x:ch.x,y:ch.y-8, 'text-anchor':'middle','font-family':'IBM Plex Sans,sans-serif','font-size':15,'font-weight':700,fill:INK});
-    txt(gc,ch.sub,   {x:ch.x,y:ch.y+12,'text-anchor':'middle','font-family':'IBM Plex Sans,sans-serif','font-size':9.5,fill:GRAY});
+    const top=isTop(ch);
+    curve(g, RX, top?RY-50:RY+50,
+             ch.cx, top?ch.cy+40:ch.cy-40,
+             GOLD, 0.55, 2.2);
+  }
+  // root ellipse
+  g.appendChild(mk('ellipse',{cx:RX,cy:RY,rx:158,ry:50,
+    fill:'#fff',stroke:GOLD,'stroke-width':2.4,filter:'url(#sh)'}));
+  txt(g,'Math 101',{x:RX,y:RY-9,'text-anchor':'middle',
+    'font-family':SERIF,'font-size':24,'font-weight':600,fill:INK});
+  txt(g,'King Saud University',{x:RX,y:RY+15,'text-anchor':'middle',
+    'font-family':SANS,'font-size':11.5,fill:GRAY});
+}
 
-    for(const sec of ch.sections){
-      // ── section ──
-      const gs=grp(sec.id);
-      const txs=[sec.x-T_OFF, sec.x, sec.x+T_OFF];
+function buildChapters(){
+  for(const ch of CHAPTERS){
+    const g=grp(ch.id);
+    const{s:c,l:cl}=ch.col;
+    const top=isTop(ch);
+    // chapter ellipse
+    g.appendChild(mk('ellipse',{cx:ch.cx,cy:ch.cy,rx:130,ry:41,
+      fill:cl,stroke:c,'stroke-width':2.2,filter:'url(#sh)'}));
+    txt(g,ch.label,{x:ch.cx,y:ch.cy-10,'text-anchor':'middle',
+      'font-family':SANS,'font-size':15,'font-weight':700,fill:INK});
+    txt(g,ch.sub,  {x:ch.cx,y:ch.cy+13,'text-anchor':'middle',
+      'font-family':SANS,'font-size':9.5,fill:GRAY});
+  }
+}
 
-      // chapter → section branch (inside section group so it dims with section)
-      curve(gs,ch.x,ch.y+38,sec.x,SY-25,ch.c,.5,2);
+// ── BUILD: SECTIONS ───────────────────────────────────────────
+function buildSections(){
+  for(const ch of CHAPTERS){
+    const{s:c,l:cl}=ch.col;
+    const top=isTop(ch);
+    // edge of chapter ellipse toward sections
+    const chEdgeY=top ? ch.cy-41 : ch.cy+41;
+    // edge of section rect facing the chapter
+    const secEdge=top ? ch.secY+26 : ch.secY-26;
 
-      // section rect
-      gs.appendChild(mk('rect',{x:sec.x-90,y:SY-26,width:180,height:52,rx:13,fill:ch.cl,stroke:ch.c,'stroke-width':2,filter:'url(#sh2)'}));
-      txt(gs,sec.label,{x:sec.x,y:SY-6, 'text-anchor':'middle','font-family':'IBM Plex Sans,sans-serif','font-size':16,'font-weight':700,fill:INK});
-      txt(gs,sec.sub,  {x:sec.x,y:SY+15,'text-anchor':'middle','font-family':'IBM Plex Sans,sans-serif','font-size':9.5,fill:GRAY});
+    for(let i=0;i<ch.sections.length;i++){
+      const sec=ch.sections[i];
+      const sx=ch.secXs[i];
+      const g=grp(sec.id);
 
-      // section → topic branches
-      for(const tx of txs) curve(gs,sec.x,SY+26,tx,TY-16,ch.c,.38,1.5);
+      // chapter → section S-curve (lives in section group so it fades with section)
+      curve(g, ch.cx,chEdgeY, sx,secEdge, c,0.52,1.8);
 
-      for(let i=0;i<sec.topics.length;i++){
-        const t=sec.topics[i], tx=txs[i];
+      // section rounded rect
+      g.appendChild(mk('rect',{
+        x:sx-96, y:ch.secY-26, width:192, height:52, rx:13,
+        fill:cl, stroke:c, 'stroke-width':1.9, filter:'url(#sh2)'
+      }));
 
-        // topic → pill lines
-        gs.appendChild(mk('line',{x1:tx,y1:TY+16,x2:tx,y2:P1Y-11,stroke:ch.c,'stroke-width':1.1,'stroke-opacity':.35}));
-        gs.appendChild(mk('line',{x1:tx,y1:P1Y+11,x2:tx,y2:P2Y-11,stroke:ch.c,'stroke-width':1.1,'stroke-opacity':.25}));
+      // section label centred vertically in rect
+      txt(g,sec.label,{
+        x:sx, y:ch.secY+5,
+        'text-anchor':'middle',
+        'font-family':SANS, 'font-size':11, 'font-weight':700, fill:INK
+      });
+    }
+  }
+}
 
-        // topic rect
-        gs.appendChild(mk('rect',{x:tx-58,y:TY-16,width:116,height:32,rx:9,fill:'#fff',stroke:ch.c,'stroke-width':1.8,filter:'url(#sh2)'}));
-        txt(gs,t.label,{x:tx,y:TY+5,'text-anchor':'middle','font-family':'IBM Plex Sans,sans-serif','font-size':10.5,'font-weight':600,fill:INK});
+// ── BUILD: TOPICS + PILLS ─────────────────────────────────────
+function buildTopicsAndPills(){
+  for(const ch of CHAPTERS){
+    const{s:c,l:cl}=ch.col;
+    const top=isTop(ch);
 
-        // pill 1
-        gs.appendChild(mk('rect',{x:tx-58,y:P1Y-11,width:116,height:22,rx:7,fill:ch.cl,stroke:ch.c,'stroke-opacity':.4,'stroke-width':1.1}));
-        const e1=mk('text',{x:tx,y:P1Y+5,'text-anchor':'middle','font-family':'IBM Plex Mono,monospace','font-size':8.5,fill:ch.c,textLength:106,lengthAdjust:'spacingAndGlyphs'});
-        e1.textContent=t.p1; gs.appendChild(e1);
+    for(let i=0;i<ch.sections.length;i++){
+      const sec=ch.sections[i];
+      const sx=ch.secXs[i];
+      const g=GROUPS[sec.id];           // reuse group created in buildSections
+      const txs=[sx-T_OFF, sx, sx+T_OFF];
 
-        // pill 2
-        gs.appendChild(mk('rect',{x:tx-58,y:P2Y-11,width:116,height:22,rx:7,fill:ch.cl,stroke:ch.c,'stroke-opacity':.4,'stroke-width':1.1}));
-        const e2=mk('text',{x:tx,y:P2Y+5,'text-anchor':'middle','font-family':'IBM Plex Mono,monospace','font-size':8.5,fill:ch.c,textLength:106,lengthAdjust:'spacingAndGlyphs'});
-        e2.textContent=t.p2; gs.appendChild(e2);
+      // section → topic S-curves
+      const secEdge=top ? ch.secY-26 : ch.secY+26;
+      const topEdge=top ? ch.topY+16 : ch.topY-16;
+      for(const tx of txs) curve(g,sx,secEdge,tx,topEdge,c,0.38,1.4);
+
+      for(let j=0;j<sec.topics.length;j++){
+        const t=sec.topics[j];
+        const tx=txs[j];
+
+        // ── topic rect ──
+        g.appendChild(mk('rect',{
+          x:tx-58, y:ch.topY-16, width:116, height:32, rx:9,
+          fill:'#fff', stroke:c, 'stroke-width':1.8, filter:'url(#sh2)'
+        }));
+        txt(g,t.label,{
+          x:tx, y:ch.topY+5, 'text-anchor':'middle',
+          'font-family':SANS, 'font-size':10.5, 'font-weight':600, fill:INK
+        });
+
+        // ── topic → P1 connector ──
+        const topicFace =top ? ch.topY-16 : ch.topY+16;
+        const p1Near    =top ? ch.p1Y+22  : ch.p1Y-22;
+        seg(g,tx,topicFace,tx,p1Near,c,0.32,1.1);
+
+        // ── P1 pill ──
+        drawPill(g,tx,ch.p1Y,t.p1,c,cl);
+
+        // ── P1 → P2 connector ──
+        const p1Far  =top ? ch.p1Y-22  : ch.p1Y+22;
+        const p2Near =top ? ch.p2Y+22  : ch.p2Y-22;
+        seg(g,tx,p1Far,tx,p2Near,c,0.22,1.1);
+
+        // ── P2 pill ──
+        drawPill(g,tx,ch.p2Y,t.p2,c,cl);
       }
     }
   }
 }
+
+// ── BUILD ASSEMBLER ───────────────────────────────────────────
+function build(){
+  buildRoot();
+  buildChapters();
+  buildSections();
+  buildTopicsAndPills();
+}
 build();
 
-// ── OPACITY CONFIG PER VIEW ───────────────────────────────────────────────────
-const DIM=0.08, SEMI=0.42;
-const ALL1={root:1,c1:1,c2:1,'1.1':1,'1.2':1,'1.3':1,'1.4':1,'2.1':1,'2.2':1,'2.3':1,'2.4':1};
-
-const OPS=[
-  ALL1,
-  {root:.45, c1:1,    c2:SEMI, '1.1':1,   '1.2':1,   '1.3':1,   '1.4':1,   '2.1':DIM, '2.2':DIM, '2.3':DIM, '2.4':DIM},
-  {root:.22, c1:SEMI, c2:DIM,  '1.1':1,   '1.2':1,   '1.3':DIM, '1.4':DIM, '2.1':DIM, '2.2':DIM, '2.3':DIM, '2.4':DIM},
-  {root:.22, c1:SEMI, c2:DIM,  '1.1':DIM, '1.2':DIM, '1.3':1,   '1.4':1,   '2.1':DIM, '2.2':DIM, '2.3':DIM, '2.4':DIM},
-  {root:.45, c1:SEMI, c2:1,    '1.1':DIM, '1.2':DIM, '1.3':DIM, '1.4':DIM, '2.1':1,   '2.2':1,   '2.3':1,   '2.4':1  },
-  {root:.22, c1:DIM,  c2:SEMI, '1.1':DIM, '1.2':DIM, '1.3':DIM, '1.4':DIM, '2.1':1,   '2.2':1,   '2.3':DIM, '2.4':DIM},
-  {root:.22, c1:DIM,  c2:SEMI, '1.1':DIM, '1.2':DIM, '1.3':DIM, '1.4':DIM, '2.1':DIM, '2.2':DIM, '2.3':1,   '2.4':1  },
-  ALL1
-];
-
-// ── VIEWS ─────────────────────────────────────────────────────────────────────
-// Sections: Ch1=[190,630,1070,1510] Ch2=[1910,2350,2790,3230] Root=1710
+// ── VIEWS ─────────────────────────────────────────────────────
+// Each view: {cx,cy,w,h} = camera centre + viewport size (SVG units)
+// ch: which chapter colour to tint the bg (null = no tint)
 const VIEWS=[
-  {cx:1710,cy:490,w:3600,h:1080, tag:'',          title:'',                                    panel:true, hint:true },
-  {cx:830, cy:370,w:1640,h:570,  tag:'Chapter 1', title:'Real Numbers & Functions',             panel:false,hint:false},
-  {cx:410, cy:710,w:860, h:660,  tag:'1.1 & 1.2', title:'Number Sets · Algebraic Expressions', panel:false,hint:false},
-  {cx:1350,cy:710,w:860, h:660,  tag:'1.3 & 1.4', title:'Functions · Trigonometry',             panel:false,hint:false},
-  {cx:2590,cy:370,w:1640,h:570,  tag:'Chapter 2', title:'Limits, Continuity & Derivatives',     panel:false,hint:false},
-  {cx:2130,cy:710,w:860, h:660,  tag:'2.1 & 2.2', title:'Limits · Limit Techniques',            panel:false,hint:false},
-  {cx:3010,cy:710,w:860, h:660,  tag:'2.3 & 2.4', title:'Continuity · Derivatives',             panel:false,hint:false},
-  {cx:1710,cy:490,w:3600,h:1080, tag:'',          title:'Complete Mind Map',                    panel:false,hint:false}
+  // 0 ── Title / intro
+  {cx:1800,cy:1300,w:3760,h:2700, ch:null, tag:'',               title:'',                                    panel:true, hint:true },
+  // 1 ── Top half overview (Ch1 + Ch2)
+  {cx:1800,cy:478, w:3760,h:970,  ch:null, tag:'Chapters 1 & 2', title:'Functions · Limits & Continuity',     panel:false,hint:false},
+  // 2 ── Ch1 full overview
+  {cx:695, cy:478, w:1520,h:970,  ch:'c1', tag:'Chapter 1',      title:'Functions',                           panel:false,hint:false},
+  // 3 ── Ch1 sections 1–2
+  {cx:366, cy:478, w:840, h:970,  ch:'c1', tag:'Ch.1 · Sec 1–2', title:'Number Sets · Inequalities',          panel:false,hint:false},
+  // 4 ── Ch1 sections 3–4
+  {cx:1025,cy:478, w:840, h:970,  ch:'c1', tag:'Ch.1 · Sec 3–4', title:'Functions Explorer · Trig',           panel:false,hint:false},
+  // 5 ── Ch2 full overview
+  {cx:2905,cy:478, w:1520,h:970,  ch:'c2', tag:'Chapter 2',      title:'Limits & Continuity',                 panel:false,hint:false},
+  // 6 ── Ch2 sections 1–2
+  {cx:2576,cy:478, w:840, h:970,  ch:'c2', tag:'Ch.2 · Sec 1–2', title:'Limit Laws · Limits at ∞',            panel:false,hint:false},
+  // 7 ── Ch2 sections 3–4
+  {cx:3235,cy:478, w:840, h:970,  ch:'c2', tag:'Ch.2 · Sec 3–4', title:'One-Sided Limits · Continuity',       panel:false,hint:false},
+  // 8 ── Bottom half overview (Ch3 + Ch4)
+  {cx:1800,cy:2122,w:3760,h:970,  ch:null, tag:'Chapters 3 & 4', title:'Differentiation · Applications',      panel:false,hint:false},
+  // 9 ── Ch3 full overview
+  {cx:695, cy:2122,w:1520,h:970,  ch:'c3', tag:'Chapter 3',      title:'Differentiation',                     panel:false,hint:false},
+  // 10 ── Ch3 sections 1–2
+  {cx:366, cy:2122,w:840, h:970,  ch:'c3', tag:'Ch.3 · Sec 1–2', title:'Derivative Definition · Core Rules',  panel:false,hint:false},
+  // 11 ── Ch3 sections 3–4
+  {cx:1025,cy:2122,w:840, h:970,  ch:'c3', tag:'Ch.3 · Sec 3–4', title:'Trig Derivatives · Chain Rule',       panel:false,hint:false},
+  // 12 ── Ch4 full overview
+  {cx:2905,cy:2122,w:1520,h:970,  ch:'c4', tag:'Chapter 4',      title:'Applications of Differentiation',     panel:false,hint:false},
+  // 13 ── Ch4 sections 1–2
+  {cx:2576,cy:2122,w:840, h:970,  ch:'c4', tag:'Ch.4 · Sec 1–2', title:'Extrema · Fundamental Theorems',      panel:false,hint:false},
+  // 14 ── Ch4 sections 3–4
+  {cx:3235,cy:2122,w:840, h:970,  ch:'c4', tag:'Ch.4 · Sec 3–4', title:'Function Analysis · Curve Sketching', panel:false,hint:false},
+  // 15 ── Final zoom-out
+  {cx:1800,cy:1300,w:3760,h:2700, ch:null, tag:'',               title:'Complete Mind Map',                   panel:false,hint:false},
 ];
 const TOTAL=VIEWS.length;
 let cur=0;
 
-function setOpacities(ops){
-  for(const[id,val] of Object.entries(ops)){const g=GROUPS[id];if(g)g.style.opacity=val;}
+// ── OPACITY MAP ───────────────────────────────────────────────
+const D=0.07, S=0.35, F=1;
+const ALL_IDS=['root','c1','c2','c3','c4',
+  's1a','s1b','s1c','s1d','s2a','s2b','s2c','s2d',
+  's3a','s3b','s3c','s3d','s4a','s4b','s4c','s4d'];
+
+function makeOps(show){
+  const r={};
+  for(const k of ALL_IDS) r[k]=D;
+  for(const[k,v] of Object.entries(show)) r[k]=v;
+  return r;
 }
 
+const ALL_F=Object.fromEntries(ALL_IDS.map(k=>[k,F]));
+const OPS=[
+  makeOps(ALL_F),                                                                        // 0 title      – all visible
+  makeOps({root:S,c1:F,c2:F,s1a:F,s1b:F,s1c:F,s1d:F,s2a:F,s2b:F,s2c:F,s2d:F}),       // 1 top half
+  makeOps({c1:F,s1a:F,s1b:F,s1c:F,s1d:F}),                                              // 2 ch1 overview
+  makeOps({c1:S,s1a:F,s1b:F}),                                                           // 3 ch1 sec 1-2
+  makeOps({c1:S,s1c:F,s1d:F}),                                                           // 4 ch1 sec 3-4
+  makeOps({c2:F,s2a:F,s2b:F,s2c:F,s2d:F}),                                              // 5 ch2 overview
+  makeOps({c2:S,s2a:F,s2b:F}),                                                           // 6 ch2 sec 1-2
+  makeOps({c2:S,s2c:F,s2d:F}),                                                           // 7 ch2 sec 3-4
+  makeOps({root:S,c3:F,c4:F,s3a:F,s3b:F,s3c:F,s3d:F,s4a:F,s4b:F,s4c:F,s4d:F}),       // 8 bottom half
+  makeOps({c3:F,s3a:F,s3b:F,s3c:F,s3d:F}),                                              // 9 ch3 overview
+  makeOps({c3:S,s3a:F,s3b:F}),                                                           // 10 ch3 sec 1-2
+  makeOps({c3:S,s3c:F,s3d:F}),                                                           // 11 ch3 sec 3-4
+  makeOps({c4:F,s4a:F,s4b:F,s4c:F,s4d:F}),                                              // 12 ch4 overview
+  makeOps({c4:S,s4a:F,s4b:F}),                                                           // 13 ch4 sec 1-2
+  makeOps({c4:S,s4c:F,s4d:F}),                                                           // 14 ch4 sec 3-4
+  makeOps(ALL_F),                                                                        // 15 final zoom-out – all visible
+];
+
+// ── SET OPACITIES ─────────────────────────────────────────────
+function setOpacities(ops){
+  for(const[id,val] of Object.entries(ops)){
+    const g=GROUPS[id]; if(g) g.style.opacity=val;
+  }
+}
+
+// ── APPLY VIEW ────────────────────────────────────────────────
+const tintEl=document.getElementById('bg-tint');
+const ovEl  =document.getElementById('ov');
+const tpEl  =document.getElementById('tp');
+const hintEl=document.getElementById('hint');
+
 function applyView(v,animate){
-  const VW=window.innerWidth,VH=window.innerHeight;
-  const scale=Math.min(VW/v.w,VH/v.h)*.91;
+  const VW=innerWidth, VH=innerHeight;
+  const scale=Math.min(VW/v.w, VH/v.h)*0.92;
   const tx=VW/2-v.cx*scale, ty=VH/2-v.cy*scale;
-  const g=document.getElementById('map');
-  g.style.transition=animate?'transform 1.1s cubic-bezier(.77,0,.18,1)':'none';
-  g.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;
-  document.getElementById('ov-tag').textContent=v.tag;
+  mapEl.style.transition=animate?'transform 1.1s cubic-bezier(.77,0,.18,1)':'none';
+  mapEl.style.transform=`translate(${tx}px,${ty}px) scale(${scale})`;
+
+  // overlay label
+  document.getElementById('ov-tag').textContent  =v.tag;
   document.getElementById('ov-title').textContent=v.title;
-  document.getElementById('ov').style.opacity=(v.tag||v.title)?'1':'0';
-  document.getElementById('tp').classList.toggle('vis',!!v.panel);
-  document.getElementById('hint').style.opacity=v.hint?'1':'0';
+  ovEl.style.opacity=(v.tag||v.title)?'1':'0';
+
+  // title panel
+  tpEl.classList.toggle('vis',!!v.panel);
+
+  // navigation hint
+  hintEl.style.opacity=v.hint?'1':'0';
+
+  // background tint (chapter colour at ~4% opacity)
+  if(v.ch){
+    const ch=CHAPTERS.find(c=>c.id===v.ch);
+    tintEl.style.backgroundColor=ch.col.tint;
+    tintEl.style.opacity='1';
+  } else {
+    tintEl.style.opacity='0';
+  }
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────
+const progEl   =document.getElementById('prog');
+const counterEl=document.getElementById('counter');
+const dotsEl   =document.getElementById('dots');
+
+// Build dot indicators
+for(let i=0;i<TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' act':'');
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function updateUI(){
+  // progress bar
+  progEl.style.width=(cur/(TOTAL-1)*100)+'%';
+  // slide counter
+  counterEl.textContent=(cur+1)+' / '+TOTAL;
+  // dots
+  document.querySelectorAll('.dot').forEach((d,i)=>{
+    d.classList.toggle('act',i===cur);
+    // colour active dot to match chapter
+    if(i===cur&&VIEWS[cur].ch){
+      const ch=CHAPTERS.find(c=>c.id===VIEWS[cur].ch);
+      d.style.background=ch.col.s;
+    } else if(i===cur){
+      d.style.background=GOLD;
+    } else {
+      d.style.background='';
+    }
+  });
 }
 
 function goTo(next){
-  if(next<0||next>=TOTAL)return;
+  if(next<0||next>=TOTAL) return;
   cur=next;
   applyView(VIEWS[cur],true);
   setOpacities(OPS[cur]);
   updateUI();
 }
 
-function updateUI(){
-  document.getElementById('prog').style.width=(cur/(TOTAL-1)*100)+'%';
-  document.getElementById('counter').textContent=(cur+1)+' / '+TOTAL;
-  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('act',i===cur));
-}
-
-// dots
-const dw=document.getElementById('dots');
-for(let i=0;i<TOTAL;i++){
-  const d=document.createElement('div');
-  d.className='dot'+(i===0?' act':'');
-  d.onclick=()=>goTo(i);
-  dw.appendChild(d);
-}
-
+// Keyboard
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();goTo(cur+1);}
-  if(e.key==='ArrowLeft'){e.preventDefault();goTo(cur-1);}
+  if(e.key==='ArrowLeft') {e.preventDefault();goTo(cur-1);}
 });
+
+// Touch swipe
 let _tx=0;
 document.addEventListener('touchstart',e=>{_tx=e.touches[0].clientX;},{passive:true});
-document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-_tx;if(Math.abs(dx)>50)goTo(dx<0?cur+1:cur-1);},{passive:true});
+document.addEventListener('touchend',  e=>{
+  const dx=e.changedTouches[0].clientX-_tx;
+  if(Math.abs(dx)>50) goTo(dx<0?cur+1:cur-1);
+},{passive:true});
+
+// Resize
 window.addEventListener('resize',()=>applyView(VIEWS[cur],false));
 
+// ── BOOT ──────────────────────────────────────────────────────
 setOpacities(OPS[0]);
 applyView(VIEWS[0],false);
 updateUI();
 
-// ── FLOATING BACKGROUND SYMBOLS ───────────────────────────────────────────────
+// ── FLOATING ROTATING SYMBOLS (canvas) ───────────────────────
 (function(){
-  const c=document.getElementById('bgc');
+  const c  =document.getElementById('bgc');
   const ctx=c.getContext('2d');
-  const syms=['∑','∫','∂','∞','π','√','Δ','∇','α','β','θ','λ','σ','ε','δ','φ','ℝ','ℤ','ℕ','ℚ','≤','≥','⊂','∈','lim',"f'","f(x)",'d/dx','→','⟺'];
+  const SYMS=['∑','∫','∂','∞','π','√','Δ','∇','α','β','θ','λ',
+               'σ','ε','δ','φ','ℝ','ℤ','ℕ','ℚ','≤','≥','⊂','∈',
+               'lim',"f′","f(x)",'→','⟺','d/dx','∀','∃','±'];
 
-  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  function resize(){ c.width=innerWidth; c.height=innerHeight; }
   resize();
   addEventListener('resize',resize);
 
+  // spawn particles
   const P=[];
-  for(let i=0;i<42;i++) P.push({
-    x:Math.random()*innerWidth,
-    y:Math.random()*innerHeight,
-    sym:syms[Math.floor(Math.random()*syms.length)],
-    size:13+Math.random()*24,
-    speed:.1+Math.random()*.28,
-    alpha:.038+Math.random()*.062,
-    drift:(Math.random()-.5)*.22
+  for(let i=0;i<40;i++) P.push({
+    x:       Math.random()*innerWidth,
+    y:       Math.random()*innerHeight,
+    sym:     SYMS[Math.floor(Math.random()*SYMS.length)],
+    size:    12+Math.random()*22,
+    speed:   0.08+Math.random()*0.24,    // upward drift speed (px/frame)
+    alpha:   0.034+Math.random()*0.054,
+    drift:   (Math.random()-0.5)*0.18,   // horizontal wobble
+    rot:     Math.random()*Math.PI*2,    // initial angle
+    rotSpd:  (Math.random()-0.5)*0.009,  // spin speed (rad/frame)
   });
 
   function draw(){
     ctx.clearRect(0,0,c.width,c.height);
-    // very subtle warm paper background
-    ctx.fillStyle='#f5f3ed';
+    ctx.fillStyle='#f5f3ed';             // warm paper background
     ctx.fillRect(0,0,c.width,c.height);
+
     for(const p of P){
       ctx.save();
-      ctx.globalAlpha=p.alpha;
+      ctx.globalAlpha = p.alpha;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);                 // spin around symbol centre
       ctx.font=`${p.size}px IBM Plex Mono,monospace`;
       ctx.fillStyle='#b8922d';
-      ctx.fillText(p.sym,p.x,p.y);
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText(p.sym,0,0);
       ctx.restore();
-      p.y-=p.speed; p.x+=p.drift;
-      if(p.y<-34){p.y=c.height+34;p.x=Math.random()*c.width;}
-      if(p.x<-44)p.x=c.width+44;
-      if(p.x>c.width+44)p.x=-44;
+
+      p.y   -= p.speed;                 // float upward
+      p.x   += p.drift;                 // drift sideways
+      p.rot += p.rotSpd;                // spin
+
+      if(p.y < -40)           { p.y=c.height+40; p.x=Math.random()*c.width; }
+      if(p.x < -50)             p.x=c.width+50;
+      if(p.x > c.width+50)      p.x=-50;
     }
     requestAnimationFrame(draw);
   }
