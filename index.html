@@ -81,6 +81,15 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'IBM Plex Sans',san
 /* ── SLIDE COUNTER ───────────────────────────────────────── */
 #counter{position:fixed;bottom:28px;left:36px;font-size:12px;
          color:#a0a0b8;letter-spacing:.05em;z-index:10;pointer-events:none}
+
+/* ── KSU CORNER LOGO ─────────────────────────────────────── */
+#ksu-corner{position:fixed;top:18px;right:18px;height:46px;
+            z-index:20;opacity:0.90;pointer-events:none;
+            border-radius:5px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+
+/* ── KSU TITLE LOGO ──────────────────────────────────────── */
+.tp-logo{display:block;height:56px;margin:0 auto 18px;
+         border-radius:6px;box-shadow:0 3px 16px rgba(0,0,0,.18)}
 </style>
 </head>
 <body>
@@ -89,6 +98,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'IBM Plex Sans',san
 <canvas id="bgc"></canvas>
 <div id="bg-tint"></div>
 <div id="vig"></div>
+
+<!-- KSU corner logo -->
+<img id="ksu-corner" src="ksu_logo.png" alt="King Saud University">
 
 <!-- progress + controls -->
 <div id="prog"></div>
@@ -105,7 +117,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'IBM Plex Sans',san
 
 <!-- title panel (slide 0 only) -->
 <div id="tp">
-  <div class="tp-ksu">King Saud University &middot; Math 101</div>
+  <img src="ksu_logo.png" class="tp-logo" alt="King Saud University">
+  <div class="tp-ksu">Math 101</div>
   <div class="tp-h">Mathematics <em style="color:#b8922d">Mind Map</em></div>
   <div class="tp-sub">Functions &middot; Limits &middot; Differentiation &middot; Applications</div>
 </div>
@@ -619,33 +632,33 @@ const VIEWS=[
   // 0 ── Title / intro
   {cx:1800,cy:1300,w:4000,h:2700, ch:null, tag:'',               title:'',                                    panel:true, hint:true },
   // 1 ── Top half overview (Ch1 + Ch2)
-  {cx:1800,cy:478, w:4000,h:970,  ch:null, tag:'Chapters 1 & 2', title:'Functions · Limits & Continuity',     panel:false,hint:false},
+  {cx:1800,cy:490, w:3600,h:900,  ch:null, tag:'Chapters 1 & 2', title:'Functions · Limits & Continuity',     panel:false,hint:false},
   // 2 ── Ch1 full overview
-  {cx:860, cy:478, w:1960,h:970,  ch:'c1', tag:'Chapter 1',      title:'Functions',                           panel:false,hint:false},
+  {cx:860, cy:490, w:1700,h:900,  ch:'c1', tag:'Chapter 1',      title:'Functions',                           panel:false,hint:false},
   // 3 ── Ch1 sections 1–2
-  {cx:420, cy:478, w:1080,h:970,  ch:'c1', tag:'Ch.1 · Sec 1–2', title:'Number Sets · Inequalities',          panel:false,hint:false},
+  {cx:420, cy:490, w:900, h:900,  ch:'c1', tag:'Ch.1 · Sec 1–2', title:'Number Sets · Inequalities',          panel:false,hint:false},
   // 4 ── Ch1 sections 3–4
-  {cx:1300,cy:478, w:1080,h:970,  ch:'c1', tag:'Ch.1 · Sec 3–4', title:'Functions Explorer · Trig',           panel:false,hint:false},
+  {cx:1300,cy:490, w:900, h:900,  ch:'c1', tag:'Ch.1 · Sec 3–4', title:'Functions Explorer · Trig',           panel:false,hint:false},
   // 5 ── Ch2 full overview
-  {cx:2740,cy:478, w:1960,h:970,  ch:'c2', tag:'Chapter 2',      title:'Limits & Continuity',                 panel:false,hint:false},
+  {cx:2740,cy:490, w:1700,h:900,  ch:'c2', tag:'Chapter 2',      title:'Limits & Continuity',                 panel:false,hint:false},
   // 6 ── Ch2 sections 1–2
-  {cx:2300,cy:478, w:1080,h:970,  ch:'c2', tag:'Ch.2 · Sec 1–2', title:'Limit Laws · Limits at ∞',            panel:false,hint:false},
+  {cx:2300,cy:490, w:900, h:900,  ch:'c2', tag:'Ch.2 · Sec 1–2', title:'Limit Laws · Limits at ∞',            panel:false,hint:false},
   // 7 ── Ch2 sections 3–4
-  {cx:3180,cy:478, w:1080,h:970,  ch:'c2', tag:'Ch.2 · Sec 3–4', title:'One-Sided Limits · Continuity',       panel:false,hint:false},
+  {cx:3180,cy:490, w:900, h:900,  ch:'c2', tag:'Ch.2 · Sec 3–4', title:'One-Sided Limits · Continuity',       panel:false,hint:false},
   // 8 ── Bottom half overview (Ch3 + Ch4)
-  {cx:1800,cy:2122,w:4000,h:970,  ch:null, tag:'Chapters 3 & 4', title:'Differentiation · Applications',      panel:false,hint:false},
+  {cx:1800,cy:2110,w:3600,h:900,  ch:null, tag:'Chapters 3 & 4', title:'Differentiation · Applications',      panel:false,hint:false},
   // 9 ── Ch3 full overview
-  {cx:860, cy:2122,w:1960,h:970,  ch:'c3', tag:'Chapter 3',      title:'Differentiation',                     panel:false,hint:false},
+  {cx:860, cy:2110,w:1700,h:900,  ch:'c3', tag:'Chapter 3',      title:'Differentiation',                     panel:false,hint:false},
   // 10 ── Ch3 sections 1–2
-  {cx:420, cy:2122,w:1080,h:970,  ch:'c3', tag:'Ch.3 · Sec 1–2', title:'Derivative Definition · Core Rules',  panel:false,hint:false},
+  {cx:420, cy:2110,w:900, h:900,  ch:'c3', tag:'Ch.3 · Sec 1–2', title:'Derivative Definition · Core Rules',  panel:false,hint:false},
   // 11 ── Ch3 sections 3–4
-  {cx:1300,cy:2122,w:1080,h:970,  ch:'c3', tag:'Ch.3 · Sec 3–4', title:'Trig Derivatives · Chain Rule',       panel:false,hint:false},
+  {cx:1300,cy:2110,w:900, h:900,  ch:'c3', tag:'Ch.3 · Sec 3–4', title:'Trig Derivatives · Chain Rule',       panel:false,hint:false},
   // 12 ── Ch4 full overview
-  {cx:2740,cy:2122,w:1960,h:970,  ch:'c4', tag:'Chapter 4',      title:'Applications of Differentiation',     panel:false,hint:false},
+  {cx:2740,cy:2110,w:1700,h:900,  ch:'c4', tag:'Chapter 4',      title:'Applications of Differentiation',     panel:false,hint:false},
   // 13 ── Ch4 sections 1–2
-  {cx:2300,cy:2122,w:1080,h:970,  ch:'c4', tag:'Ch.4 · Sec 1–2', title:'Extrema · Fundamental Theorems',      panel:false,hint:false},
+  {cx:2300,cy:2110,w:900, h:900,  ch:'c4', tag:'Ch.4 · Sec 1–2', title:'Extrema · Fundamental Theorems',      panel:false,hint:false},
   // 14 ── Ch4 sections 3–4
-  {cx:3180,cy:2122,w:1080,h:970,  ch:'c4', tag:'Ch.4 · Sec 3–4', title:'Function Analysis · Curve Sketching', panel:false,hint:false},
+  {cx:3180,cy:2110,w:900, h:900,  ch:'c4', tag:'Ch.4 · Sec 3–4', title:'Function Analysis · Curve Sketching', panel:false,hint:false},
   // 15 ── Final zoom-out
   {cx:1800,cy:1300,w:4000,h:2700, ch:null, tag:'',               title:'Complete Mind Map',                   panel:false,hint:false},
 ];
