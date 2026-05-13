@@ -662,36 +662,36 @@ const TOTAL=VIEWS.length;
 let cur=0;
 
 // ── OPACITY MAP ───────────────────────────────────────────────
-const D=0.07, S=0.35, F=1;
+const DIM=0.07, SEMI=0.35, VIS=1;
 const ALL_IDS=['root','c1','c2','c3','c4',
   's1a','s1b','s1c','s1d','s2a','s2b','s2c','s2d',
   's3a','s3b','s3c','s3d','s4a','s4b','s4c','s4d'];
 
 function makeOps(show){
   const r={};
-  for(const k of ALL_IDS) r[k]=D;
+  for(const k of ALL_IDS) r[k]=DIM;
   for(const[k,v] of Object.entries(show)) r[k]=v;
   return r;
 }
 
-const ALL_F=Object.fromEntries(ALL_IDS.map(k=>[k,F]));
+const ALL_VIS=Object.fromEntries(ALL_IDS.map(k=>[k,VIS]));
 const OPS=[
-  makeOps(ALL_F),                                                                        // 0 title      – all visible
-  makeOps({root:S,c1:F,c2:F,s1a:F,s1b:F,s1c:F,s1d:F,s2a:F,s2b:F,s2c:F,s2d:F}),       // 1 top half
-  makeOps({c1:F,s1a:F,s1b:F,s1c:F,s1d:F}),                                              // 2 ch1 overview
-  makeOps({c1:S,s1a:F,s1b:F}),                                                           // 3 ch1 sec 1-2
-  makeOps({c1:S,s1c:F,s1d:F}),                                                           // 4 ch1 sec 3-4
-  makeOps({c2:F,s2a:F,s2b:F,s2c:F,s2d:F}),                                              // 5 ch2 overview
-  makeOps({c2:S,s2a:F,s2b:F}),                                                           // 6 ch2 sec 1-2
-  makeOps({c2:S,s2c:F,s2d:F}),                                                           // 7 ch2 sec 3-4
-  makeOps({root:S,c3:F,c4:F,s3a:F,s3b:F,s3c:F,s3d:F,s4a:F,s4b:F,s4c:F,s4d:F}),       // 8 bottom half
-  makeOps({c3:F,s3a:F,s3b:F,s3c:F,s3d:F}),                                              // 9 ch3 overview
-  makeOps({c3:S,s3a:F,s3b:F}),                                                           // 10 ch3 sec 1-2
-  makeOps({c3:S,s3c:F,s3d:F}),                                                           // 11 ch3 sec 3-4
-  makeOps({c4:F,s4a:F,s4b:F,s4c:F,s4d:F}),                                              // 12 ch4 overview
-  makeOps({c4:S,s4a:F,s4b:F}),                                                           // 13 ch4 sec 1-2
-  makeOps({c4:S,s4c:F,s4d:F}),                                                           // 14 ch4 sec 3-4
-  makeOps(ALL_F),                                                                        // 15 final zoom-out – all visible
+  makeOps(ALL_VIS),                                                                                          // 0  title        – all visible
+  makeOps({root:SEMI,c1:VIS,c2:VIS,s1a:VIS,s1b:VIS,s1c:VIS,s1d:VIS,s2a:VIS,s2b:VIS,s2c:VIS,s2d:VIS}),   // 1  top half
+  makeOps({c1:VIS,s1a:VIS,s1b:VIS,s1c:VIS,s1d:VIS}),                                                      // 2  ch1 overview
+  makeOps({c1:SEMI,s1a:VIS,s1b:VIS}),                                                                      // 3  ch1 sec 1-2
+  makeOps({c1:SEMI,s1c:VIS,s1d:VIS}),                                                                      // 4  ch1 sec 3-4
+  makeOps({c2:VIS,s2a:VIS,s2b:VIS,s2c:VIS,s2d:VIS}),                                                      // 5  ch2 overview
+  makeOps({c2:SEMI,s2a:VIS,s2b:VIS}),                                                                      // 6  ch2 sec 1-2
+  makeOps({c2:SEMI,s2c:VIS,s2d:VIS}),                                                                      // 7  ch2 sec 3-4
+  makeOps({root:SEMI,c3:VIS,c4:VIS,s3a:VIS,s3b:VIS,s3c:VIS,s3d:VIS,s4a:VIS,s4b:VIS,s4c:VIS,s4d:VIS}),   // 8  bottom half
+  makeOps({c3:VIS,s3a:VIS,s3b:VIS,s3c:VIS,s3d:VIS}),                                                      // 9  ch3 overview
+  makeOps({c3:SEMI,s3a:VIS,s3b:VIS}),                                                                      // 10 ch3 sec 1-2
+  makeOps({c3:SEMI,s3c:VIS,s3d:VIS}),                                                                      // 11 ch3 sec 3-4
+  makeOps({c4:VIS,s4a:VIS,s4b:VIS,s4c:VIS,s4d:VIS}),                                                      // 12 ch4 overview
+  makeOps({c4:SEMI,s4a:VIS,s4b:VIS}),                                                                      // 13 ch4 sec 1-2
+  makeOps({c4:SEMI,s4c:VIS,s4d:VIS}),                                                                      // 14 ch4 sec 3-4
+  makeOps(ALL_VIS),                                                                                         // 15 final zoom-out – all visible
 ];
 
 // ── SET OPACITIES ─────────────────────────────────────────────
