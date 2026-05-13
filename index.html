@@ -118,15 +118,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'IBM Plex Sans',san
              font-size:clamp(38px,5vw,64px);font-weight:600;
              color:#1c1b28;line-height:1.05;margin-bottom:13px}
 .intro-title em{color:#b8922d;font-style:italic}
-.intro-sub{font-size:13.5px;color:#68657d;letter-spacing:.03em;margin-bottom:40px}
-#intro-btn{display:inline-flex;align-items:center;gap:10px;
-  background:#1c1b28;color:#f5f3ed;border:none;border-radius:50px;
-  padding:15px 46px;font-size:13px;font-weight:600;
-  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
-  transition:background .2s,transform .15s,box-shadow .2s;
-  box-shadow:0 6px 26px rgba(28,27,40,.3)}
-#intro-btn:hover{background:#2e2d44;transform:scale(1.04);
-                 box-shadow:0 8px 34px rgba(28,27,40,.38)}
+.intro-sub{font-size:13.5px;color:#68657d;letter-spacing:.03em;margin-bottom:32px}
+.intro-hint{font-size:11.5px;color:#a0a0b8;letter-spacing:.08em;
+            animation:hintPulse 2.4s ease-in-out infinite}
+.intro-hint kbd{display:inline-block;padding:1px 7px;border-radius:4px;
+               border:1px solid #c8c5d8;font-family:inherit;font-size:11px;
+               background:rgba(255,255,255,.6)}
+@keyframes hintPulse{0%,100%{opacity:.5} 50%{opacity:1}}
+#intro{cursor:pointer}
 
 /* ── HIDE PRESENTATION UI BEFORE START ───────────────────── */
 body.pre-start #svg,
@@ -149,13 +148,13 @@ body.pre-start #hint{display:none}
 <div id="vig"></div>
 
 <!-- ── INTRO SPLASH ─────────────────────────────────────── -->
-<div id="intro">
+<div id="intro" onclick="startMap()">
   <div id="intro-card">
     <img src="ksu_logo.png" id="intro-logo" alt="King Saud University">
     <div class="intro-course">King Saud University &middot; Math 101</div>
     <div class="intro-title">Mathematics <em>Mind Map</em></div>
     <div class="intro-sub">Functions &middot; Limits &middot; Differentiation &middot; Applications</div>
-    <button id="intro-btn" onclick="startMap()">&#9654;&nbsp;&nbsp;Begin</button>
+    <div class="intro-hint">Press <kbd>→</kbd> or click anywhere to begin</div>
   </div>
 </div>
 
@@ -208,10 +207,10 @@ body.pre-start #hint{display:none}
 // ── PALETTE ───────────────────────────────────────────────────
 const GOLD='#b8922d', INK='#1c1b28', GRAY='#58556e';
 const COL={
-  c1:{ s:'#1aaa7e', l:'#e4f8f1', tint:'rgba(26,170,126,0.04)'  },
-  c2:{ s:'#2e9e5b', l:'#e5f6ec', tint:'rgba(46,158,91,0.04)'   },
-  c3:{ s:'#d4733a', l:'#fdf0e8', tint:'rgba(212,115,58,0.04)'  },
-  c4:{ s:'#6b5ecf', l:'#ece9fb', tint:'rgba(107,94,207,0.04)'  },
+  c1:{ s:'#1aaa7e', l:'#e4f8f1', tint:'rgba(26,170,126,0.04)'  },  // teal
+  c2:{ s:'#3572d8', l:'#e8f0fc', tint:'rgba(53,114,216,0.04)'  },  // blue
+  c3:{ s:'#d4733a', l:'#fdf0e8', tint:'rgba(212,115,58,0.04)'  },  // orange
+  c4:{ s:'#6b5ecf', l:'#ece9fb', tint:'rgba(107,94,207,0.04)'  },  // purple
 };
 
 // ── LAYOUT ────────────────────────────────────────────────────
@@ -842,7 +841,10 @@ function goTo(next){
 
 // Keyboard
 document.addEventListener('keydown',e=>{
-  if(document.body.classList.contains('pre-start')) return;
+  if(document.body.classList.contains('pre-start')){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='Enter'){e.preventDefault();startMap();}
+    return;
+  }
   if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();goTo(cur+1);}
   if(e.key==='ArrowLeft') {e.preventDefault();goTo(cur-1);}
 });
@@ -863,37 +865,57 @@ window.addEventListener('resize',()=>applyView(VIEWS[cur],false));
 applyView(VIEWS[0],false);   // position map while SVG is hidden
 
 // ── START: intro → mindmap build ──────────────────────────────
+let _introStarted=false;
 function startMap(){
+  if(_introStarted) return;
+  _introStarted=true;
+
   const intro=document.getElementById('intro');
-  intro.classList.add('out');            // fade out intro card
+  intro.classList.add('out');
 
   setTimeout(()=>{
     intro.style.display='none';
-    document.body.classList.remove('pre-start');  // reveal UI
+    document.body.classList.remove('pre-start');
+    applyView(VIEWS[0],false);
 
-    // Reset every group to invisible for the build animation
-    const allG=['root',...ALL_IDS];
-    allG.forEach(id=>{ if(GROUPS[id]) GROUPS[id].style.opacity='0'; });
-
-    // Wave build: root → chapters → inner sections → outer sections
-    const waves=[
-      {ids:['root'],                                              t:0   },
-      {ids:['c1','c2','c3','c4'],                                t:400 },
-      {ids:['s1a','s1b','s2a','s2b','s3a','s3b','s4a','s4b'],   t:820 },
-      {ids:['s1c','s1d','s2c','s2d','s3c','s3d','s4c','s4d'],   t:1200},
+    // Build order: root → chapters → sections (inner to outer), each element staggered
+    const order=[
+      'root',
+      'c1','c2','c3','c4',
+      's1a','s2a','s3a','s4a',
+      's1b','s2b','s3b','s4b',
+      's1c','s2c','s3c','s4c',
+      's1d','s2d','s3d','s4d',
     ];
-    waves.forEach(w=>{
-      setTimeout(()=>{
-        w.ids.forEach(id=>{ if(GROUPS[id]) GROUPS[id].style.opacity='1'; });
-      }, w.t);
+
+    // Pre-hide all with translate offset
+    order.forEach(id=>{
+      const g=GROUPS[id]; if(!g) return;
+      g.style.transition='none';
+      g.style.opacity='0';
+      g.style.transform='translateY(18px)';
     });
 
-    // After build completes, hand off to navigation system
-    setTimeout(()=>{
-      setOpacities(OPS[0]);   // confirms all visible for slide 0
-      updateUI();
-    }, 1750);
-  }, 900);
+    // Stagger each group in with opacity + slide-up
+    order.forEach((id,i)=>{
+      const g=GROUPS[id]; if(!g) return;
+      const delay=60+i*85;  // 85 ms between each group
+      setTimeout(()=>{
+        g.style.transition='opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1)';
+        g.style.opacity='1';
+        g.style.transform='translateY(0)';
+      }, delay);
+      // Clear overrides once done so normal dimming system works cleanly
+      setTimeout(()=>{
+        g.style.transition='';
+        g.style.transform='';
+      }, delay+820);
+    });
+
+    // Hand off to navigation after last group settles
+    const total=60+order.length*85+840;
+    setTimeout(()=>{ setOpacities(OPS[0]); updateUI(); }, total);
+  }, 820);
 }
 
 // ── FLOATING ROTATING SYMBOLS (canvas) ───────────────────────
