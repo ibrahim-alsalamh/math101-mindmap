@@ -153,12 +153,12 @@ const TOP_Y_TOP=265, TOP_Y_BOT=2335;
 // Pill-1 center Y  (moved further from topics for breathing room)
 const P1_Y_TOP=118,  P1_Y_BOT=2482;
 // Topic x-spread from section center
-const T_OFF=112;
-// Section x arrays (left side / right side)
-const SEC_X_L=[200,530,860,1190];
-const SEC_X_R=[2410,2740,3070,3400];
-// Pill dimensions
-const PW=116, PHT=22, PHF=44;  // width, text-height, fraction-height
+const T_OFF=126;
+// Section x arrays (left side / right side)  — 390px between sections
+const SEC_X_L=[115,505,895,1285];
+const SEC_X_R=[2315,2705,3095,3485];
+// Pill dimensions  (narrower than T_OFF so pills never collide)
+const PW=106, PHT=22, PHF=44;  // width, text-height, fraction-height
 
 // ── PILL DATA HELPERS ─────────────────────────────────────────
 // Plain text
@@ -620,31 +620,31 @@ const VIEWS=[
   // 1 ── Top half overview (Ch1 + Ch2)
   {cx:1800,cy:478, w:3760,h:970,  ch:null, tag:'Chapters 1 & 2', title:'Functions · Limits & Continuity',     panel:false,hint:false},
   // 2 ── Ch1 full overview
-  {cx:695, cy:478, w:1520,h:970,  ch:'c1', tag:'Chapter 1',      title:'Functions',                           panel:false,hint:false},
+  {cx:700, cy:478, w:1700,h:970,  ch:'c1', tag:'Chapter 1',      title:'Functions',                           panel:false,hint:false},
   // 3 ── Ch1 sections 1–2
-  {cx:366, cy:478, w:840, h:970,  ch:'c1', tag:'Ch.1 · Sec 1–2', title:'Number Sets · Inequalities',          panel:false,hint:false},
+  {cx:310, cy:478, w:900, h:970,  ch:'c1', tag:'Ch.1 · Sec 1–2', title:'Number Sets · Inequalities',          panel:false,hint:false},
   // 4 ── Ch1 sections 3–4
-  {cx:1025,cy:478, w:840, h:970,  ch:'c1', tag:'Ch.1 · Sec 3–4', title:'Functions Explorer · Trig',           panel:false,hint:false},
+  {cx:1090,cy:478, w:900, h:970,  ch:'c1', tag:'Ch.1 · Sec 3–4', title:'Functions Explorer · Trig',           panel:false,hint:false},
   // 5 ── Ch2 full overview
-  {cx:2905,cy:478, w:1520,h:970,  ch:'c2', tag:'Chapter 2',      title:'Limits & Continuity',                 panel:false,hint:false},
+  {cx:2900,cy:478, w:1700,h:970,  ch:'c2', tag:'Chapter 2',      title:'Limits & Continuity',                 panel:false,hint:false},
   // 6 ── Ch2 sections 1–2
-  {cx:2576,cy:478, w:840, h:970,  ch:'c2', tag:'Ch.2 · Sec 1–2', title:'Limit Laws · Limits at ∞',            panel:false,hint:false},
+  {cx:2510,cy:478, w:900, h:970,  ch:'c2', tag:'Ch.2 · Sec 1–2', title:'Limit Laws · Limits at ∞',            panel:false,hint:false},
   // 7 ── Ch2 sections 3–4
-  {cx:3235,cy:478, w:840, h:970,  ch:'c2', tag:'Ch.2 · Sec 3–4', title:'One-Sided Limits · Continuity',       panel:false,hint:false},
+  {cx:3290,cy:478, w:900, h:970,  ch:'c2', tag:'Ch.2 · Sec 3–4', title:'One-Sided Limits · Continuity',       panel:false,hint:false},
   // 8 ── Bottom half overview (Ch3 + Ch4)
   {cx:1800,cy:2122,w:3760,h:970,  ch:null, tag:'Chapters 3 & 4', title:'Differentiation · Applications',      panel:false,hint:false},
   // 9 ── Ch3 full overview
-  {cx:695, cy:2122,w:1520,h:970,  ch:'c3', tag:'Chapter 3',      title:'Differentiation',                     panel:false,hint:false},
+  {cx:700, cy:2122,w:1700,h:970,  ch:'c3', tag:'Chapter 3',      title:'Differentiation',                     panel:false,hint:false},
   // 10 ── Ch3 sections 1–2
-  {cx:366, cy:2122,w:840, h:970,  ch:'c3', tag:'Ch.3 · Sec 1–2', title:'Derivative Definition · Core Rules',  panel:false,hint:false},
+  {cx:310, cy:2122,w:900, h:970,  ch:'c3', tag:'Ch.3 · Sec 1–2', title:'Derivative Definition · Core Rules',  panel:false,hint:false},
   // 11 ── Ch3 sections 3–4
-  {cx:1025,cy:2122,w:840, h:970,  ch:'c3', tag:'Ch.3 · Sec 3–4', title:'Trig Derivatives · Chain Rule',       panel:false,hint:false},
+  {cx:1090,cy:2122,w:900, h:970,  ch:'c3', tag:'Ch.3 · Sec 3–4', title:'Trig Derivatives · Chain Rule',       panel:false,hint:false},
   // 12 ── Ch4 full overview
-  {cx:2905,cy:2122,w:1520,h:970,  ch:'c4', tag:'Chapter 4',      title:'Applications of Differentiation',     panel:false,hint:false},
+  {cx:2900,cy:2122,w:1700,h:970,  ch:'c4', tag:'Chapter 4',      title:'Applications of Differentiation',     panel:false,hint:false},
   // 13 ── Ch4 sections 1–2
-  {cx:2576,cy:2122,w:840, h:970,  ch:'c4', tag:'Ch.4 · Sec 1–2', title:'Extrema · Fundamental Theorems',      panel:false,hint:false},
+  {cx:2510,cy:2122,w:900, h:970,  ch:'c4', tag:'Ch.4 · Sec 1–2', title:'Extrema · Fundamental Theorems',      panel:false,hint:false},
   // 14 ── Ch4 sections 3–4
-  {cx:3235,cy:2122,w:840, h:970,  ch:'c4', tag:'Ch.4 · Sec 3–4', title:'Function Analysis · Curve Sketching', panel:false,hint:false},
+  {cx:3290,cy:2122,w:900, h:970,  ch:'c4', tag:'Ch.4 · Sec 3–4', title:'Function Analysis · Curve Sketching', panel:false,hint:false},
   // 15 ── Final zoom-out
   {cx:1800,cy:1300,w:3760,h:2700, ch:null, tag:'',               title:'Complete Mind Map',                   panel:false,hint:false},
 ];
