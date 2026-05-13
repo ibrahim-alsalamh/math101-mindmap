@@ -150,10 +150,8 @@ const CH_Y_TOP=850,  CH_Y_BOT=1750;
 const SEC_Y_TOP=470, SEC_Y_BOT=2130;
 // Topic Y
 const TOP_Y_TOP=265, TOP_Y_BOT=2335;
-// Pill-1 center Y
-const P1_Y_TOP=158,  P1_Y_BOT=2442;
-// Pill-2 center Y
-const P2_Y_TOP=86,   P2_Y_BOT=2514;
+// Pill-1 center Y  (moved further from topics for breathing room)
+const P1_Y_TOP=118,  P1_Y_BOT=2482;
 // Topic x-spread from section center
 const T_OFF=112;
 // Section x arrays (left side / right side)
@@ -175,7 +173,7 @@ const CH1={
   id:'c1', label:'Chapter 1', sub:'Functions',
   col:COL.c1, cx:700, cy:CH_Y_TOP, side:'TL',
   secXs:SEC_X_L, secY:SEC_Y_TOP, topY:TOP_Y_TOP,
-  p1Y:P1_Y_TOP, p2Y:P2_Y_TOP,
+  p1Y:P1_Y_TOP,
   sections:[
     { id:'s1a', label:'Number Sets',
       topics:[
@@ -208,7 +206,7 @@ const CH2={
   id:'c2', label:'Chapter 2', sub:'Limits & Continuity',
   col:COL.c2, cx:2900, cy:CH_Y_TOP, side:'TR',
   secXs:SEC_X_R, secY:SEC_Y_TOP, topY:TOP_Y_TOP,
-  p1Y:P1_Y_TOP, p2Y:P2_Y_TOP,
+  p1Y:P1_Y_TOP,
   sections:[
     { id:'s2a', label:'Limit Laws',
       topics:[
@@ -242,7 +240,7 @@ const CH3={
   id:'c3', label:'Chapter 3', sub:'Differentiation',
   col:COL.c3, cx:700, cy:CH_Y_BOT, side:'BL',
   secXs:SEC_X_L, secY:SEC_Y_BOT, topY:TOP_Y_BOT,
-  p1Y:P1_Y_BOT, p2Y:P2_Y_BOT,
+  p1Y:P1_Y_BOT,
   sections:[
     { id:'s3a', label:'Derivative Defn.',
       topics:[
@@ -300,7 +298,7 @@ const CH4={
   id:'c4', label:'Chapter 4', sub:'Applications of Diff.',
   col:COL.c4, cx:2900, cy:CH_Y_BOT, side:'BR',
   secXs:SEC_X_R, secY:SEC_Y_BOT, topY:TOP_Y_BOT,
-  p1Y:P1_Y_BOT, p2Y:P2_Y_BOT,
+  p1Y:P1_Y_BOT,
   sections:[
     { id:'s4a', label:'Extrema (Max & Min)',
       topics:[
@@ -592,21 +590,13 @@ function buildTopicsAndPills(){
           'font-family':SANS, 'font-size':10.5, 'font-weight':600, fill:INK
         });
 
-        // ── topic → P1 connector ──
-        const topicFace =top ? ch.topY-16 : ch.topY+16;
-        const p1Near    =top ? ch.p1Y+22  : ch.p1Y-22;
-        seg(g,tx,topicFace,tx,p1Near,c,0.32,1.1);
+        // ── topic → pill connector ──
+        const topicFace=top ? ch.topY-16 : ch.topY+16;
+        const pillNear =top ? ch.p1Y+22  : ch.p1Y-22;
+        seg(g,tx,topicFace,tx,pillNear,c,0.32,1.1);
 
-        // ── P1 pill ──
+        // ── single pill per topic ──
         drawPill(g,tx,ch.p1Y,t.p1,c,cl);
-
-        // ── P1 → P2 connector ──
-        const p1Far  =top ? ch.p1Y-22  : ch.p1Y+22;
-        const p2Near =top ? ch.p2Y+22  : ch.p2Y-22;
-        seg(g,tx,p1Far,tx,p2Near,c,0.22,1.1);
-
-        // ── P2 pill ──
-        drawPill(g,tx,ch.p2Y,t.p2,c,cl);
       }
     }
   }
