@@ -90,14 +90,74 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'IBM Plex Sans',san
 /* ── KSU TITLE LOGO ──────────────────────────────────────── */
 .tp-logo{display:block;height:56px;margin:0 auto 18px;
          border-radius:6px;box-shadow:0 3px 16px rgba(0,0,0,.18)}
+
+/* ── INTRO OVERLAY ───────────────────────────────────────── */
+#intro{position:fixed;inset:0;z-index:50;
+       display:flex;align-items:center;justify-content:center;
+       transition:opacity .9s ease}
+#intro.out{opacity:0;pointer-events:none}
+
+#intro-card{text-align:center;
+  background:rgba(247,245,240,.84);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(184,146,45,.26);border-radius:28px;
+  padding:52px 80px;
+  box-shadow:0 22px 70px rgba(0,0,0,.15),
+             inset 0 0 0 1px rgba(255,255,255,.55);
+  animation:cardIn .8s cubic-bezier(.22,1,.36,1) both}
+@keyframes cardIn{
+  from{transform:translateY(30px) scale(.96);opacity:0}
+  to  {transform:translateY(0)    scale(1);  opacity:1}}
+
+#intro-logo{height:70px;border-radius:7px;margin-bottom:26px;
+            display:block;margin-left:auto;margin-right:auto;
+            box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.intro-course{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+              color:#b8922d;font-weight:600;margin-bottom:14px}
+.intro-title{font-family:'Cormorant Garamond',serif;
+             font-size:clamp(38px,5vw,64px);font-weight:600;
+             color:#1c1b28;line-height:1.05;margin-bottom:13px}
+.intro-title em{color:#b8922d;font-style:italic}
+.intro-sub{font-size:13.5px;color:#68657d;letter-spacing:.03em;margin-bottom:40px}
+#intro-btn{display:inline-flex;align-items:center;gap:10px;
+  background:#1c1b28;color:#f5f3ed;border:none;border-radius:50px;
+  padding:15px 46px;font-size:13px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 6px 26px rgba(28,27,40,.3)}
+#intro-btn:hover{background:#2e2d44;transform:scale(1.04);
+                 box-shadow:0 8px 34px rgba(28,27,40,.38)}
+
+/* ── HIDE PRESENTATION UI BEFORE START ───────────────────── */
+body.pre-start #svg,
+body.pre-start #ov,
+body.pre-start #prog,
+body.pre-start #aL,
+body.pre-start #aR,
+body.pre-start #dots,
+body.pre-start #counter,
+body.pre-start #ksu-corner,
+body.pre-start #tp,
+body.pre-start #hint{display:none}
 </style>
 </head>
-<body>
+<body class="pre-start">
 
 <!-- background layers -->
 <canvas id="bgc"></canvas>
 <div id="bg-tint"></div>
 <div id="vig"></div>
+
+<!-- ── INTRO SPLASH ─────────────────────────────────────── -->
+<div id="intro">
+  <div id="intro-card">
+    <img src="ksu_logo.png" id="intro-logo" alt="King Saud University">
+    <div class="intro-course">King Saud University &middot; Math 101</div>
+    <div class="intro-title">Mathematics <em>Mind Map</em></div>
+    <div class="intro-sub">Functions &middot; Limits &middot; Differentiation &middot; Applications</div>
+    <button id="intro-btn" onclick="startMap()">&#9654;&nbsp;&nbsp;Begin</button>
+  </div>
+</div>
 
 <!-- KSU corner logo -->
 <img id="ksu-corner" src="ksu_logo.png" alt="King Saud University">
@@ -782,6 +842,7 @@ function goTo(next){
 
 // Keyboard
 document.addEventListener('keydown',e=>{
+  if(document.body.classList.contains('pre-start')) return;
   if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();goTo(cur+1);}
   if(e.key==='ArrowLeft') {e.preventDefault();goTo(cur-1);}
 });
@@ -790,6 +851,7 @@ document.addEventListener('keydown',e=>{
 let _tx=0;
 document.addEventListener('touchstart',e=>{_tx=e.touches[0].clientX;},{passive:true});
 document.addEventListener('touchend',  e=>{
+  if(document.body.classList.contains('pre-start')) return;
   const dx=e.changedTouches[0].clientX-_tx;
   if(Math.abs(dx)>50) goTo(dx<0?cur+1:cur-1);
 },{passive:true});
@@ -798,60 +860,112 @@ document.addEventListener('touchend',  e=>{
 window.addEventListener('resize',()=>applyView(VIEWS[cur],false));
 
 // ── BOOT ──────────────────────────────────────────────────────
-setOpacities(OPS[0]);
-applyView(VIEWS[0],false);
-updateUI();
+applyView(VIEWS[0],false);   // position map while SVG is hidden
+
+// ── START: intro → mindmap build ──────────────────────────────
+function startMap(){
+  const intro=document.getElementById('intro');
+  intro.classList.add('out');            // fade out intro card
+
+  setTimeout(()=>{
+    intro.style.display='none';
+    document.body.classList.remove('pre-start');  // reveal UI
+
+    // Reset every group to invisible for the build animation
+    const allG=['root',...ALL_IDS];
+    allG.forEach(id=>{ if(GROUPS[id]) GROUPS[id].style.opacity='0'; });
+
+    // Wave build: root → chapters → inner sections → outer sections
+    const waves=[
+      {ids:['root'],                                              t:0   },
+      {ids:['c1','c2','c3','c4'],                                t:400 },
+      {ids:['s1a','s1b','s2a','s2b','s3a','s3b','s4a','s4b'],   t:820 },
+      {ids:['s1c','s1d','s2c','s2d','s3c','s3d','s4c','s4d'],   t:1200},
+    ];
+    waves.forEach(w=>{
+      setTimeout(()=>{
+        w.ids.forEach(id=>{ if(GROUPS[id]) GROUPS[id].style.opacity='1'; });
+      }, w.t);
+    });
+
+    // After build completes, hand off to navigation system
+    setTimeout(()=>{
+      setOpacities(OPS[0]);   // confirms all visible for slide 0
+      updateUI();
+    }, 1750);
+  }, 900);
+}
 
 // ── FLOATING ROTATING SYMBOLS (canvas) ───────────────────────
 (function(){
   const c  =document.getElementById('bgc');
   const ctx=c.getContext('2d');
-  const SYMS=['∑','∫','∂','∞','π','√','Δ','∇','α','β','θ','λ',
-               'σ','ε','δ','φ','ℝ','ℤ','ℕ','ℚ','≤','≥','⊂','∈',
-               'lim',"f′","f(x)",'→','⟺','d/dx','∀','∃','±'];
+
+  const SYMS=[
+    '∑','∫','∂','∞','π','√','Δ','∇','α','β','θ','λ',
+    'σ','ε','δ','φ','ℝ','ℤ','ℕ','ℚ','≤','≥','⊂','∈',
+    'lim',"f′","f(x)",'→','⟺','d/dx','∀','∃','±',
+    'x²','eˣ',"f⁻¹",'∮','≠','≡','∏','μ','ω','∇²','∉',
+    "f″",'ℂ','⟹','∝','∠','⊥','‖','∪','∩',
+  ];
+
+  // Three distinct font families for visual variety
+  const FONTS=[
+    `600 {sz}px 'IBM Plex Mono',monospace`,          // techy / code feel
+    `italic 600 {sz}px 'Cormorant Garamond',serif`,  // classical / elegant
+    `400 {sz}px 'IBM Plex Sans',sans-serif`,          // clean / modern
+  ];
+
+  // Gold-family colours at varying warmth
+  const COLS=['#b8922d','#c9a44a','#9a7622','#b8922d','#d4b86a','#7a5f1a'];
 
   function resize(){ c.width=innerWidth; c.height=innerHeight; }
   resize();
   addEventListener('resize',resize);
 
-  // spawn particles
   const P=[];
-  for(let i=0;i<40;i++) P.push({
-    x:       Math.random()*innerWidth,
-    y:       Math.random()*innerHeight,
-    sym:     SYMS[Math.floor(Math.random()*SYMS.length)],
-    size:    12+Math.random()*22,
-    speed:   0.08+Math.random()*0.24,    // upward drift speed (px/frame)
-    alpha:   0.034+Math.random()*0.054,
-    drift:   (Math.random()-0.5)*0.18,   // horizontal wobble
-    rot:     Math.random()*Math.PI*2,    // initial angle
-    rotSpd:  (Math.random()-0.5)*0.009,  // spin speed (rad/frame)
-  });
+  for(let i=0;i<62;i++){
+    const fi=Math.floor(Math.random()*FONTS.length);
+    const sz=16+Math.random()*38;
+    P.push({
+      x:      Math.random()*innerWidth,
+      y:      Math.random()*innerHeight,
+      sym:    SYMS[Math.floor(Math.random()*SYMS.length)],
+      size:   sz,
+      font:   FONTS[fi].replace('{sz}',sz|0),
+      col:    COLS[Math.floor(Math.random()*COLS.length)],
+      speed:  0.10+Math.random()*0.30,
+      alpha:  0.07+Math.random()*0.10,   // 0.07–0.17 — clearly visible
+      drift:  (Math.random()-0.5)*0.22,
+      rot:    Math.random()*Math.PI*2,
+      rotSpd: (Math.random()-0.5)*0.013,
+    });
+  }
 
   function draw(){
     ctx.clearRect(0,0,c.width,c.height);
-    ctx.fillStyle='#f5f3ed';             // warm paper background
+    ctx.fillStyle='#f5f3ed';
     ctx.fillRect(0,0,c.width,c.height);
 
     for(const p of P){
       ctx.save();
-      ctx.globalAlpha = p.alpha;
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);                 // spin around symbol centre
-      ctx.font=`${p.size}px IBM Plex Mono,monospace`;
-      ctx.fillStyle='#b8922d';
+      ctx.globalAlpha=p.alpha;
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot);
+      ctx.font=p.font;
+      ctx.fillStyle=p.col;
       ctx.textAlign='center';
       ctx.textBaseline='middle';
       ctx.fillText(p.sym,0,0);
       ctx.restore();
 
-      p.y   -= p.speed;                 // float upward
-      p.x   += p.drift;                 // drift sideways
-      p.rot += p.rotSpd;                // spin
+      p.y   -=p.speed;
+      p.x   +=p.drift;
+      p.rot +=p.rotSpd;
 
-      if(p.y < -40)           { p.y=c.height+40; p.x=Math.random()*c.width; }
-      if(p.x < -50)             p.x=c.width+50;
-      if(p.x > c.width+50)      p.x=-50;
+      if(p.y<-50)        { p.y=c.height+50; p.x=Math.random()*c.width; }
+      if(p.x<-60)          p.x=c.width+60;
+      if(p.x>c.width+60)   p.x=-60;
     }
     requestAnimationFrame(draw);
   }
